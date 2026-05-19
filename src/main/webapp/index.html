@@ -1,0 +1,77 @@
+<!doctype html>
+<html class="no-js" lang="es" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>SuperControl</title>
+    <meta name="description" content="Sistema de Supervisión y Control - SuperControl" />
+    <meta name="google" content="notranslate" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="icon" type="image/png" href="content/images/favicon-01_0.png" />
+    <link rel="shortcut icon" href="content/images/favicon-01_0.png" />
+    <link rel="manifest" href="manifest.webapp" />
+    <link rel="stylesheet" href="content/css/loading.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
+    <!-- jhipster-needle-add-resources-to-root - JHipster will add new resources here -->
+  </head>
+  <body>
+    <!--[if lt IE 9]>
+      <p class="browserupgrade">
+        You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve
+        your experience.
+      </p>
+    <![endif]-->
+    <div id="root">
+      <div class="app-loading">
+        <img src="content/images/logotipo-etecsa.jpg" alt="ETECSA" />
+        <div class="loading-text">Cargando sistema...</div>
+        <div class="loading-dots">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+      <div class="app-loading" style="display: none">
+        <div id="jhipster-error" style="display: none">
+          <!-- This content is for troubleshooting purpose and will be removed when app renders -->
+          <h1>An error has occurred :-(</h1>
+          <h2>Usual error causes</h2>
+          <ol>
+            <li>
+              You started the application from an IDE and you didn't run <code style="color: red">npm start</code> or
+              <code style="color: red">npm run webapp:build</code>.
+            </li>
+            <li>
+              You had a network error while running <code style="color: red">npm install</code>. If you are behind a corporate proxy, it is
+              likely that this error was caused by your proxy. Have a look at the JHipster error logs, you will probably have the cause of
+              the error.
+            </li>
+            <li>
+              You installed a Node.js version that doesn't work with JHipster: please use an LTS (long-term support) version, as it's the
+              only version we support.
+            </li>
+          </ol>
+          <!-- end of troubleshooting content -->
+        </div>
+      </div>
+    </div>
+    <noscript>
+      <h1>You must enable JavaScript to view this page.</h1>
+    </noscript>
+    <script type="text/javascript">
+      // show an error message if the app loading takes more than 4 sec
+      window.onload = function () {
+        setTimeout(showError, 4000);
+      };
+      function showError() {
+        const errorElm = document.getElementById('jhipster-error');
+        if (errorElm?.style) {
+          errorElm.style.display = 'block';
+        }
+      }
+    </script>
+  </body>
+</html>
