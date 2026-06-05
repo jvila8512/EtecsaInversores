@@ -1,4 +1,4 @@
-# appsupervisor
+# inversorMonitor
 
 This application was generated using JHipster 8.11.0, you can find documentation and help at [https://www.jhipster.tech/documentation-archive/v8.11.0](https://www.jhipster.tech/documentation-archive/v8.11.0).
 
@@ -22,6 +22,19 @@ In the project root, JHipster generates configuration files for tools like git, 
 
 ## Development
 
+### Doing API-First development using openapi-generator-cli
+
+[OpenAPI-Generator]() is configured for this application. You can generate API code from the `src/main/resources/swagger/api.yml` definition file by running:
+
+```bash
+./mvnw generate-sources
+```
+
+Then implements the generated delegate classes with `@Service` classes.
+
+To edit the `api.yml` definition file, you can use a tool such as [Swagger-Editor](). Start a local instance of the swagger-editor using docker by running: `docker compose -f src/main/docker/swagger-editor.yml up -d`. The editor will then be reachable at [http://localhost:7742](http://localhost:7742).
+
+Refer to [Doing API-First development][] for more details.
 The build system will install automatically the recommended version of Node and npm.
 
 We provide a wrapper to launch npm.
@@ -88,7 +101,7 @@ For further instructions on how to develop with JHipster, have a look at [Using 
 
 ### Packaging as jar
 
-To build the final jar and optimize the appsupervisor application for production, run:
+To build the final jar and optimize the inversorMonitor application for production, run:
 
 ```
 ./mvnw -Pprod clean verify
@@ -235,6 +248,9 @@ To configure CI for your project, run the ci-cd sub-generator (`jhipster ci-cd`)
 [Setting up Continuous Integration]: https://www.jhipster.tech/documentation-archive/v8.11.0/setting-up-ci/
 [Node.js]: https://nodejs.org/
 [NPM]: https://www.npmjs.com/
+[OpenAPI-Generator]: https://openapi-generator.tech
+[Swagger-Editor]: https://editor.swagger.io
+[Doing API-First development]: https://www.jhipster.tech/documentation-archive/v8.11.0/doing-api-first-development/
 [Webpack]: https://webpack.github.io/
 [BrowserSync]: https://www.browsersync.io/
 [Jest]: https://jestjs.io

@@ -1,0 +1,80 @@
+{
+  "annotations": {
+    "changelogDate": "20260603043150"
+  },
+  "applications": ["inversorMonitor"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "nombre",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "255"
+    },
+    {
+      "fieldName": "ubicacion",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "direccionIp",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "45"
+    },
+    {
+      "fieldName": "puerto",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "activo",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "estadoConexion",
+      "fieldType": "EstadoDispositivo",
+      "fieldValues": "Conectado,Error,Desconectado,Inicializando"
+    },
+    {
+      "fieldName": "ultimaLectura",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "ultimoError",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "tiempoEsperaMs",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "reintentos",
+      "fieldType": "Integer"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "GatewayTcp",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "sitio",
+      "relationshipName": "sitio",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

@@ -1,0 +1,348 @@
+/**
+ * ================================================================
+ *  inversorMonitor — JDL v7.0  MULTI-MASTER DEFINITIVO
+ * ================================================================
+ *
+ *  ESCENARIO REAL:
+ *   10 inversores Felicity en la misma app.
+ *   Grupo A: Master A (slave_id=1) + 4 esclavos (slave_id=2,3,4,5)
+ *             → Gateway-01 IP 192.168.1.10:502
+ *   Grupo B: Master B (slave_id=1) + 4 esclavos (slave_id=2,3,4,5)
+ *             → Gateway-02 IP 192.168.1.20:502
+ *
+ *  REGLAS CLAVE:
+ *   ✓ slave_id es único POR gateway, NO globalmente
+ *     (dos masters pueden ser slave_id=1 si están en gateways distintos)
+ *   ✓ Un master pertenece a un GatewayTcp
+ *   ✓ Un esclavo apunta a su master (hereda el gateway)
+ *   ✓ Puedes tener N grupos master+esclavos en la misma app
+ *   ✓ Cada grupo es completamente independiente en polling
+ *
+ *  CONSTRAINT en BD (Liquibase manual post-generación):
+ *   UNIQUE(gateway_id, slave_id)
+ *   → Garantiza que no haya dos inversores con el mismo slave_id
+ *     en el mismo gateway
+ * ================================================================
+ */
+
+application {
+  config {
+    baseName             inversorMonitor
+    applicationType      monolith
+    packageName          com.etecsa.monitor
+    authenticationType   jwt
+    prodDatabaseType     postgresql
+    devDatabaseType      postgresql
+    cacheProvider        ehcache
+    enableHibernateCache true
+    clientFramework      react
+    nativeLanguage       es
+    languages            [es, en]
+    buildTool            maven
+    testFrameworks       [jest]
+    enableSwaggerCodegen true
+  }
+  entities *
+}
+
+// ================================================================
+//  ENUMERACIONES
+// ================================================================
+
+enum TipoConexion {
+  SerialRs485,
+  TcpModbus
+}
+
+enum EstadoDispositivo {
+  Conectado,
+  Error,
+  Desconectado,
+  Inicializando
+}
+
+enum TipoDato {
+  UnsignedInt16,
+  SignedInt16,
+  UnsignedInt32,
+  SignedInt32,
+  FloatIEEE754,
+  AsciiText
+}
+
+// ================================================================
+//  CAPA 1: CATÁLOGO DE MARCAS Y PROTOCOLOS
+// ================================================================
+
+/**
+ * Marca — fabricante con sus rangos de registros Modbus.
+ * Felicity: 0x1101–0x112A
+ * Mawa:     0x1000–0x1050
+ */
+entity Marca {
+  nombre                String   required maxlength(50)
+  fabricante            String            maxlength(100)
+  registroInicio        Integer  required
+  registroFin           Integer  required
+  registroInfoInicio    Integer
+  registroInfoFin       Integer
+  baudRateDefault       Integer
+  descripcion           String            maxlength(500)
+  activaMarcaDefault    Boolean  required
+}
+
+/**
+ * MapeoRegistro — direccion + escala de cada campo por marca.
+ * Permite soportar cualquier marca sin cambiar código Java.
+ */
+entity MapeoRegistro {
+  direccionRegistro     Integer  required
+  nombreRegistro        String   required maxlength(100)
+  campoSql              String   required maxlength(60)
+  tipoDato              TipoDato required
+  escala                Double
+  unidad                String            maxlength(10)
+  activo                Boolean  required
+  descripcion           String            maxlength(255)
+}
+
+entity ModeloInversor {
+  nombre                String   required maxlength(50)
+  capacidadVa           Integer  required
+  voltajeSistemaNom     Integer  required
+  descripcion           String            maxlength(500)
+}
+
+// ================================================================
+//  CAPA 2: SITIO
+// ================================================================
+
+entity Sitio {
+  nombre                String   required maxlength(100)
+  descripcion           String            maxlength(255)
+  ubicacion             String            maxlength(200)
+  contacto              String            maxlength(100)
+  telefono              String            maxlength(20)
+  activo                Boolean  required
+  fechaInstalacion      LocalDate
+}
+
+// ================================================================
+//  CAPA 3: GATEWAY TCP — LA CONEXIÓN FÍSICA COMPARTIDA
+//
+//  Cada gateway es una caja física:
+//    RS-485 (cable) → Gateway → TCP/IP (red)
+//
+//  Un gateway puede servir a UN grupo de inversores.
+//  Si tienes 2 grupos independientes → 2 gateways.
+//
+//  slave_id es ÚNICO dentro de un gateway:
+//    Gateway-01: slave_id 1,2,3,4,5
+//    Gateway-02: slave_id 1,2,3,4,5  ← pueden repetirse entre gateways
+// ================================================================
+
+entity GatewayTcp {
+  nombre                String   required maxlength(100)
+  descripcion           String            maxlength(255)
+  ubicacion             String            maxlength(200)
+  direccionIp           String   required maxlength(45)
+  puerto                Integer  required
+  activo                Boolean  required
+  estadoConexion        EstadoDispositivo
+  ultimaLectura         Instant
+  ultimoError           String            maxlength(500)
+  tiempoEsperaMs        Integer
+  reintentos            Integer
+}
+
+// ================================================================
+//  CAPA 4: INVERSOR — MULTI-MASTER / MULTI-ESCLAVO
+//
+//  Roles posibles:
+//
+//  1. MASTER (esMaster=true, masterReferencia=null)
+//     - Tiene gateway asignado
+//     - Define la conexión del grupo
+//     - slaveId = el suyo propio (ej: 1)
+//
+//  2. ESCLAVO (esMaster=false, masterReferencia → su master)
+//     - Hereda el gateway del master
+//     - Solo necesita su slaveId (ej: 2, 3, 4...)
+//     - No tiene IP propia
+//
+//  3. INDEPENDIENTE (esMaster=false, masterReferencia=null)
+//     - Conexión directa serial (sin gateway)
+//     - No pertenece a ningún grupo
+//
+//  CONSTRAINT (se aplica manual en Liquibase):
+//    UNIQUE(gateway_id, slave_id)
+//    → No puede haber dos inversores con mismo slave_id en mismo gateway
+// ================================================================
+
+entity Inversor {
+  nombre                String          required maxlength(100)
+  numeroSerie           String                   maxlength(50)
+
+  // ── Rol en el grupo ──────────────────────────────────────────
+  // true  = es master de su grupo (define la conexión)
+  // false = esclavo (usa conexión del master) o independiente serial
+  esMaster              Boolean         required
+
+  // ── Conexión Modbus ──────────────────────────────────────────
+  // MASTER con gateway: rellena gateway_id, deja puertoSerial null
+  // ESCLAVO:            solo rellena slaveId, hereda el resto del master
+  // INDEPENDIENTE:      rellena puertoSerial, deja gateway null
+  tipoConexion          TipoConexion    required
+  puertoSerial          String                   maxlength(50)
+  slaveId               Integer         required  // 1-247, único en su gateway
+
+  // ── Estado ───────────────────────────────────────────────────
+  activo                Boolean         required
+  estadoDispositivo     EstadoDispositivo
+  ultimaLectura         Instant
+  ultimoError           String                   maxlength(500)
+
+  // ── Configuración ────────────────────────────────────────────
+  periodoMuestreoSeg    Integer
+
+  // ── Metadata ─────────────────────────────────────────────────
+  fechaRegistro         Instant         required
+  ultimaConexion        Instant
+}
+
+// ================================================================
+//  CAPA 5: DATOS HISTÓRICOS
+// ================================================================
+
+entity DatoInversor {
+  tiempo                Instant  required
+
+  bateriaVoltajeV       Double
+  bateriaCorrienteA     Double
+  bateriaPotenciaW      Double
+
+  pvVoltajeV            Double
+  pvPotenciaW           Double
+
+  salidaVoltajeV        Double
+  salidaPotenciaW       Double
+  salidaAparenteVa      Double
+  cargaPorcentaje       Integer
+
+  redVoltajeV           Double
+  redFrecuenciaHz       Double
+
+  modoOperacion         String   maxlength(20)
+  codigoFallo           Integer
+
+  eficienciaPct         Double
+  consumoRedW           Double
+
+  bateriaCargando       Boolean
+  pvActivo              Boolean
+  redActiva             Boolean
+
+  crcValido             Boolean
+  latenciaMs            Integer
+}
+
+entity DatoEficiencia {
+  fecha                 LocalDate required
+  energiaPvWh           Double
+  energiaCargaWh        Double
+  energiaRedWh          Double
+  eficienciaPromPct     Double
+  horasSol              Double
+  picoPvW               Double
+  picoCargaW            Double
+  maxBateriaV           Double
+  minBateriaV           Double
+  totalLecturas         Integer
+  calculadoEn           Instant
+}
+
+// ================================================================
+//  CAPA 6: ALERTAS
+// ================================================================
+
+entity AlertaConfig {
+  nombre                String   required maxlength(100)
+  descripcion           String            maxlength(255)
+  campoMonitorizado     String   required maxlength(60)
+  operador              String   required maxlength(5)
+  umbral                Double   required
+  activa                Boolean  required
+  nivelSeveridad        String            maxlength(20)
+  canalNotificacion     String            maxlength(50)
+  cooldownMinutos       Integer
+}
+
+entity EventoAlerta {
+  timestamp             Instant  required
+  nombreAlerta          String   required maxlength(100)
+  mensaje               String   required maxlength(500)
+  campoMonitorizado     String            maxlength(60)
+  valorDetectado        Double
+  umbral                Double
+  operador              String            maxlength(5)
+  nivelSeveridad        String            maxlength(20)
+  notificacionEnviada   Boolean
+  canalUsado            String            maxlength(50)
+  resuelto              Boolean
+  fechaResolucion       Instant
+  notas                 String            maxlength(500)
+}
+
+// ================================================================
+//  RELACIONES
+// ================================================================
+
+relationship ManyToOne {
+
+  // Catálogo
+  MapeoRegistro{marca(nombre)}            to Marca
+  ModeloInversor{marca(nombre)}           to Marca
+
+  // Inversor → referencias
+  Inversor{sitio(nombre)}                 to Sitio
+  Inversor{marca(nombre)}                 to Marca
+  Inversor{modelo(nombre)}               to ModeloInversor
+
+  // ── CLAVE 1: gateway (la conexión física compartida) ─────────
+  // Solo el master (y opcionalmente esclavos) tienen gateway.
+  // Los esclavos pueden heredarlo en código sin FK propia,
+  // pero es mejor asignarlo también para consultas directas.
+  Inversor{gateway(nombre)}               to GatewayTcp
+
+  // ── CLAVE 2: self-referencing master → esclavo ───────────────
+  // esclavo.masterReferencia → el inversor master del grupo
+  // master.masterReferencia  → null
+  Inversor{masterReferencia(nombre)}      to Inversor
+
+  // Gateway pertenece a un sitio
+  GatewayTcp{sitio(nombre)}              to Sitio
+
+  // Series temporales
+  DatoInversor{inversor(nombre)}          to Inversor
+  DatoEficiencia{inversor(nombre)}        to Inversor
+
+  // Alertas
+  AlertaConfig{inversor(nombre)}          to Inversor
+  EventoAlerta{inversor(nombre)}          to Inversor
+  EventoAlerta{alertaConfig(nombre)}      to AlertaConfig
+}
+
+// ================================================================
+//  OPCIONES DE GENERACIÓN
+// ================================================================
+
+dto * with mapstruct
+service * with serviceClass
+
+paginate DatoInversor, EventoAlerta with infinite-scroll
+paginate DatoEficiencia, AlertaConfig with pagination
+paginate Sitio, Inversor, Marca, ModeloInversor,
+         MapeoRegistro, GatewayTcp with pagination
+
+filter DatoInversor, EventoAlerta, DatoEficiencia,
+       Inversor, MapeoRegistro, GatewayTcp

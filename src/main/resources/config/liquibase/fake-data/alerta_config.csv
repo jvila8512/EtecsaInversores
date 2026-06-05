@@ -1,0 +1,9 @@
+id;nombre;descripcion;campo_monitorizado;operador;umbral;activa;nivel_severidad;canal_notificacion;cooldown_minutos;inversor_id
+1;Bateria Baja;Voltaje de bateria por debajo del umbral critico;bateria_voltaje_v;<;45.0;true;CRITICA;EMAIL;30;1
+2;Bateria Muy Baja;Voltaje de bateria en nivel de corte;bateria_voltaje_v;<;42.0;true;CRITICA;EMAIL;5;1
+3;Sobrecarga AC;Potencia de salida AC excede el 90% de capacidad;salida_potencia_w;>;4950;true;ALTA;EMAIL;15;1
+4;Red Perdida;Voltaje de red AC cayo a cero;red_voltaje_v;<;10.0;true;ALTA;EMAIL;5;1
+5;Frecuencia Red Anormal;Frecuencia de red fuera de rango;red_frecuencia_hz;<;47.0;true;MEDIA;LOG;60;1
+6;Frecuencia Red Alta;Frecuencia de red por encima de rango;red_frecuencia_hz;>;53.0;true;MEDIA;LOG;60;1
+7;Codigo Fallo Activo;Inversor reporta codigo de fallo;codigo_fallo;>;0;true;CRITICA;EMAIL;5;1
+8;PV Sin Generacion;Potencia PV cero durante horas solares;pv_potencia_w;<;1.0;true;BAJA;LOG;120;1

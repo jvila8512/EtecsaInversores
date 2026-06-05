@@ -1,0 +1,28 @@
+id;direccion_registro;nombre_registro;campo_sql;tipo_dato;escala;unidad;activo;descripcion;marca_id
+1;4353;Working Mode;modo_operacion;UnsignedInt16;1;;true;0x1101 — Modo de operacion del inversor (0=SOL,1=SBU,2=SUB);1
+2;4354;Battery Charge Stage;bateria_cargando;UnsignedInt16;1;;true;0x1102 — Etapa de carga de bateria (0=Silent,1=Bulk,2=Abs,3=Float);1
+3;4355;Fault Code;codigo_fallo;UnsignedInt16;1;;true;0x1103 — Codigo de fallo activo (0=sin fallo);1
+4;4356;Power Flow Bits;red_activa;UnsignedInt16;1;;true;0x1104 — Bits de flujo de potencia (bit0=Grid,bit1=PV,bit2=Bat);1
+5;4360;Battery Voltage;bateria_voltaje_v;UnsignedInt16;100;V;true;0x1108 — Voltaje de bateria (valor/100);1
+6;4361;Battery Current;bateria_corriente_a;SignedInt16;1;A;true;0x1109 — Corriente de bateria (signed);1
+7;4362;Battery Power;bateria_potencia_w;SignedInt16;1;W;true;0x110A — Potencia de bateria (signed, negativo=descarga);1
+8;4369;AC Output Voltage;salida_voltaje_v;UnsignedInt16;10;V;true;0x1111 — Voltaje de salida AC (valor/10);1
+9;4375;AC Input Voltage;red_voltaje_v;UnsignedInt16;10;V;true;0x1117 — Voltaje de entrada AC/red (valor/10);1
+10;4377;AC Input Frequency;red_frecuencia_hz;UnsignedInt16;100;Hz;true;0x1119 — Frecuencia de red AC (valor/100);1
+11;4382;AC Output Power;salida_potencia_w;SignedInt16;1;W;true;0x111E — Potencia de salida AC (signed);1
+12;4383;AC Output Apparent Power;salida_aparente_va;UnsignedInt16;1;VA;true;0x111F — Potencia aparente de salida AC;1
+13;4384;Load Percentage;carga_porcentaje;UnsignedInt16;1;%;true;0x1120 — Porcentaje de carga;1
+14;4390;PV Voltage;pv_voltaje_v;UnsignedInt16;10;V;true;0x1126 — Voltaje del panel solar (valor/10);1
+15;4394;PV Power;pv_potencia_w;SignedInt16;1;W;true;0x112A — Potencia del panel solar (signed);1
+16;8479;Battery Cut-off Voltage;battery_cutoff_v;UnsignedInt16;10;V;true;0x211F — Voltaje de corte de bateria (config, valor/10);1
+17;8482;Battery CV Voltage;battery_cv_v;UnsignedInt16;10;V;true;0x2122 — Voltaje CV de bateria (config, valor/10);1
+18;8483;Battery Float Voltage;battery_float_v;SignedInt16;10;V;true;0x2123 — Voltaje float de bateria (config, signed/10);1
+19;8489;AC Output Frequency;ac_output_freq;UnsignedInt16;1;Hz;true;0x2129 — Frecuencia de salida AC (config, 50/60);1
+20;8490;Output Source Priority;output_source_priority;UnsignedInt16;1;;true;0x212A — Prioridad de fuente de salida (0=SOL,1=SBU,2=SUB);1
+21;8491;Application Mode;application_mode;UnsignedInt16;1;;true;0x212B — Modo de aplicacion (config);1
+22;8492;Charging Source Priority;charging_source_priority;UnsignedInt16;1;;true;0x212C — Prioridad de fuente de carga (0=CSO,1=SOL,2=OSO);1
+23;8493;Battery Type;battery_type;UnsignedInt16;1;;true;0x212D — Tipo de bateria (0=AGM,1=Flooded,2=User);1
+24;8494;Max Charging Current;max_charging_current;UnsignedInt16;1;A;true;0x212E — Corriente maxima de carga (config);1
+25;8496;Max AC Charging Current;max_ac_charging_current;UnsignedInt16;1;A;true;0x2130 — Corriente maxima de carga AC (config);1
+26;8534;Battery Back-to-Charge V;battery_back_charge_v;UnsignedInt16;10;V;true;0x2156 — Voltaje de retorno a carga (config, valor/10);1
+27;8537;Battery Back-to-Discharge;battery_back_discharge_v;UnsignedInt16;10;V;true;0x2159 — Voltaje de retorno a descarga (config, valor/10);1

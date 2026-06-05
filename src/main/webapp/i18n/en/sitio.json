@@ -1,5 +1,5 @@
 {
-  "appsupervisorApp": {
+  "inversorMonitorApp": {
     "sitio": {
       "home": {
         "title": "Sitios",
@@ -19,9 +19,12 @@
       },
       "id": "ID",
       "nombre": "Nombre",
-      "codigo": "Codigo",
+      "descripcion": "Descripcion",
       "ubicacion": "Ubicacion",
-      "fechaRegistro": "Fecha Registro"
+      "contacto": "Contacto",
+      "telefono": "Telefono",
+      "activo": "Activo",
+      "fechaInstalacion": "Fecha Instalacion"
     }
   }
 }

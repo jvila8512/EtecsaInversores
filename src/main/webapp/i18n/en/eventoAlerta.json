@@ -1,0 +1,38 @@
+{
+  "inversorMonitorApp": {
+    "eventoAlerta": {
+      "home": {
+        "title": "Evento Alertas",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Evento Alerta",
+        "createOrEditLabel": "Create or edit a Evento Alerta",
+        "notFound": "No Evento Alertas found"
+      },
+      "created": "A new Evento Alerta is created with identifier {{ param }}",
+      "updated": "A Evento Alerta is updated with identifier {{ param }}",
+      "deleted": "A Evento Alerta is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Evento Alerta {{ id }}?"
+      },
+      "detail": {
+        "title": "Evento Alerta"
+      },
+      "id": "ID",
+      "timestamp": "Timestamp",
+      "nombreAlerta": "Nombre Alerta",
+      "mensaje": "Mensaje",
+      "campoMonitorizado": "Campo Monitorizado",
+      "valorDetectado": "Valor Detectado",
+      "umbral": "Umbral",
+      "operador": "Operador",
+      "nivelSeveridad": "Nivel Severidad",
+      "notificacionEnviada": "Notificacion Enviada",
+      "canalUsado": "Canal Usado",
+      "resuelto": "Resuelto",
+      "fechaResolucion": "Fecha Resolucion",
+      "notas": "Notas",
+      "inversor": "Inversor",
+      "alertaConfig": "Alerta Config"
+    }
+  }
+}

@@ -1,0 +1,68 @@
+{
+  "annotations": {
+    "changelogDate": "20260603043147"
+  },
+  "applications": ["inversorMonitor"],
+  "documentation": "MapeoRegistro — direccion + escala de cada campo por marca.\\nPermite soportar cualquier marca sin cambiar código Java.",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "direccionRegistro",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "nombreRegistro",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "campoSql",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "tipoDato",
+      "fieldType": "TipoDato",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "UnsignedInt16,SignedInt16,UnsignedInt32,SignedInt32,FloatIEEE754,AsciiText"
+    },
+    {
+      "fieldName": "escala",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "unidad",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "10"
+    },
+    {
+      "fieldName": "activo",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "255"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "MapeoRegistro",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "marca",
+      "relationshipName": "marca",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

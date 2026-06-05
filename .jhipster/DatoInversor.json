@@ -1,0 +1,110 @@
+{
+  "annotations": {
+    "changelogDate": "20260603043152"
+  },
+  "applications": ["inversorMonitor"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "tiempo",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "bateriaVoltajeV",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "bateriaCorrienteA",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "bateriaPotenciaW",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "pvVoltajeV",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "pvPotenciaW",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "salidaVoltajeV",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "salidaPotenciaW",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "salidaAparenteVa",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "cargaPorcentaje",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "redVoltajeV",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "redFrecuenciaHz",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "modoOperacion",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "codigoFallo",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "eficienciaPct",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "consumoRedW",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "bateriaCargando",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "pvActivo",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "redActiva",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "crcValido",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "latenciaMs",
+      "fieldType": "Integer"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "DatoInversor",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "inversor",
+      "relationshipName": "inversor",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

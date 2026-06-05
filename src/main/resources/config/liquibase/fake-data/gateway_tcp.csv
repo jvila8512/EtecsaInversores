@@ -1,0 +1,3 @@
+id;nombre;descripcion;ubicacion;direccion_ip;puerto;activo;estado_conexion;ultima_lectura;ultimo_error;tiempo_espera_ms;reintentos;sitio_id
+1;GW-Techo-Norte;Grupo A — techo norte, 5 inversores;Techo norte, sala 1;192.168.1.10;502;true;Inicializando;;;;3000;3;1
+2;GW-Techo-Sur;Grupo B — techo sur, 5 inversores;Techo sur, sala 2;192.168.1.20;502;true;Inicializando;;;;3000;3;1

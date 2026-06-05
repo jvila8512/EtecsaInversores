@@ -1,0 +1,60 @@
+{
+  "annotations": {
+    "changelogDate": "20260603043146"
+  },
+  "applications": ["inversorMonitor"],
+  "documentation": "Marca — fabricante con sus rangos de registros Modbus.\\nFelicity: 0x1101–0x112A\\nMawa:     0x1000–0x1050",
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "nombre",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "fabricante",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "registroInicio",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "registroFin",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "registroInfoInicio",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "registroInfoFin",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "baudRateDefault",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "descripcion",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "activaMarcaDefault",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Marca",
+  "pagination": "pagination",
+  "relationships": [],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

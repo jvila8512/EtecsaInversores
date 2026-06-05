@@ -1,5 +1,5 @@
 import React from 'react';
-import { Route, Navigate } from 'react-router';
+import { Route } from 'react-router';
 
 import { useLocation } from 'react-router-dom';
 
@@ -18,8 +18,6 @@ import ErrorBoundaryRoutes from 'app/shared/error/error-boundary-routes';
 import PageNotFound from 'app/shared/error/page-not-found';
 import { AUTHORITIES } from 'app/config/constants';
 import { sendActivity } from 'app/config/websocket-middleware';
-import GeneradoresDashboard from './modules/generadores/GeneradoresDashboard';
-import Dashboard from './modules/generadores';
 
 const loading = <div>loading ...</div>;
 
@@ -43,9 +41,6 @@ const AppRoutes = () => {
         <Route index element={<Home />} />
         <Route path="login" element={<Login />} />
         <Route path="logout" element={<Logout />} />
-        <Route path="generadores" element={<GeneradoresDashboard />} />
-        <Route path="dashboard" element={<Dashboard />} />
-        <Route path="inicio" element={<Navigate to="/dashboard" replace />} />
         <Route path="account">
           <Route
             path="*"

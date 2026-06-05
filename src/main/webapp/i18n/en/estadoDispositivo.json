@@ -1,0 +1,11 @@
+{
+  "inversorMonitorApp": {
+    "EstadoDispositivo": {
+      "null": "",
+      "Conectado": "Conectado",
+      "Error": "Error",
+      "Desconectado": "Desconectado",
+      "Inicializando": "Inicializando"
+    }
+  }
+}

@@ -1,31 +1,50 @@
 {
   "annotations": {
-    "changelogDate": "20260227164311"
+    "changelogDate": "20260603043149"
   },
-  "applications": ["appsupervisor"],
+  "applications": ["inversorMonitor"],
   "dto": "mapstruct",
   "fields": [
     {
       "fieldName": "nombre",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "unique"]
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
     },
     {
-      "fieldName": "codigo",
+      "fieldName": "descripcion",
       "fieldType": "String",
-      "fieldValidateRules": ["required", "unique"]
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "255"
     },
     {
       "fieldName": "ubicacion",
       "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "200"
+    },
+    {
+      "fieldName": "contacto",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "telefono",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "activo",
+      "fieldType": "Boolean",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "fechaRegistro",
-      "fieldType": "ZonedDateTime"
+      "fieldName": "fechaInstalacion",
+      "fieldType": "LocalDate"
     }
   ],
-  "jpaMetamodelFiltering": true,
   "name": "Sitio",
   "pagination": "pagination",
   "relationships": [],

@@ -4,11 +4,10 @@ import { Button, Table } from 'reactstrap';
 import { JhiItemCount, JhiPagination, TextFormat, Translate, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
-import { APP_DATE_FORMAT } from 'app/config/constants';
+import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
-import { Box, CircularProgress } from '@mui/material';
 
 import { getEntities } from './sitio.reducer';
 
@@ -93,50 +92,54 @@ export const Sitio = () => {
   return (
     <div>
       <h2 id="sitio-heading" data-cy="SitioHeading">
-        <Translate contentKey="appsupervisorApp.sitio.home.title">Sitios</Translate>
+        <Translate contentKey="inversorMonitorApp.sitio.home.title">Sitios</Translate>
         <div className="d-flex justify-content-end">
           <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
             <FontAwesomeIcon icon="sync" spin={loading} />{' '}
-            <Translate contentKey="appsupervisorApp.sitio.home.refreshListLabel">Refresh List</Translate>
+            <Translate contentKey="inversorMonitorApp.sitio.home.refreshListLabel">Refresh List</Translate>
           </Button>
           <Link to="/sitio/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
             <FontAwesomeIcon icon="plus" />
             &nbsp;
-            <Translate contentKey="appsupervisorApp.sitio.home.createLabel">Create new Sitio</Translate>
+            <Translate contentKey="inversorMonitorApp.sitio.home.createLabel">Create new Sitio</Translate>
           </Link>
         </div>
       </h2>
-
-      {/* Loading indicator */}
-      {loading && (
-        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress size={40} sx={{ color: '#2563eb' }} />
-        </Box>
-      )}
-
       <div className="table-responsive">
         {sitioList && sitioList.length > 0 ? (
           <Table responsive>
             <thead>
               <tr>
                 <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="appsupervisorApp.sitio.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
+                  <Translate contentKey="inversorMonitorApp.sitio.id">ID</Translate> <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
                 </th>
                 <th className="hand" onClick={sort('nombre')}>
-                  <Translate contentKey="appsupervisorApp.sitio.nombre">Nombre</Translate>{' '}
+                  <Translate contentKey="inversorMonitorApp.sitio.nombre">Nombre</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('nombre')} />
                 </th>
-                <th className="hand" onClick={sort('codigo')}>
-                  <Translate contentKey="appsupervisorApp.sitio.codigo">Codigo</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('codigo')} />
+                <th className="hand" onClick={sort('descripcion')}>
+                  <Translate contentKey="inversorMonitorApp.sitio.descripcion">Descripcion</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('descripcion')} />
                 </th>
                 <th className="hand" onClick={sort('ubicacion')}>
-                  <Translate contentKey="appsupervisorApp.sitio.ubicacion">Ubicacion</Translate>{' '}
+                  <Translate contentKey="inversorMonitorApp.sitio.ubicacion">Ubicacion</Translate>{' '}
                   <FontAwesomeIcon icon={getSortIconByFieldName('ubicacion')} />
                 </th>
-                <th className="hand" onClick={sort('fechaRegistro')}>
-                  <Translate contentKey="appsupervisorApp.sitio.fechaRegistro">Fecha Registro</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('fechaRegistro')} />
+                <th className="hand" onClick={sort('contacto')}>
+                  <Translate contentKey="inversorMonitorApp.sitio.contacto">Contacto</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('contacto')} />
+                </th>
+                <th className="hand" onClick={sort('telefono')}>
+                  <Translate contentKey="inversorMonitorApp.sitio.telefono">Telefono</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('telefono')} />
+                </th>
+                <th className="hand" onClick={sort('activo')}>
+                  <Translate contentKey="inversorMonitorApp.sitio.activo">Activo</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('activo')} />
+                </th>
+                <th className="hand" onClick={sort('fechaInstalacion')}>
+                  <Translate contentKey="inversorMonitorApp.sitio.fechaInstalacion">Fecha Instalacion</Translate>{' '}
+                  <FontAwesomeIcon icon={getSortIconByFieldName('fechaInstalacion')} />
                 </th>
                 <th />
               </tr>
@@ -150,9 +153,16 @@ export const Sitio = () => {
                     </Button>
                   </td>
                   <td>{sitio.nombre}</td>
-                  <td>{sitio.codigo}</td>
+                  <td>{sitio.descripcion}</td>
                   <td>{sitio.ubicacion}</td>
-                  <td>{sitio.fechaRegistro ? <TextFormat type="date" value={sitio.fechaRegistro} format={APP_DATE_FORMAT} /> : null}</td>
+                  <td>{sitio.contacto}</td>
+                  <td>{sitio.telefono}</td>
+                  <td>{sitio.activo ? 'true' : 'false'}</td>
+                  <td>
+                    {sitio.fechaInstalacion ? (
+                      <TextFormat type="date" value={sitio.fechaInstalacion} format={APP_LOCAL_DATE_FORMAT} />
+                    ) : null}
+                  </td>
                   <td className="text-end">
                     <div className="btn-group flex-btn-group-container">
                       <Button tag={Link} to={`/sitio/${sitio.id}`} color="info" size="sm" data-cy="entityDetailsButton">
@@ -195,7 +205,7 @@ export const Sitio = () => {
         ) : (
           !loading && (
             <div className="alert alert-warning">
-              <Translate contentKey="appsupervisorApp.sitio.home.notFound">No Sitios found</Translate>
+              <Translate contentKey="inversorMonitorApp.sitio.home.notFound">No Sitios found</Translate>
             </div>
           )
         )}

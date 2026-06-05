@@ -1,0 +1,41 @@
+{
+  "inversorMonitorApp": {
+    "inversor": {
+      "home": {
+        "title": "Inversors",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Inversor",
+        "createOrEditLabel": "Create or edit a Inversor",
+        "notFound": "No Inversors found"
+      },
+      "created": "A new Inversor is created with identifier {{ param }}",
+      "updated": "A Inversor is updated with identifier {{ param }}",
+      "deleted": "A Inversor is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Inversor {{ id }}?"
+      },
+      "detail": {
+        "title": "Inversor"
+      },
+      "id": "ID",
+      "nombre": "Nombre",
+      "numeroSerie": "Numero Serie",
+      "esMaster": "Es Master",
+      "tipoConexion": "Tipo Conexion",
+      "puertoSerial": "Puerto Serial",
+      "slaveId": "Slave Id",
+      "activo": "Activo",
+      "estadoDispositivo": "Estado Dispositivo",
+      "ultimaLectura": "Ultima Lectura",
+      "ultimoError": "Ultimo Error",
+      "periodoMuestreoSeg": "Periodo Muestreo Seg",
+      "fechaRegistro": "Fecha Registro",
+      "ultimaConexion": "Ultima Conexion",
+      "sitio": "Sitio",
+      "marca": "Marca",
+      "modelo": "Modelo",
+      "gateway": "Gateway",
+      "masterReferencia": "Master Referencia"
+    }
+  }
+}

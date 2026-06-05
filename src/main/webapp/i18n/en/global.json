@@ -1,6 +1,6 @@
 {
   "global": {
-    "title": "Appsupervisor",
+    "title": "InversorMonitor",
     "browsehappy": "You are using an <strong>outdated</strong> browser. Please <a href=\"http://browsehappy.com/?locale=en\">upgrade your browser</a> to improve your experience.",
     "menu": {
       "home": "Home",
@@ -8,12 +8,16 @@
       "entities": {
         "main": "Entities",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "marca": "Marca",
+        "mapeoRegistro": "Mapeo Registro",
+        "modeloInversor": "Modelo Inversor",
         "sitio": "Sitio",
-        "equipo": "Equipo",
-        "especialidad": "Especialidad",
-        "eventoEquipo": "Evento Equipo",
-        "eventoPlantilla": "Evento Plantilla",
-        "alarma": "Alarma"
+        "gatewayTcp": "Gateway Tcp",
+        "inversor": "Inversor",
+        "datoInversor": "Dato Inversor",
+        "datoEficiencia": "Dato Eficiencia",
+        "alertaConfig": "Alerta Config",
+        "eventoAlerta": "Evento Alerta"
       },
       "account": {
         "main": "Account",

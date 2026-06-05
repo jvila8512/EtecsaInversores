@@ -1,0 +1,279 @@
+<style>
+  .lbl {
+    font-size: 11px;
+    fill: var(--color-text-secondary);
+  }
+  .nm {
+    font-size: 12px;
+    font-weight: 500;
+    fill: var(--color-text-primary);
+  }
+  .sub {
+    font-size: 10px;
+    fill: var(--color-text-tertiary);
+  }
+  .ok {
+    font-size: 10px;
+    fill: var(--color-text-success);
+    font-weight: 500;
+  }
+</style>
+<svg width="100%" viewBox="0 0 680 560" role="img">
+  <title>3 escenarios de conexión de inversores</title>
+  <defs>
+    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+      <path d="M2 1L8 5L2 9" fill="none" stroke="context-stroke" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+    </marker>
+  </defs>
+
+  <!-- TÍTULO -->
+  <text x="340" y="24" text-anchor="middle" font-size="13" font-weight="600" fill="var(--color-text-primary)">
+    3 formas de conectar un inversor — el sistema soporta todas
+  </text>
+
+  <!-- ═══════════════════════════════════════
+     ESCENARIO 1: Inversor SOLO / Independiente
+     ═══════════════════════════════════════ -->
+  <rect
+    x="20"
+    y="40"
+    width="200"
+    height="220"
+    rx="8"
+    fill="var(--color-background-secondary)"
+    stroke="var(--color-border-secondary)"
+    stroke-width="0.5"
+  />
+  <text x="120" y="60" text-anchor="middle" font-size="11" font-weight="600" fill="var(--color-text-primary)">CASO 1</text>
+  <text x="120" y="76" text-anchor="middle" class="lbl">Inversor independiente</text>
+  <text x="120" y="90" text-anchor="middle" class="sub">(sin master, sin esclavos)</text>
+
+  <!-- App -->
+  <g class="c-purple">
+    <rect x="60" y="104" width="120" height="32" rx="5" stroke-width="0.5" />
+    <text x="120" y="120" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--color-text-primary)">Tu app</text>
+  </g>
+
+  <line x1="120" y1="136" x2="120" y2="156" stroke="var(--color-text-info)" stroke-width="1.5" marker-end="url(#arr)" />
+  <text x="135" y="150" class="lbl">TCP/IP</text>
+
+  <!-- Gateway solo -->
+  <g class="c-amber">
+    <rect x="60" y="156" width="120" height="32" rx="5" stroke-width="0.5" />
+    <text x="120" y="168" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--color-text-primary)">Gateway</text>
+    <text x="120" y="180" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-secondary)">
+      192.168.1.10:502
+    </text>
+  </g>
+
+  <line x1="120" y1="188" x2="120" y2="208" stroke="var(--color-text-secondary)" stroke-width="1.5" marker-end="url(#arr)" />
+
+  <!-- Inversor solo -->
+  <g class="c-gray">
+    <rect x="60" y="208" width="120" height="36" rx="5" stroke-width="0.5" />
+    <text x="120" y="222" text-anchor="middle" dominant-baseline="central" font-size="11" fill="var(--color-text-primary)">Inversor X</text>
+    <text x="120" y="235" text-anchor="middle" dominant-baseline="central" class="sub">slave_id=1</text>
+  </g>
+
+  <text x="120" y="262" text-anchor="middle" class="ok">✓ esMaster=false</text>
+  <text x="120" y="276" text-anchor="middle" class="sub">masterReferencia=null</text>
+  <text x="120" y="290" text-anchor="middle" class="sub">gateway asignado</text>
+
+  <!-- ═══════════════════════════════════════
+     ESCENARIO 2: Master con esclavos
+     ═══════════════════════════════════════ -->
+  <rect
+    x="240"
+    y="40"
+    width="200"
+    height="220"
+    rx="8"
+    fill="var(--color-background-secondary)"
+    stroke="var(--color-border-secondary)"
+    stroke-width="0.5"
+  />
+  <text x="340" y="60" text-anchor="middle" font-size="11" font-weight="600" fill="var(--color-text-primary)">CASO 2</text>
+  <text x="340" y="76" text-anchor="middle" class="lbl">Master con esclavos</text>
+  <text x="340" y="90" text-anchor="middle" class="sub">(1 gateway, N inversores)</text>
+
+  <!-- App -->
+  <g class="c-purple">
+    <rect x="280" y="104" width="120" height="32" rx="5" stroke-width="0.5" />
+    <text x="340" y="120" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--color-text-primary)">Tu app</text>
+  </g>
+
+  <line x1="340" y1="136" x2="340" y2="156" stroke="var(--color-text-info)" stroke-width="1.5" marker-end="url(#arr)" />
+
+  <!-- Gateway master -->
+  <g class="c-amber">
+    <rect x="280" y="156" width="120" height="32" rx="5" stroke-width="0.5" />
+    <text x="340" y="168" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--color-text-primary)">Gateway</text>
+    <text x="340" y="180" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-secondary)">
+      192.168.1.10:502
+    </text>
+  </g>
+
+  <!-- Bus -->
+  <line x1="258" y1="210" x2="422" y2="210" stroke="var(--color-text-secondary)" stroke-width="1.5" />
+  <line x1="295" y1="188" x2="280" y2="210" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#arr)" />
+  <line x1="340" y1="188" x2="340" y2="210" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#arr)" />
+  <line x1="385" y1="188" x2="400" y2="210" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#arr)" />
+
+  <!-- Master -->
+  <g class="c-teal">
+    <rect x="252" y="216" width="56" height="36" rx="4" stroke-width="1" />
+    <text x="280" y="230" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)" font-weight="600">
+      ★ Master
+    </text>
+    <text x="280" y="243" text-anchor="middle" dominant-baseline="central" class="sub">slave=1</text>
+  </g>
+
+  <!-- Esclavos -->
+  <g class="c-blue">
+    <rect x="315" y="216" width="50" height="36" rx="4" stroke-width="0.5" />
+    <text x="340" y="230" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)">Esclavo</text>
+    <text x="340" y="243" text-anchor="middle" dominant-baseline="central" class="sub">slave=2</text>
+  </g>
+
+  <g class="c-blue">
+    <rect x="372" y="216" width="50" height="36" rx="4" stroke-width="0.5" />
+    <text x="397" y="230" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)">Esclavo</text>
+    <text x="397" y="243" text-anchor="middle" dominant-baseline="central" class="sub">slave=3</text>
+  </g>
+
+  <text x="340" y="262" text-anchor="middle" class="ok">✓ Master: esMaster=true</text>
+  <text x="340" y="276" text-anchor="middle" class="sub">Esclavos: masterReferencia=Master</text>
+  <text x="340" y="290" text-anchor="middle" class="sub">Todos comparten el gateway</text>
+
+  <!-- ═══════════════════════════════════════
+     ESCENARIO 3: Mixto
+     ═══════════════════════════════════════ -->
+  <rect
+    x="460"
+    y="40"
+    width="200"
+    height="220"
+    rx="8"
+    fill="var(--color-background-secondary)"
+    stroke="var(--color-border-secondary)"
+    stroke-width="0.5"
+  />
+  <text x="560" y="60" text-anchor="middle" font-size="11" font-weight="600" fill="var(--color-text-primary)">CASO 3</text>
+  <text x="560" y="76" text-anchor="middle" class="lbl">Mixto en la misma app</text>
+  <text x="560" y="90" text-anchor="middle" class="sub">(independientes + grupos)</text>
+
+  <!-- App -->
+  <g class="c-purple">
+    <rect x="500" y="104" width="120" height="32" rx="5" stroke-width="0.5" />
+    <text x="560" y="120" text-anchor="middle" dominant-baseline="central" font-size="10" fill="var(--color-text-primary)">Tu app</text>
+  </g>
+
+  <line x1="520" y1="136" x2="500" y2="156" stroke="var(--color-text-info)" stroke-width="1.5" marker-end="url(#arr)" />
+  <line x1="600" y1="136" x2="620" y2="156" stroke="var(--color-text-info)" stroke-width="1.5" marker-end="url(#arr)" />
+
+  <!-- Gateway A -->
+  <g class="c-amber">
+    <rect x="468" y="156" width="90" height="28" rx="4" stroke-width="0.5" />
+    <text x="513" y="170" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)">
+      GW-A .10:502
+    </text>
+  </g>
+
+  <!-- Gateway B -->
+  <g class="c-amber">
+    <rect x="568" y="156" width="90" height="28" rx="4" stroke-width="0.5" />
+    <text x="613" y="170" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)">
+      GW-B .20:502
+    </text>
+  </g>
+
+  <!-- Inv solo -->
+  <g class="c-gray">
+    <rect x="468" y="196" width="90" height="30" rx="4" stroke-width="0.5" />
+    <text x="513" y="211" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)">
+      Inv-Solo (slave=1)
+    </text>
+  </g>
+  <line x1="513" y1="184" x2="513" y2="196" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#arr)" />
+
+  <!-- Master B + esclavos -->
+  <line x1="580" y1="184" x2="568" y2="196" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#arr)" />
+  <line x1="628" y1="184" x2="640" y2="196" stroke="var(--color-text-secondary)" stroke-width="1" marker-end="url(#arr)" />
+
+  <g class="c-teal">
+    <rect x="560" y="196" width="62" height="30" rx="4" stroke-width="1" />
+    <text x="591" y="208" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)" font-weight="600">
+      ★ Master B
+    </text>
+    <text x="591" y="220" text-anchor="middle" dominant-baseline="central" class="sub">slave=1</text>
+  </g>
+
+  <g class="c-blue">
+    <rect x="628" y="196" width="50" height="30" rx="4" stroke-width="0.5" />
+    <text x="653" y="208" text-anchor="middle" dominant-baseline="central" font-size="9" fill="var(--color-text-primary)">Esclavo</text>
+    <text x="653" y="220" text-anchor="middle" dominant-baseline="central" class="sub">slave=2</text>
+  </g>
+
+  <text x="560" y="242" text-anchor="middle" class="ok">✓ Todo convive en la misma app</text>
+  <text x="560" y="256" text-anchor="middle" class="sub">Cada inversor tiene su driver</text>
+  <text x="560" y="270" text-anchor="middle" class="sub">resuelto automáticamente</text>
+
+  <!-- ═══════════════════════════════════════
+     TABLA DE DECISIÓN
+     ═══════════════════════════════════════ -->
+  <rect
+    x="20"
+    y="280"
+    width="640"
+    height="248"
+    rx="8"
+    fill="var(--color-background-secondary)"
+    stroke="var(--color-border-secondary)"
+    stroke-width="0.5"
+  />
+  <text x="340" y="300" text-anchor="middle" font-size="12" font-weight="600" fill="var(--color-text-primary)">
+    ¿Cómo lo decide el sistema al registrar?
+  </text>
+
+  <!-- Cabeceras tabla -->
+  <line x1="20" y1="312" x2="660" y2="312" stroke="var(--color-border-secondary)" stroke-width="0.5" />
+  <text x="100" y="326" text-anchor="middle" class="lbl" font-weight="500">Situación</text>
+  <text x="270" y="326" text-anchor="middle" class="lbl" font-weight="500">esMaster</text>
+  <text x="400" y="326" text-anchor="middle" class="lbl" font-weight="500">masterReferencia</text>
+  <text x="560" y="326" text-anchor="middle" class="lbl" font-weight="500">¿Cómo lee el sistema?</text>
+  <line x1="20" y1="332" x2="660" y2="332" stroke="var(--color-border-secondary)" stroke-width="0.5" />
+
+  <!-- Fila 1 -->
+  <text x="100" y="350" text-anchor="middle" class="lbl">Inversor solo (1 por gateway)</text>
+  <text x="270" y="350" text-anchor="middle" font-size="11" fill="var(--color-text-secondary)">false</text>
+  <text x="400" y="350" text-anchor="middle" font-size="11" fill="var(--color-text-secondary)">null</text>
+  <text x="560" y="350" text-anchor="middle" font-size="10" fill="var(--color-text-success)">Driver del gateway → slave_id</text>
+
+  <!-- Fila 2 -->
+  <line x1="20" y1="360" x2="660" y2="360" stroke="var(--color-border-tertiary)" stroke-width="0.3" />
+  <text x="100" y="378" text-anchor="middle" class="lbl">Master del grupo</text>
+  <text x="270" y="378" text-anchor="middle" font-size="11" fill="#0F6E56" font-weight="600">true</text>
+  <text x="400" y="378" text-anchor="middle" font-size="11" fill="var(--color-text-secondary)">null</text>
+  <text x="560" y="378" text-anchor="middle" font-size="10" fill="var(--color-text-success)">Driver del gateway → slave_id</text>
+
+  <!-- Fila 3 -->
+  <line x1="20" y1="388" x2="660" y2="388" stroke="var(--color-border-tertiary)" stroke-width="0.3" />
+  <text x="100" y="406" text-anchor="middle" class="lbl">Esclavo del grupo</text>
+  <text x="270" y="406" text-anchor="middle" font-size="11" fill="var(--color-text-secondary)">false</text>
+  <text x="400" y="406" text-anchor="middle" font-size="11" fill="var(--color-text-secondary)">→ su master</text>
+  <text x="560" y="406" text-anchor="middle" font-size="10" fill="var(--color-text-success)">Driver del gateway → slave_id</text>
+
+  <!-- Conclusión -->
+  <line x1="20" y1="420" x2="660" y2="420" stroke="var(--color-border-secondary)" stroke-width="0.5" />
+  <text x="340" y="438" text-anchor="middle" font-size="11" font-weight="600" fill="var(--color-text-primary)">Conclusión clave</text>
+  <text x="340" y="456" text-anchor="middle" font-size="11" fill="var(--color-text-secondary)">
+    Los 3 casos usan exactamente el mismo mecanismo de lectura:
+  </text>
+  <text x="340" y="474" text-anchor="middle" font-size="11" font-weight="500" fill="var(--color-text-info)">
+    driver.readHoldingRegisters(slave_id, 0x1101, 42)
+  </text>
+  <text x="340" y="492" text-anchor="middle" font-size="10" fill="var(--color-text-tertiary)">
+    Lo único que cambia entre un inversor independiente y un esclavo es quién agrupa los datos en la UI.
+  </text>
+  <text x="340" y="510" text-anchor="middle" font-size="10" fill="var(--color-text-tertiary)">A nivel Modbus son exactamente iguales.</text>
+</svg>

@@ -3,12 +3,12 @@
                              https://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.etecsa</groupId>
-    <artifactId>appsupervisor</artifactId>
+    <groupId>com.etecsa.monitor</groupId>
+    <artifactId>inversor-monitor</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Appsupervisor</name>
-    <description>Description for Appsupervisor</description>
+    <name>Inversor Monitor</name>
+    <description>Description for Inversor Monitor</description>
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
@@ -31,7 +31,7 @@
         <maven.build.timestamp.format>yyyyMMddHHmmss</maven.build.timestamp.format>
         <maven.compiler.source>${java.version}</maven.compiler.source>
         <maven.compiler.target>${java.version}</maven.compiler.target>
-        <start-class>com.etecsa.AppsupervisorApp</start-class>
+        <start-class>com.etecsa.monitor.InversorMonitorApp</start-class>
         <argLine>-Djava.security.egd=file:/dev/./urandom -Xmx1G</argLine>
         <m2e.apt.activation>jdt_apt</m2e.apt.activation>
         <run.addResources>false</run.addResources>
@@ -41,6 +41,7 @@
         <checksum-maven-plugin.version>1.11</checksum-maven-plugin.version>
         <frontend-maven-plugin.version>1.15.1</frontend-maven-plugin.version>
         <git-commit-id-maven-plugin.version>9.0.1</git-commit-id-maven-plugin.version>
+        <jackson-databind-nullable.version>0.2.6</jackson-databind-nullable.version>
         <jacoco-maven-plugin.version>0.8.13</jacoco-maven-plugin.version>
         <jhipster-framework.version>8.11.0</jhipster-framework.version>
         <jib-maven-plugin.architecture>amd64</jib-maven-plugin.architecture>
@@ -65,6 +66,7 @@
         <maven-war-plugin.version>3.4.0</maven-war-plugin.version>
         <modernizer-maven-plugin.version>3.1.0</modernizer-maven-plugin.version>
         <nohttp-checkstyle.version>0.0.11</nohttp-checkstyle.version>
+        <openapi-generator-maven-plugin.version>7.13.0</openapi-generator-maven-plugin.version>
         <profile.api-docs/>
         <profile.e2e/>
         <profile.no-liquibase/>
@@ -196,10 +198,6 @@
             <artifactId>jackson-module-jaxb-annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.mysql</groupId>
-            <artifactId>mysql-connector-j</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.tngtech.archunit</groupId>
             <artifactId>archunit-junit5-api</artifactId>
             <version>${archunit-junit5.version}</version>
@@ -277,6 +275,15 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
+            <groupId>org.openapitools</groupId>
+            <artifactId>jackson-databind-nullable</artifactId>
+            <version>${jackson-databind-nullable.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+        </dependency>
+        <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>jdbc</artifactId>
             <scope>test</scope>
@@ -288,24 +295,13 @@
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
-            <artifactId>mysql</artifactId>
+            <artifactId>postgresql</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>testcontainers</artifactId>
             <scope>test</scope>
-        </dependency>
-          <dependency>
-            <groupId>com.digitalpetri.modbus</groupId>
-            <artifactId>modbus-tcp</artifactId>
-            <version>2.1.3</version>
-        </dependency>
-
-        <dependency>
-            <groupId>io.netty</groupId>
-            <artifactId>netty-all</artifactId>
-            <version>4.1.119.Final</version>
         </dependency>
     </dependencies>
 
@@ -378,6 +374,10 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.sonarsource.scanner.maven</groupId>
@@ -455,8 +455,6 @@
                         </annotationProcessorPaths>
                     </configuration>
                 </plugin>
-                <!-- Commented out to fix dependency convergence issues -->
-                <!--
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
@@ -494,7 +492,6 @@
                         </rules>
                     </configuration>
                 </plugin>
-                -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -656,7 +653,7 @@
                             </platforms>
                         </from>
                         <to>
-                            <image>appsupervisor:latest</image>
+                            <image>inversormonitor:latest</image>
                         </to>
                         <container>
                             <entrypoint>
@@ -801,12 +798,12 @@
                     <configuration>
                         <changeLogFile>config/liquibase/master.xml</changeLogFile>
                         <diffChangeLogFile>${project.basedir}/src/main/resources/config/liquibase/changelog/${maven.build.timestamp}_changelog.xml</diffChangeLogFile>
-                        <driver>com.mysql.cj.jdbc.Driver</driver>
+                        <driver>org.postgresql.Driver</driver>
                         <url>${liquibase-plugin.url}</url>
                         <defaultSchemaName/>
                         <username>${liquibase-plugin.username}</username>
                         <password>${liquibase-plugin.password}</password>
-                        <referenceUrl>hibernate:spring:com.etecsa.domain?dialect=org.hibernate.dialect.MySQL8Dialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
+                        <referenceUrl>hibernate:spring:com.etecsa.monitor.domain?dialect=org.hibernate.dialect.PostgreSQLDialect&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.CamelCaseToUnderscoresNamingStrategy&amp;hibernate.implicit_naming_strategy=org.springframework.boot.orm.jpa.hibernate.SpringImplicitNamingStrategy</referenceUrl>
                         <verbose>true</verbose>
                         <logging>debug</logging>
                         <contexts>!test</contexts>
@@ -835,6 +832,31 @@
                     </dependencies>
                 </plugin>
                 <plugin>
+                    <groupId>org.openapitools</groupId>
+                    <artifactId>openapi-generator-maven-plugin</artifactId>
+                    <version>${openapi-generator-maven-plugin.version}</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>generate</goal>
+                            </goals>
+                            <configuration>
+                                <inputSpec>${project.basedir}/src/main/resources/swagger/api.yml</inputSpec>
+                                <generatorName>spring</generatorName>
+                                <apiPackage>com.etecsa.monitor.web.api</apiPackage>
+                                <modelPackage>com.etecsa.monitor.service.api.dto</modelPackage>
+                                <supportingFilesToGenerate>ApiUtil.java</supportingFilesToGenerate>
+                                <skipValidateSpec>false</skipValidateSpec>
+                                <configOptions>
+                                    <delegatePattern>true</delegatePattern>
+                                    <title>inversor-monitor</title>
+                                    <useSpringBoot3>true</useSpringBoot3>
+                                </configOptions>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
+                <plugin>
                     <groupId>org.sonarsource.scanner.maven</groupId>
                     <artifactId>sonar-maven-plugin</artifactId>
                     <version>${sonar-maven-plugin.version}</version>
@@ -858,8 +880,8 @@
             <properties>
                 <!-- default Spring profiles -->
                 <liquibase-plugin.password/>
-                <liquibase-plugin.url>jdbc:mysql://localhost:3306/appsupervisor</liquibase-plugin.url>
-                <liquibase-plugin.username>root</liquibase-plugin.username>
+                <liquibase-plugin.url>jdbc:postgresql://localhost:5432/inversorMonitor</liquibase-plugin.url>
+                <liquibase-plugin.username>inversorMonitor</liquibase-plugin.username>
                 <profile.test>test,testdev</profile.test>
                 <spring.profiles.active>dev${profile.tls}${profile.no-liquibase}</spring.profiles.active>
             </properties>
@@ -941,6 +963,19 @@
                                                 <ignore/>
                                             </action>
                                         </pluginExecution>
+                                        <pluginExecution>
+                                            <pluginExecutionFilter>
+                                                <groupId>org.openapitools</groupId>
+                                                <artifactId>openapi-generator-maven-plugin</artifactId>
+                                                <versionRange>${openapi-generator-maven-plugin.version}</versionRange>
+                                                <goals>
+                                                    <goal>generate</goal>
+                                                </goals>
+                                            </pluginExecutionFilter>
+                                            <action>
+                                                <ignore/>
+                                            </action>
+                                        </pluginExecution>
                                     </pluginExecutions>
                                 </lifecycleMappingMetadata>
                             </configuration>
@@ -979,8 +1014,8 @@
             <properties>
                 <!-- default Spring profiles -->
                 <liquibase-plugin.password/>
-                <liquibase-plugin.url>jdbc:mysql://localhost:3306/appsupervisor</liquibase-plugin.url>
-                <liquibase-plugin.username>root</liquibase-plugin.username>
+                <liquibase-plugin.url>jdbc:postgresql://localhost:5432/inversorMonitor</liquibase-plugin.url>
+                <liquibase-plugin.username>inversorMonitor</liquibase-plugin.username>
                 <profile.test>test,testprod</profile.test>
                 <spring.profiles.active>prod${profile.api-docs}${profile.tls}${profile.e2e}${profile.no-liquibase}</spring.profiles.active>
             </properties>

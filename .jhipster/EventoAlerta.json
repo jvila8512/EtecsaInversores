@@ -1,0 +1,97 @@
+{
+  "annotations": {
+    "changelogDate": "20260603043155"
+  },
+  "applications": ["inversorMonitor"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "timestamp",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "nombreAlerta",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "mensaje",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "campoMonitorizado",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "60"
+    },
+    {
+      "fieldName": "valorDetectado",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "umbral",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "operador",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "5"
+    },
+    {
+      "fieldName": "nivelSeveridad",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "20"
+    },
+    {
+      "fieldName": "notificacionEnviada",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "canalUsado",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "resuelto",
+      "fieldType": "Boolean"
+    },
+    {
+      "fieldName": "fechaResolucion",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "notas",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "EventoAlerta",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "inversor",
+      "relationshipName": "inversor",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "alertaConfig",
+      "relationshipName": "alertaConfig",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

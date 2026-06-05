@@ -1,2 +1,2 @@
 org.springframework.test.context.ContextCustomizerFactory = \
-    com.etecsa.config.SqlTestContainersSpringContextCustomizerFactory
+com.etecsa.monitor.config.SqlTestContainersSpringContextCustomizerFactory

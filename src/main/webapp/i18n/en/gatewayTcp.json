@@ -1,0 +1,35 @@
+{
+  "inversorMonitorApp": {
+    "gatewayTcp": {
+      "home": {
+        "title": "Gateway Tcps",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Gateway Tcp",
+        "createOrEditLabel": "Create or edit a Gateway Tcp",
+        "notFound": "No Gateway Tcps found"
+      },
+      "created": "A new Gateway Tcp is created with identifier {{ param }}",
+      "updated": "A Gateway Tcp is updated with identifier {{ param }}",
+      "deleted": "A Gateway Tcp is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Gateway Tcp {{ id }}?"
+      },
+      "detail": {
+        "title": "Gateway Tcp"
+      },
+      "id": "ID",
+      "nombre": "Nombre",
+      "descripcion": "Descripcion",
+      "ubicacion": "Ubicacion",
+      "direccionIp": "Direccion Ip",
+      "puerto": "Puerto",
+      "activo": "Activo",
+      "estadoConexion": "Estado Conexion",
+      "ultimaLectura": "Ultima Lectura",
+      "ultimoError": "Ultimo Error",
+      "tiempoEsperaMs": "Tiempo Espera Ms",
+      "reintentos": "Reintentos",
+      "sitio": "Sitio"
+    }
+  }
+}

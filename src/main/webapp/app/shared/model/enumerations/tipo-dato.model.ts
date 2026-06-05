@@ -1,11 +1,13 @@
 export enum TipoDato {
-  BOOLEAN = 'BOOLEAN',
+  UnsignedInt16 = 'UnsignedInt16',
 
-  INT16 = 'INT16',
+  SignedInt16 = 'SignedInt16',
 
-  UINT16 = 'UINT16',
+  UnsignedInt32 = 'UnsignedInt32',
 
-  INT32 = 'INT32',
+  SignedInt32 = 'SignedInt32',
 
-  FLOAT32 = 'FLOAT32',
+  FloatIEEE754 = 'FloatIEEE754',
+
+  AsciiText = 'AsciiText',
 }

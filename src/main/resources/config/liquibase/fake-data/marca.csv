@@ -1,0 +1,2 @@
+id;nombre;fabricante;registro_inicio;registro_fin;registro_info_inicio;registro_info_fin;baud_rate_default;descripcion;activa_marca_default
+1;Felicity;Felicity Solar;4353;4394;8192;8207;2400;Rangos lectura 0x1101-0x112A, configuracion 0x211F-0x2159. BaudRate 2400 por defecto para RS485.;true

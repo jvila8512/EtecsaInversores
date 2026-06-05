@@ -1,0 +1,118 @@
+{
+  "annotations": {
+    "changelogDate": "20260603043151"
+  },
+  "applications": ["inversorMonitor"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "nombre",
+      "fieldType": "String",
+      "fieldValidateRules": ["required", "maxlength"],
+      "fieldValidateRulesMaxlength": "100"
+    },
+    {
+      "fieldName": "numeroSerie",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "esMaster",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "tipoConexion",
+      "fieldType": "TipoConexion",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "SerialRs485,TcpModbus"
+    },
+    {
+      "fieldName": "puertoSerial",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "50"
+    },
+    {
+      "fieldName": "slaveId",
+      "fieldType": "Integer",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "activo",
+      "fieldType": "Boolean",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "estadoDispositivo",
+      "fieldType": "EstadoDispositivo",
+      "fieldValues": "Conectado,Error,Desconectado,Inicializando"
+    },
+    {
+      "fieldName": "ultimaLectura",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "ultimoError",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "500"
+    },
+    {
+      "fieldName": "periodoMuestreoSeg",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "fechaRegistro",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "ultimaConexion",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "Inversor",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "sitio",
+      "relationshipName": "sitio",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "marca",
+      "relationshipName": "marca",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "modeloInversor",
+      "relationshipName": "modelo",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "gatewayTcp",
+      "relationshipName": "gateway",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "inversor",
+      "relationshipName": "masterReferencia",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

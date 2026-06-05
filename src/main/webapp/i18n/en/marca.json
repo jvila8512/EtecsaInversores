@@ -1,0 +1,32 @@
+{
+  "inversorMonitorApp": {
+    "marca": {
+      "home": {
+        "title": "Marcas",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Marca",
+        "createOrEditLabel": "Create or edit a Marca",
+        "notFound": "No Marcas found"
+      },
+      "created": "A new Marca is created with identifier {{ param }}",
+      "updated": "A Marca is updated with identifier {{ param }}",
+      "deleted": "A Marca is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Marca {{ id }}?"
+      },
+      "detail": {
+        "title": "Marca"
+      },
+      "id": "ID",
+      "nombre": "Nombre",
+      "fabricante": "Fabricante",
+      "registroInicio": "Registro Inicio",
+      "registroFin": "Registro Fin",
+      "registroInfoInicio": "Registro Info Inicio",
+      "registroInfoFin": "Registro Info Fin",
+      "baudRateDefault": "Baud Rate Default",
+      "descripcion": "Descripcion",
+      "activaMarcaDefault": "Activa Marca Default"
+    }
+  }
+}

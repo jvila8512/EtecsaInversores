@@ -13,12 +13,6 @@ npm-debug.log.*
 ######################
 .sass-cache/
 
-# Archivos temporales no deseados
-nul
-.atl/
-output.md
-UI_MODERNIZATION_GUIDE.md
-
 ######################
 # Eclipse
 ######################

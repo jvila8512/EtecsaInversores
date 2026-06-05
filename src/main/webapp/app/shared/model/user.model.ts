@@ -7,11 +7,11 @@ export interface IUser {
   activated?: boolean;
   langKey?: string;
   authorities?: any[];
-  imageUrl?: string;
   createdBy?: string;
   createdDate?: Date | null;
   lastModifiedBy?: string;
   lastModifiedDate?: Date | null;
+  imageUrl?: string;
   password?: string;
 }
 
@@ -24,10 +24,10 @@ export const defaultValue: Readonly<IUser> = {
   activated: true,
   langKey: '',
   authorities: [],
-  imageUrl: '',
   createdBy: '',
   createdDate: null,
   lastModifiedBy: '',
   lastModifiedDate: null,
+  imageUrl: '',
   password: '',
 };

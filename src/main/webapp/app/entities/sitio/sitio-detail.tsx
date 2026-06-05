@@ -4,7 +4,7 @@ import { Button, Col, Row } from 'reactstrap';
 import { TextFormat, Translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { APP_DATE_FORMAT } from 'app/config/constants';
+import { APP_LOCAL_DATE_FORMAT } from 'app/config/constants';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { getEntity } from './sitio.reducer';
@@ -23,7 +23,7 @@ export const SitioDetail = () => {
     <Row>
       <Col md="8">
         <h2 data-cy="sitioDetailsHeading">
-          <Translate contentKey="appsupervisorApp.sitio.detail.title">Sitio</Translate>
+          <Translate contentKey="inversorMonitorApp.sitio.detail.title">Sitio</Translate>
         </h2>
         <dl className="jh-entity-details">
           <dt>
@@ -34,29 +34,49 @@ export const SitioDetail = () => {
           <dd>{sitioEntity.id}</dd>
           <dt>
             <span id="nombre">
-              <Translate contentKey="appsupervisorApp.sitio.nombre">Nombre</Translate>
+              <Translate contentKey="inversorMonitorApp.sitio.nombre">Nombre</Translate>
             </span>
           </dt>
           <dd>{sitioEntity.nombre}</dd>
           <dt>
-            <span id="codigo">
-              <Translate contentKey="appsupervisorApp.sitio.codigo">Codigo</Translate>
+            <span id="descripcion">
+              <Translate contentKey="inversorMonitorApp.sitio.descripcion">Descripcion</Translate>
             </span>
           </dt>
-          <dd>{sitioEntity.codigo}</dd>
+          <dd>{sitioEntity.descripcion}</dd>
           <dt>
             <span id="ubicacion">
-              <Translate contentKey="appsupervisorApp.sitio.ubicacion">Ubicacion</Translate>
+              <Translate contentKey="inversorMonitorApp.sitio.ubicacion">Ubicacion</Translate>
             </span>
           </dt>
           <dd>{sitioEntity.ubicacion}</dd>
           <dt>
-            <span id="fechaRegistro">
-              <Translate contentKey="appsupervisorApp.sitio.fechaRegistro">Fecha Registro</Translate>
+            <span id="contacto">
+              <Translate contentKey="inversorMonitorApp.sitio.contacto">Contacto</Translate>
+            </span>
+          </dt>
+          <dd>{sitioEntity.contacto}</dd>
+          <dt>
+            <span id="telefono">
+              <Translate contentKey="inversorMonitorApp.sitio.telefono">Telefono</Translate>
+            </span>
+          </dt>
+          <dd>{sitioEntity.telefono}</dd>
+          <dt>
+            <span id="activo">
+              <Translate contentKey="inversorMonitorApp.sitio.activo">Activo</Translate>
+            </span>
+          </dt>
+          <dd>{sitioEntity.activo ? 'true' : 'false'}</dd>
+          <dt>
+            <span id="fechaInstalacion">
+              <Translate contentKey="inversorMonitorApp.sitio.fechaInstalacion">Fecha Instalacion</Translate>
             </span>
           </dt>
           <dd>
-            {sitioEntity.fechaRegistro ? <TextFormat value={sitioEntity.fechaRegistro} type="date" format={APP_DATE_FORMAT} /> : null}
+            {sitioEntity.fechaInstalacion ? (
+              <TextFormat value={sitioEntity.fechaInstalacion} type="date" format={APP_LOCAL_DATE_FORMAT} />
+            ) : null}
           </dd>
         </dl>
         <Button tag={Link} to="/sitio" replace color="info" data-cy="entityDetailsBackButton">

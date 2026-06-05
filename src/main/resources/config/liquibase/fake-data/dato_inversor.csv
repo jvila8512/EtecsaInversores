@@ -1,0 +1,1 @@
+id;tiempo;bateria_voltaje_v;bateria_corriente_a;bateria_potencia_w;pv_voltaje_v;pv_potencia_w;salida_voltaje_v;salida_potencia_w;salida_aparente_va;carga_porcentaje;red_voltaje_v;red_frecuencia_hz;modo_operacion;codigo_fallo;eficiencia_pct;consumo_red_w;bateria_cargando;pv_activo;red_activa;crc_valido;latencia_ms

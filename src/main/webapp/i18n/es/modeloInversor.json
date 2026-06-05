@@ -1,0 +1,28 @@
+{
+  "inversorMonitorApp": {
+    "modeloInversor": {
+      "home": {
+        "title": "Modelo Inversors",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Modelo Inversor",
+        "createOrEditLabel": "Crear o editar Modelo Inversor",
+        "notFound": "Ningún Modelo Inversors encontrado"
+      },
+      "created": "Un nuevo Modelo Inversor ha sido creado con el identificador {{ param }}",
+      "updated": "Un Modelo Inversor ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Modelo Inversor ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Modelo Inversor {{ id }}?"
+      },
+      "detail": {
+        "title": "Modelo Inversor"
+      },
+      "id": "ID",
+      "nombre": "Nombre",
+      "capacidadVa": "Capacidad Va",
+      "voltajeSistemaNom": "Voltaje Sistema Nom",
+      "descripcion": "Descripcion",
+      "marca": "Marca"
+    }
+  }
+}

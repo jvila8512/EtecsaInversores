@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!--
+        Constraints and indexes for Multi-Master model.
+        UNIQUE(gateway_id, slave_id) ensures no two inverters
+        share the same slave_id within the same gateway.
+    -->
+
+    <!-- 1. UNIQUE constraint: gateway_id + slave_id on inversor -->
+    <changeSet id="20260604000001-1" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="uk_inversor_gateway_slave"/>
+            </not>
+        </preConditions>
+        <addUniqueConstraint
+            tableName="inversor"
+            columnNames="gateway_id, slave_id"
+            constraintName="uk_inversor_gateway_slave"/>
+    </changeSet>
+
+    <!-- 2. Index: find all inverters by gateway (for polling groups) -->
+    <changeSet id="20260604000001-2" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_inversor_gateway"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="inversor" indexName="idx_inversor_gateway">
+            <column name="gateway_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 3. Index: find all inverters by sitio -->
+    <changeSet id="20260604000001-3" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_inversor_sitio"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="inversor" indexName="idx_inversor_sitio">
+            <column name="sitio_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 4. Index: find slaves by master (master_referencia_id) -->
+    <changeSet id="20260604000001-4" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_inversor_master_ref"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="inversor" indexName="idx_inversor_master_ref">
+            <column name="master_referencia_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 5. Index: find all masters (es_master=true) quickly -->
+    <changeSet id="20260604000001-5" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_inversor_es_master"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="inversor" indexName="idx_inversor_es_master">
+            <column name="es_master"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 6. Index: dato_inversor by inversor_id + tiempo (time-series queries) -->
+    <changeSet id="20260604000001-6" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_dato_inversor_inversor_tiempo"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="dato_inversor" indexName="idx_dato_inversor_inversor_tiempo">
+            <column name="inversor_id"/>
+            <column name="tiempo"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 7. Index: dato_eficiencia by inversor_id + fecha -->
+    <changeSet id="20260604000001-7" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_dato_eficiencia_inversor_fecha"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="dato_eficiencia" indexName="idx_dato_eficiencia_inversor_fecha">
+            <column name="inversor_id"/>
+            <column name="fecha"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 8. Index: evento_alerta by inversor_id + timestamp -->
+    <changeSet id="20260604000001-8" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_evento_alerta_inversor_timestamp"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="evento_alerta" indexName="idx_evento_alerta_inversor_timestamp">
+            <column name="inversor_id"/>
+            <column name="timestamp"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 9. Index: gateway_tcp by sitio_id -->
+    <changeSet id="20260604000001-9" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_gateway_tcp_sitio"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="gateway_tcp" indexName="idx_gateway_tcp_sitio">
+            <column name="sitio_id"/>
+        </createIndex>
+    </changeSet>
+
+    <!-- 10. Index: alerta_config by inversor_id -->
+    <changeSet id="20260604000001-10" author="etecsa">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <indexExists indexName="idx_alerta_config_inversor"/>
+            </not>
+        </preConditions>
+        <createIndex tableName="alerta_config" indexName="idx_alerta_config_inversor">
+            <column name="inversor_id"/>
+        </createIndex>
+    </changeSet>
+
+</databaseChangeLog>

@@ -1,0 +1,72 @@
+{
+  "annotations": {
+    "changelogDate": "20260603043153"
+  },
+  "applications": ["inversorMonitor"],
+  "dto": "mapstruct",
+  "fields": [
+    {
+      "fieldName": "fecha",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "energiaPvWh",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "energiaCargaWh",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "energiaRedWh",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "eficienciaPromPct",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "horasSol",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "picoPvW",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "picoCargaW",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "maxBateriaV",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "minBateriaV",
+      "fieldType": "Double"
+    },
+    {
+      "fieldName": "totalLecturas",
+      "fieldType": "Integer"
+    },
+    {
+      "fieldName": "calculadoEn",
+      "fieldType": "Instant"
+    }
+  ],
+  "jpaMetamodelFiltering": true,
+  "name": "DatoEficiencia",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "nombre",
+      "otherEntityName": "inversor",
+      "relationshipName": "inversor",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

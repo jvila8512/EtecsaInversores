@@ -1,0 +1,36 @@
+{
+  "inversorMonitorApp": {
+    "datoEficiencia": {
+      "home": {
+        "title": "Dato Eficiencias",
+        "refreshListLabel": "Refrescar lista",
+        "createLabel": "Crear nuevo Dato Eficiencia",
+        "createOrEditLabel": "Crear o editar Dato Eficiencia",
+        "notFound": "Ningún Dato Eficiencias encontrado"
+      },
+      "created": "Un nuevo Dato Eficiencia ha sido creado con el identificador {{ param }}",
+      "updated": "Un Dato Eficiencia ha sido actualizado con el identificador {{ param }}",
+      "deleted": "Un Dato Eficiencia ha sido eliminado con el identificador {{ param }}",
+      "delete": {
+        "question": "¿Seguro que quiere eliminar Dato Eficiencia {{ id }}?"
+      },
+      "detail": {
+        "title": "Dato Eficiencia"
+      },
+      "id": "ID",
+      "fecha": "Fecha",
+      "energiaPvWh": "Energia Pv Wh",
+      "energiaCargaWh": "Energia Carga Wh",
+      "energiaRedWh": "Energia Red Wh",
+      "eficienciaPromPct": "Eficiencia Prom Pct",
+      "horasSol": "Horas Sol",
+      "picoPvW": "Pico Pv W",
+      "picoCargaW": "Pico Carga W",
+      "maxBateriaV": "Max Bateria V",
+      "minBateriaV": "Min Bateria V",
+      "totalLecturas": "Total Lecturas",
+      "calculadoEn": "Calculado En",
+      "inversor": "Inversor"
+    }
+  }
+}

@@ -43,8 +43,8 @@ export const SitioDeleteDialog = () => {
       <ModalHeader toggle={handleClose} data-cy="sitioDeleteDialogHeading">
         <Translate contentKey="entity.delete.title">Confirm delete operation</Translate>
       </ModalHeader>
-      <ModalBody id="appsupervisorApp.sitio.delete.question">
-        <Translate contentKey="appsupervisorApp.sitio.delete.question" interpolate={{ id: sitioEntity.id }}>
+      <ModalBody id="inversorMonitorApp.sitio.delete.question">
+        <Translate contentKey="inversorMonitorApp.sitio.delete.question" interpolate={{ id: sitioEntity.id }}>
           Are you sure you want to delete this Sitio?
         </Translate>
       </ModalBody>

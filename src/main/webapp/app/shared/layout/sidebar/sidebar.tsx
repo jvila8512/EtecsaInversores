@@ -188,12 +188,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAuthenticated, isAdmin, currentLoca
             </ListItemButton>
             <Collapse in={entitiesOpen && open} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {subItem('/sitio', 'Sitios')}
-                {subItem('/equipo', 'Equipos')}
-                {subItem('/evento-plantilla', 'Eventos Plantilla')}
-                {subItem('/evento-equipo', 'Eventos Equipo')}
-                {subItem('/especialidad', 'Especialidades')}
-                {subItem('/generadores', 'Generadores')}
+                {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
               </List>
             </Collapse>
 
@@ -211,8 +206,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isAuthenticated, isAdmin, currentLoca
             </ListItemButton>
             <Collapse in={monitoreoOpen && open} timeout="auto" unmountOnExit>
               <List component="div" disablePadding>
-                {subItem('/alarma/monitor', 'Monitor Alarmas')}
-                {subItem('/alarma', 'Administrar Alarmas')}
+                {/* jhipster-needle-add-monitoring-to-menu - Monitoring entities will be added here */}
               </List>
             </Collapse>
 

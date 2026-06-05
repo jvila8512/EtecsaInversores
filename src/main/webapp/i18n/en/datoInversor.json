@@ -1,0 +1,45 @@
+{
+  "inversorMonitorApp": {
+    "datoInversor": {
+      "home": {
+        "title": "Dato Inversors",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Dato Inversor",
+        "createOrEditLabel": "Create or edit a Dato Inversor",
+        "notFound": "No Dato Inversors found"
+      },
+      "created": "A new Dato Inversor is created with identifier {{ param }}",
+      "updated": "A Dato Inversor is updated with identifier {{ param }}",
+      "deleted": "A Dato Inversor is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Dato Inversor {{ id }}?"
+      },
+      "detail": {
+        "title": "Dato Inversor"
+      },
+      "id": "ID",
+      "tiempo": "Tiempo",
+      "bateriaVoltajeV": "Bateria Voltaje V",
+      "bateriaCorrienteA": "Bateria Corriente A",
+      "bateriaPotenciaW": "Bateria Potencia W",
+      "pvVoltajeV": "Pv Voltaje V",
+      "pvPotenciaW": "Pv Potencia W",
+      "salidaVoltajeV": "Salida Voltaje V",
+      "salidaPotenciaW": "Salida Potencia W",
+      "salidaAparenteVa": "Salida Aparente Va",
+      "cargaPorcentaje": "Carga Porcentaje",
+      "redVoltajeV": "Red Voltaje V",
+      "redFrecuenciaHz": "Red Frecuencia Hz",
+      "modoOperacion": "Modo Operacion",
+      "codigoFallo": "Codigo Fallo",
+      "eficienciaPct": "Eficiencia Pct",
+      "consumoRedW": "Consumo Red W",
+      "bateriaCargando": "Bateria Cargando",
+      "pvActivo": "Pv Activo",
+      "redActiva": "Red Activa",
+      "crcValido": "Crc Valido",
+      "latenciaMs": "Latencia Ms",
+      "inversor": "Inversor"
+    }
+  }
+}

@@ -1,0 +1,1 @@
+id;timestamp;nombre_alerta;mensaje;campo_monitorizado;valor_detectado;umbral;operador;nivel_severidad;notificacion_enviada;canal_usado;resuelto;fecha_resolucion;notas

@@ -1,0 +1,11 @@
+id;nombre;numero_serie;es_master;tipo_conexion;puerto_serial;slave_id;activo;estado_dispositivo;ultima_lectura;ultimo_error;periodo_muestreo_seg;fecha_registro;ultima_conexion;marca_id;modelo_id;sitio_id;gateway_id;master_referencia_id
+1;Felicity-A1;FLC-A1-2025-001;true;TcpModbus;;1;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;1;
+2;Felicity-A2;FLC-A2-2025-002;false;TcpModbus;;2;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;1;1
+3;Felicity-A3;FLC-A3-2025-003;false;TcpModbus;;3;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;1;1
+4;Felicity-A4;FLC-A4-2025-004;false;TcpModbus;;4;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;1;1
+5;Felicity-A5;FLC-A5-2025-005;false;TcpModbus;;5;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;1;1
+6;Felicity-B1;FLC-B1-2025-006;true;TcpModbus;;1;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;2;
+7;Felicity-B2;FLC-B2-2025-007;false;TcpModbus;;2;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;2;6
+8;Felicity-B3;FLC-B3-2025-008;false;TcpModbus;;3;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;2;6
+9;Felicity-B4;FLC-B4-2025-009;false;TcpModbus;;4;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;2;6
+10;Felicity-B5;FLC-B5-2025-010;false;TcpModbus;;5;true;Inicializando;;;5;2025-01-15T10:00:00;;1;1;1;2;6

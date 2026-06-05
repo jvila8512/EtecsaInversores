@@ -11,9 +11,6 @@ import ErrorBoundary from 'app/shared/error/error-boundary';
 import AppComponent from 'app/app';
 import { loadIcons } from 'app/config/icon-loader';
 
-// Archivo SCSS principal
-import './app.scss';
-
 const store = getStore();
 registerLocale(store);
 

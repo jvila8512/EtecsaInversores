@@ -4,7 +4,6 @@ import { Button, Col, Row } from 'reactstrap';
 import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { convertDateTimeFromServer, convertDateTimeToServer, displayDefaultDateTime } from 'app/shared/util/date-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 
 import { createEntity, getEntity, reset, updateEntity } from './sitio.reducer';
@@ -44,7 +43,6 @@ export const SitioUpdate = () => {
     if (values.id !== undefined && typeof values.id !== 'number') {
       values.id = Number(values.id);
     }
-    values.fechaRegistro = convertDateTimeToServer(values.fechaRegistro);
 
     const entity = {
       ...sitioEntity,
@@ -60,20 +58,17 @@ export const SitioUpdate = () => {
 
   const defaultValues = () =>
     isNew
-      ? {
-          fechaRegistro: displayDefaultDateTime(),
-        }
+      ? {}
       : {
           ...sitioEntity,
-          fechaRegistro: convertDateTimeFromServer(sitioEntity.fechaRegistro),
         };
 
   return (
     <div>
       <Row className="justify-content-center">
         <Col md="8">
-          <h2 id="appsupervisorApp.sitio.home.createOrEditLabel" data-cy="SitioCreateUpdateHeading">
-            <Translate contentKey="appsupervisorApp.sitio.home.createOrEditLabel">Create or edit a Sitio</Translate>
+          <h2 id="inversorMonitorApp.sitio.home.createOrEditLabel" data-cy="SitioCreateUpdateHeading">
+            <Translate contentKey="inversorMonitorApp.sitio.home.createOrEditLabel">Create or edit a Sitio</Translate>
           </h2>
         </Col>
       </Row>
@@ -94,42 +89,70 @@ export const SitioUpdate = () => {
                 />
               ) : null}
               <ValidatedField
-                label={translate('appsupervisorApp.sitio.nombre')}
+                label={translate('inversorMonitorApp.sitio.nombre')}
                 id="sitio-nombre"
                 name="nombre"
                 data-cy="nombre"
                 type="text"
                 validate={{
                   required: { value: true, message: translate('entity.validation.required') },
+                  maxLength: { value: 100, message: translate('entity.validation.maxlength', { max: 100 }) },
                 }}
               />
               <ValidatedField
-                label={translate('appsupervisorApp.sitio.codigo')}
-                id="sitio-codigo"
-                name="codigo"
-                data-cy="codigo"
+                label={translate('inversorMonitorApp.sitio.descripcion')}
+                id="sitio-descripcion"
+                name="descripcion"
+                data-cy="descripcion"
                 type="text"
                 validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
+                  maxLength: { value: 255, message: translate('entity.validation.maxlength', { max: 255 }) },
                 }}
               />
               <ValidatedField
-                label={translate('appsupervisorApp.sitio.ubicacion')}
+                label={translate('inversorMonitorApp.sitio.ubicacion')}
                 id="sitio-ubicacion"
                 name="ubicacion"
                 data-cy="ubicacion"
                 type="text"
                 validate={{
-                  required: { value: true, message: translate('entity.validation.required') },
+                  maxLength: { value: 200, message: translate('entity.validation.maxlength', { max: 200 }) },
                 }}
               />
               <ValidatedField
-                label={translate('appsupervisorApp.sitio.fechaRegistro')}
-                id="sitio-fechaRegistro"
-                name="fechaRegistro"
-                data-cy="fechaRegistro"
-                type="datetime-local"
-                placeholder="YYYY-MM-DD HH:mm"
+                label={translate('inversorMonitorApp.sitio.contacto')}
+                id="sitio-contacto"
+                name="contacto"
+                data-cy="contacto"
+                type="text"
+                validate={{
+                  maxLength: { value: 100, message: translate('entity.validation.maxlength', { max: 100 }) },
+                }}
+              />
+              <ValidatedField
+                label={translate('inversorMonitorApp.sitio.telefono')}
+                id="sitio-telefono"
+                name="telefono"
+                data-cy="telefono"
+                type="text"
+                validate={{
+                  maxLength: { value: 20, message: translate('entity.validation.maxlength', { max: 20 }) },
+                }}
+              />
+              <ValidatedField
+                label={translate('inversorMonitorApp.sitio.activo')}
+                id="sitio-activo"
+                name="activo"
+                data-cy="activo"
+                check
+                type="checkbox"
+              />
+              <ValidatedField
+                label={translate('inversorMonitorApp.sitio.fechaInstalacion')}
+                id="sitio-fechaInstalacion"
+                name="fechaInstalacion"
+                data-cy="fechaInstalacion"
+                type="date"
               />
               <Button tag={Link} id="cancel-save" data-cy="entityCreateCancelButton" to="/sitio" replace color="info">
                 <FontAwesomeIcon icon="arrow-left" />

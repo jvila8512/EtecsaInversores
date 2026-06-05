@@ -1,0 +1,9 @@
+{
+  "inversorMonitorApp": {
+    "TipoConexion": {
+      "null": "",
+      "SerialRs485": "SerialRs485",
+      "TcpModbus": "TcpModbus"
+    }
+  }
+}

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity DatoInversor.
+    -->
+    <changeSet id="20260603043152-1" author="jhipster">
+        <createTable tableName="dato_inversor">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="tiempo" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="bateria_voltaje_v" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="bateria_corriente_a" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="bateria_potencia_w" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="pv_voltaje_v" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="pv_potencia_w" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="salida_voltaje_v" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="salida_potencia_w" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="salida_aparente_va" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="carga_porcentaje" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="red_voltaje_v" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="red_frecuencia_hz" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="modo_operacion" type="varchar(20)">
+                <constraints nullable="true" />
+            </column>
+            <column name="codigo_fallo" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="eficiencia_pct" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="consumo_red_w" type="double">
+                <constraints nullable="true" />
+            </column>
+            <column name="bateria_cargando" type="boolean">
+                <constraints nullable="true" />
+            </column>
+            <column name="pv_activo" type="boolean">
+                <constraints nullable="true" />
+            </column>
+            <column name="red_activa" type="boolean">
+                <constraints nullable="true" />
+            </column>
+            <column name="crc_valido" type="boolean">
+                <constraints nullable="true" />
+            </column>
+            <column name="latencia_ms" type="integer">
+                <constraints nullable="true" />
+            </column>
+            <column name="inversor_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+        <dropDefaultValue tableName="dato_inversor" columnName="tiempo" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+
+    <!--
+        Load sample data generated with Faker.js
+        - This data can be easily edited using a CSV editor (or even MS Excel) and
+          is located in the 'src/main/resources/config/liquibase/fake-data' directory
+        - By default this data is applied when running with the JHipster 'dev' profile.
+          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
+          Spring Boot configuration key.
+    -->
+    <changeSet id="20260603043152-1-data" author="jhipster" context="faker">
+        <loadData
+                  file="config/liquibase/fake-data/dato_inversor.csv"
+                  separator=";"
+                  tableName="dato_inversor"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="tiempo" type="date"/>
+            <column name="bateria_voltaje_v" type="numeric"/>
+            <column name="bateria_corriente_a" type="numeric"/>
+            <column name="bateria_potencia_w" type="numeric"/>
+            <column name="pv_voltaje_v" type="numeric"/>
+            <column name="pv_potencia_w" type="numeric"/>
+            <column name="salida_voltaje_v" type="numeric"/>
+            <column name="salida_potencia_w" type="numeric"/>
+            <column name="salida_aparente_va" type="numeric"/>
+            <column name="carga_porcentaje" type="numeric"/>
+            <column name="red_voltaje_v" type="numeric"/>
+            <column name="red_frecuencia_hz" type="numeric"/>
+            <column name="modo_operacion" type="string"/>
+            <column name="codigo_fallo" type="numeric"/>
+            <column name="eficiencia_pct" type="numeric"/>
+            <column name="consumo_red_w" type="numeric"/>
+            <column name="bateria_cargando" type="boolean"/>
+            <column name="pv_activo" type="boolean"/>
+            <column name="red_activa" type="boolean"/>
+            <column name="crc_valido" type="boolean"/>
+            <column name="latencia_ms" type="numeric"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

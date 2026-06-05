@@ -1,0 +1,33 @@
+{
+  "inversorMonitorApp": {
+    "alertaConfig": {
+      "home": {
+        "title": "Alerta Configs",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Alerta Config",
+        "createOrEditLabel": "Create or edit a Alerta Config",
+        "notFound": "No Alerta Configs found"
+      },
+      "created": "A new Alerta Config is created with identifier {{ param }}",
+      "updated": "A Alerta Config is updated with identifier {{ param }}",
+      "deleted": "A Alerta Config is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Alerta Config {{ id }}?"
+      },
+      "detail": {
+        "title": "Alerta Config"
+      },
+      "id": "ID",
+      "nombre": "Nombre",
+      "descripcion": "Descripcion",
+      "campoMonitorizado": "Campo Monitorizado",
+      "operador": "Operador",
+      "umbral": "Umbral",
+      "activa": "Activa",
+      "nivelSeveridad": "Nivel Severidad",
+      "canalNotificacion": "Canal Notificacion",
+      "cooldownMinutos": "Cooldown Minutos",
+      "inversor": "Inversor"
+    }
+  }
+}

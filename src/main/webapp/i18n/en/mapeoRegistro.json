@@ -1,0 +1,32 @@
+{
+  "inversorMonitorApp": {
+    "mapeoRegistro": {
+      "home": {
+        "title": "Mapeo Registros",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Mapeo Registro",
+        "createOrEditLabel": "Create or edit a Mapeo Registro",
+        "notFound": "No Mapeo Registros found"
+      },
+      "created": "A new Mapeo Registro is created with identifier {{ param }}",
+      "updated": "A Mapeo Registro is updated with identifier {{ param }}",
+      "deleted": "A Mapeo Registro is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Mapeo Registro {{ id }}?"
+      },
+      "detail": {
+        "title": "Mapeo Registro"
+      },
+      "id": "ID",
+      "direccionRegistro": "Direccion Registro",
+      "nombreRegistro": "Nombre Registro",
+      "campoSql": "Campo Sql",
+      "tipoDato": "Tipo Dato",
+      "escala": "Escala",
+      "unidad": "Unidad",
+      "activo": "Activo",
+      "descripcion": "Descripcion",
+      "marca": "Marca"
+    }
+  }
+}

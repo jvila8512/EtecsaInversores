@@ -1,0 +1,3 @@
+# PostgreSQL Docker config
+# Add any initialization scripts (.sql, .sh) to this directory
+# They will be executed on first container startup
