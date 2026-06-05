@@ -21,6 +21,9 @@ logging:
     com.etecsa.monitor: DEBUG
 
 spring:
+  docker:
+    compose:
+      enabled: false # PostgreSQL is running locally, no Docker Compose needed
   devtools:
     restart:
       enabled: true
