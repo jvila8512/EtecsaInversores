@@ -1,31 +1,133 @@
 import React, { useEffect, useState } from 'react';
-import InfiniteScroll from 'react-infinite-scroll-component';
-import { Link, useLocation } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { TextFormat, Translate, getPaginationState } from 'react-jhipster';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { JhiPagination, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
-import { APP_DATE_FORMAT } from 'app/config/constants';
-import { ASC, DESC, ITEMS_PER_PAGE } from 'app/shared/util/pagination.constants';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Toolbar,
+  Typography,
+  FormControl,
+  InputLabel,
+  Select,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
+import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getEntities, createEntity, updateEntity, deleteEntity } from './dato-inversor.reducer';
+import { getEntities as getInversores } from 'app/entities/inversor/inversor.reducer';
+import { IDatoInversor } from 'app/shared/model/dato-inversor.model';
 
-import { getEntities, reset } from './dato-inversor.reducer';
+const ALL_COLUMNS = [
+  { key: 'id', label: 'Id', default: true },
+  { key: 'tiempo', label: 'Tiempo', default: true },
+  { key: 'bateriaVoltajeV', label: 'Batería V', default: true },
+  { key: 'bateriaCorrienteA', label: 'Batería A', default: false },
+  { key: 'bateriaPotenciaW', label: 'Batería W', default: false },
+  { key: 'pvVoltajeV', label: 'PV V', default: true },
+  { key: 'pvPotenciaW', label: 'PV W', default: true },
+  { key: 'salidaVoltajeV', label: 'Salida V', default: false },
+  { key: 'salidaPotenciaW', label: 'Salida W', default: false },
+  { key: 'cargaPorcentaje', label: 'Carga %', default: true },
+  { key: 'redVoltajeV', label: 'Red V', default: false },
+  { key: 'eficienciaPct', label: 'Eficiencia %', default: true },
+  { key: 'bateriaCargando', label: 'Cargando', default: true },
+  { key: 'pvActivo', label: 'PV Activo', default: false },
+  { key: 'crcValido', label: 'CRC OK', default: false },
+  { key: 'inversor', label: 'Inversor', default: true },
+];
+
+const emptyForm = {
+  tiempo: '',
+  bateriaVoltajeV: '',
+  bateriaCorrienteA: '',
+  bateriaPotenciaW: '',
+  pvVoltajeV: '',
+  pvPotenciaW: '',
+  salidaVoltajeV: '',
+  salidaPotenciaW: '',
+  salidaAparenteVa: '',
+  cargaPorcentaje: '',
+  redVoltajeV: '',
+  redFrecuenciaHz: '',
+  modoOperacion: '',
+  codigoFallo: '',
+  eficienciaPct: '',
+  consumoRedW: '',
+  bateriaCargando: false,
+  pvActivo: false,
+  redActiva: false,
+  crcValido: false,
+  latenciaMs: '',
+  inversorId: '',
+};
 
 export const DatoInversor = () => {
   const dispatch = useAppDispatch();
-
   const pageLocation = useLocation();
+  const navigate = useNavigate();
+
+  const datoInversorList = useAppSelector(state => state.datoInversor.entities);
+  const loading = useAppSelector(state => state.datoInversor.loading);
+  const updating = useAppSelector(state => state.datoInversor.updating);
+  const updateSuccess = useAppSelector(state => state.datoInversor.updateSuccess);
+  const totalItems = useAppSelector(state => state.datoInversor.totalItems);
+  const inversorList = useAppSelector(state => state.inversor.entities);
 
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
-  const [sorting, setSorting] = useState(false);
+  const [selectedEntity, setSelectedEntity] = useState<IDatoInversor | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [columnMenuAnchor, setColumnMenuAnchor] = useState<null | HTMLElement>(null);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
+    const saved = localStorage.getItem('dato-inversor-columns');
+    if (saved) return JSON.parse(saved);
+    return ALL_COLUMNS.filter(c => c.default).map(c => c.key);
+  });
+  const [formKey, setFormKey] = useState(0);
+  const [formValues, setFormValues] = useState(emptyForm);
 
-  const datoInversorList = useAppSelector(state => state.datoInversor.entities);
-  const loading = useAppSelector(state => state.datoInversor.loading);
-  const links = useAppSelector(state => state.datoInversor.links);
-  const updateSuccess = useAppSelector(state => state.datoInversor.updateSuccess);
+  const saveColumns = (cols: string[]) => {
+    setVisibleColumns(cols);
+    localStorage.setItem('dato-inversor-columns', JSON.stringify(cols));
+  };
+  const toggleColumn = (key: string) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length > 1) saveColumns(visibleColumns.filter(c => c !== key));
+    } else {
+      saveColumns([...visibleColumns, key]);
+    }
+  };
+  const showColumn = (key: string) => visibleColumns.includes(key);
 
   const getAllEntities = () => {
     dispatch(
@@ -36,274 +138,411 @@ export const DatoInversor = () => {
       }),
     );
   };
-
-  const resetAll = () => {
-    dispatch(reset());
-    setPaginationState({
-      ...paginationState,
-      activePage: 1,
-    });
-    dispatch(getEntities({}));
+  const sortEntities = () => {
+    getAllEntities();
+    const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
+    if (pageLocation.search !== endURL) navigate(`${pageLocation.pathname}${endURL}`);
   };
 
   useEffect(() => {
-    resetAll();
-  }, []);
-
+    sortEntities();
+  }, [paginationState.activePage, paginationState.order, paginationState.sort]);
+  useEffect(() => {
+    const params = new URLSearchParams(pageLocation.search);
+    const page = params.get('page');
+    const sort = params.get(SORT);
+    if (page && sort) {
+      const sortSplit = sort.split(',');
+      setPaginationState({ ...paginationState, activePage: +page, sort: sortSplit[0], order: sortSplit[1] });
+    }
+  }, [pageLocation.search]);
   useEffect(() => {
     if (updateSuccess) {
-      resetAll();
+      setIsOpen(false);
+      setSelectedEntity(null);
+      setFormValues(emptyForm);
     }
   }, [updateSuccess]);
-
   useEffect(() => {
-    getAllEntities();
-  }, [paginationState.activePage]);
+    dispatch(getInversores({ page: 0, size: 1000, sort: 'id,asc' }));
+  }, []);
 
-  const handleLoadMore = () => {
-    if ((window as any).pageYOffset > 0) {
-      setPaginationState({
-        ...paginationState,
-        activePage: paginationState.activePage + 1,
-      });
-    }
+  const sort = (field: string) =>
+    setPaginationState({ ...paginationState, order: paginationState.order === ASC ? DESC : ASC, sort: field });
+  const handlePagination = (currentPage: number) => setPaginationState({ ...paginationState, activePage: currentPage });
+  const handleSyncList = () => sortEntities();
+
+  const filteredList = datoInversorList?.filter(
+    e =>
+      !globalFilter ||
+      e.inversor?.nombre?.toLowerCase().includes(globalFilter.toLowerCase()) ||
+      e.modoOperacion?.toLowerCase().includes(globalFilter.toLowerCase()),
+  );
+
+  const openNew = () => {
+    setSelectedEntity(null);
+    setFormValues(emptyForm);
+    setFormKey(prev => prev + 1);
+    setIsOpen(true);
   };
-
-  useEffect(() => {
-    if (sorting) {
-      getAllEntities();
-      setSorting(false);
-    }
-  }, [sorting]);
-
-  const sort = p => () => {
-    dispatch(reset());
-    setPaginationState({
-      ...paginationState,
-      activePage: 1,
-      order: paginationState.order === ASC ? DESC : ASC,
-      sort: p,
+  const openEdit = (row: IDatoInversor) => {
+    setSelectedEntity(row);
+    setFormValues({
+      tiempo: row.tiempo ? row.tiempo.format('YYYY-MM-DDTHH:mm') : '',
+      bateriaVoltajeV: row.bateriaVoltajeV?.toString() || '',
+      bateriaCorrienteA: row.bateriaCorrienteA?.toString() || '',
+      bateriaPotenciaW: row.bateriaPotenciaW?.toString() || '',
+      pvVoltajeV: row.pvVoltajeV?.toString() || '',
+      pvPotenciaW: row.pvPotenciaW?.toString() || '',
+      salidaVoltajeV: row.salidaVoltajeV?.toString() || '',
+      salidaPotenciaW: row.salidaPotenciaW?.toString() || '',
+      salidaAparenteVa: row.salidaAparenteVa?.toString() || '',
+      cargaPorcentaje: row.cargaPorcentaje?.toString() || '',
+      redVoltajeV: row.redVoltajeV?.toString() || '',
+      redFrecuenciaHz: row.redFrecuenciaHz?.toString() || '',
+      modoOperacion: row.modoOperacion || '',
+      codigoFallo: row.codigoFallo?.toString() || '',
+      eficienciaPct: row.eficienciaPct?.toString() || '',
+      consumoRedW: row.consumoRedW?.toString() || '',
+      bateriaCargando: row.bateriaCargando ?? false,
+      pvActivo: row.pvActivo ?? false,
+      redActiva: row.redActiva ?? false,
+      crcValido: row.crcValido ?? false,
+      latenciaMs: row.latenciaMs?.toString() || '',
+      inversorId: row.inversor?.id?.toString() || '',
     });
-    setSorting(true);
+    setFormKey(prev => prev + 1);
+    setIsOpen(true);
   };
-
-  const handleSyncList = () => {
-    resetAll();
+  const closeDialog = () => {
+    setIsOpen(false);
+    setSelectedEntity(null);
+    setFormValues(emptyForm);
   };
-
-  const getSortIconByFieldName = (fieldName: string) => {
-    const sortFieldName = paginationState.sort;
-    const order = paginationState.order;
-    if (sortFieldName !== fieldName) {
-      return faSort;
-    }
-    return order === ASC ? faSortUp : faSortDown;
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormValues(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+  const save = () => {
+    const entity: any = {
+      tiempo: formValues.tiempo || null,
+      bateriaVoltajeV: formValues.bateriaVoltajeV ? parseFloat(formValues.bateriaVoltajeV) : null,
+      bateriaCorrienteA: formValues.bateriaCorrienteA ? parseFloat(formValues.bateriaCorrienteA) : null,
+      bateriaPotenciaW: formValues.bateriaPotenciaW ? parseFloat(formValues.bateriaPotenciaW) : null,
+      pvVoltajeV: formValues.pvVoltajeV ? parseFloat(formValues.pvVoltajeV) : null,
+      pvPotenciaW: formValues.pvPotenciaW ? parseFloat(formValues.pvPotenciaW) : null,
+      salidaVoltajeV: formValues.salidaVoltajeV ? parseFloat(formValues.salidaVoltajeV) : null,
+      salidaPotenciaW: formValues.salidaPotenciaW ? parseFloat(formValues.salidaPotenciaW) : null,
+      salidaAparenteVa: formValues.salidaAparenteVa ? parseFloat(formValues.salidaAparenteVa) : null,
+      cargaPorcentaje: formValues.cargaPorcentaje ? parseFloat(formValues.cargaPorcentaje) : null,
+      redVoltajeV: formValues.redVoltajeV ? parseFloat(formValues.redVoltajeV) : null,
+      redFrecuenciaHz: formValues.redFrecuenciaHz ? parseFloat(formValues.redFrecuenciaHz) : null,
+      modoOperacion: formValues.modoOperacion || null,
+      codigoFallo: formValues.codigoFallo ? parseInt(formValues.codigoFallo, 10) : null,
+      eficienciaPct: formValues.eficienciaPct ? parseFloat(formValues.eficienciaPct) : null,
+      consumoRedW: formValues.consumoRedW ? parseFloat(formValues.consumoRedW) : null,
+      bateriaCargando: formValues.bateriaCargando,
+      pvActivo: formValues.pvActivo,
+      redActiva: formValues.redActiva,
+      crcValido: formValues.crcValido,
+      latenciaMs: formValues.latenciaMs ? parseInt(formValues.latenciaMs, 10) : null,
+      inversor: formValues.inversorId ? { id: parseInt(formValues.inversorId, 10) } : null,
+    };
+    if (selectedEntity?.id) entity.id = selectedEntity.id;
+    dispatch(selectedEntity?.id ? updateEntity(entity) : createEntity(entity));
+  };
+  const openDelete = (row: IDatoInversor) => {
+    setSelectedEntity(row);
+    setIsDeleting(true);
+  };
+  const confirmDelete = () => {
+    if (selectedEntity?.id) dispatch(deleteEntity(selectedEntity.id));
+    setIsDeleting(false);
+    setSelectedEntity(null);
+  };
+  const closeDelete = () => {
+    setIsDeleting(false);
+    setSelectedEntity(null);
   };
 
   return (
-    <div>
-      <h2 id="dato-inversor-heading" data-cy="DatoInversorHeading">
-        <Translate contentKey="inversorMonitorApp.datoInversor.home.title">Dato Inversors</Translate>
-        <div className="d-flex justify-content-end">
-          <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
-            <FontAwesomeIcon icon="sync" spin={loading} />{' '}
-            <Translate contentKey="inversorMonitorApp.datoInversor.home.refreshListLabel">Refresh List</Translate>
+    <Paper sx={{ p: 3 }}>
+      <Toolbar sx={{ justifyContent: 'space-between', mb: 2, px: 0 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          Datos de Inversor
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" startIcon={<ViewColumnIcon />} onClick={e => setColumnMenuAnchor(e.currentTarget)}>
+            Columnas
           </Button>
-          <Link to="/dato-inversor/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="inversorMonitorApp.datoInversor.home.createLabel">Create new Dato Inversor</Translate>
-          </Link>
-        </div>
-      </h2>
-      <div className="table-responsive">
-        <InfiniteScroll
-          dataLength={datoInversorList ? datoInversorList.length : 0}
-          next={handleLoadMore}
-          hasMore={paginationState.activePage - 1 < links.next}
-          loader={<div className="loader">Loading ...</div>}
-        >
-          {datoInversorList && datoInversorList.length > 0 ? (
-            <Table responsive>
-              <thead>
-                <tr>
-                  <th className="hand" onClick={sort('id')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.id">ID</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                  </th>
-                  <th className="hand" onClick={sort('tiempo')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.tiempo">Tiempo</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('tiempo')} />
-                  </th>
-                  <th className="hand" onClick={sort('bateriaVoltajeV')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.bateriaVoltajeV">Bateria Voltaje V</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('bateriaVoltajeV')} />
-                  </th>
-                  <th className="hand" onClick={sort('bateriaCorrienteA')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.bateriaCorrienteA">Bateria Corriente A</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('bateriaCorrienteA')} />
-                  </th>
-                  <th className="hand" onClick={sort('bateriaPotenciaW')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.bateriaPotenciaW">Bateria Potencia W</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('bateriaPotenciaW')} />
-                  </th>
-                  <th className="hand" onClick={sort('pvVoltajeV')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.pvVoltajeV">Pv Voltaje V</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('pvVoltajeV')} />
-                  </th>
-                  <th className="hand" onClick={sort('pvPotenciaW')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.pvPotenciaW">Pv Potencia W</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('pvPotenciaW')} />
-                  </th>
-                  <th className="hand" onClick={sort('salidaVoltajeV')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.salidaVoltajeV">Salida Voltaje V</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('salidaVoltajeV')} />
-                  </th>
-                  <th className="hand" onClick={sort('salidaPotenciaW')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.salidaPotenciaW">Salida Potencia W</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('salidaPotenciaW')} />
-                  </th>
-                  <th className="hand" onClick={sort('salidaAparenteVa')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.salidaAparenteVa">Salida Aparente Va</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('salidaAparenteVa')} />
-                  </th>
-                  <th className="hand" onClick={sort('cargaPorcentaje')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.cargaPorcentaje">Carga Porcentaje</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('cargaPorcentaje')} />
-                  </th>
-                  <th className="hand" onClick={sort('redVoltajeV')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.redVoltajeV">Red Voltaje V</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('redVoltajeV')} />
-                  </th>
-                  <th className="hand" onClick={sort('redFrecuenciaHz')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.redFrecuenciaHz">Red Frecuencia Hz</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('redFrecuenciaHz')} />
-                  </th>
-                  <th className="hand" onClick={sort('modoOperacion')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.modoOperacion">Modo Operacion</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('modoOperacion')} />
-                  </th>
-                  <th className="hand" onClick={sort('codigoFallo')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.codigoFallo">Codigo Fallo</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('codigoFallo')} />
-                  </th>
-                  <th className="hand" onClick={sort('eficienciaPct')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.eficienciaPct">Eficiencia Pct</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('eficienciaPct')} />
-                  </th>
-                  <th className="hand" onClick={sort('consumoRedW')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.consumoRedW">Consumo Red W</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('consumoRedW')} />
-                  </th>
-                  <th className="hand" onClick={sort('bateriaCargando')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.bateriaCargando">Bateria Cargando</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('bateriaCargando')} />
-                  </th>
-                  <th className="hand" onClick={sort('pvActivo')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.pvActivo">Pv Activo</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('pvActivo')} />
-                  </th>
-                  <th className="hand" onClick={sort('redActiva')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.redActiva">Red Activa</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('redActiva')} />
-                  </th>
-                  <th className="hand" onClick={sort('crcValido')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.crcValido">Crc Valido</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('crcValido')} />
-                  </th>
-                  <th className="hand" onClick={sort('latenciaMs')}>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.latenciaMs">Latencia Ms</Translate>{' '}
-                    <FontAwesomeIcon icon={getSortIconByFieldName('latenciaMs')} />
-                  </th>
-                  <th>
-                    <Translate contentKey="inversorMonitorApp.datoInversor.inversor">Inversor</Translate> <FontAwesomeIcon icon="sort" />
-                  </th>
-                  <th />
-                </tr>
-              </thead>
-              <tbody>
-                {datoInversorList.map((datoInversor, i) => (
-                  <tr key={`entity-${i}`} data-cy="entityTable">
-                    <td>
-                      <Button tag={Link} to={`/dato-inversor/${datoInversor.id}`} color="link" size="sm">
-                        {datoInversor.id}
-                      </Button>
-                    </td>
-                    <td>{datoInversor.tiempo ? <TextFormat type="date" value={datoInversor.tiempo} format={APP_DATE_FORMAT} /> : null}</td>
-                    <td>{datoInversor.bateriaVoltajeV}</td>
-                    <td>{datoInversor.bateriaCorrienteA}</td>
-                    <td>{datoInversor.bateriaPotenciaW}</td>
-                    <td>{datoInversor.pvVoltajeV}</td>
-                    <td>{datoInversor.pvPotenciaW}</td>
-                    <td>{datoInversor.salidaVoltajeV}</td>
-                    <td>{datoInversor.salidaPotenciaW}</td>
-                    <td>{datoInversor.salidaAparenteVa}</td>
-                    <td>{datoInversor.cargaPorcentaje}</td>
-                    <td>{datoInversor.redVoltajeV}</td>
-                    <td>{datoInversor.redFrecuenciaHz}</td>
-                    <td>{datoInversor.modoOperacion}</td>
-                    <td>{datoInversor.codigoFallo}</td>
-                    <td>{datoInversor.eficienciaPct}</td>
-                    <td>{datoInversor.consumoRedW}</td>
-                    <td>{datoInversor.bateriaCargando ? 'true' : 'false'}</td>
-                    <td>{datoInversor.pvActivo ? 'true' : 'false'}</td>
-                    <td>{datoInversor.redActiva ? 'true' : 'false'}</td>
-                    <td>{datoInversor.crcValido ? 'true' : 'false'}</td>
-                    <td>{datoInversor.latenciaMs}</td>
-                    <td>
-                      {datoInversor.inversor ? (
-                        <Link to={`/inversor/${datoInversor.inversor.id}`}>{datoInversor.inversor.nombre}</Link>
-                      ) : (
-                        ''
-                      )}
-                    </td>
-                    <td className="text-end">
-                      <div className="btn-group flex-btn-group-container">
-                        <Button tag={Link} to={`/dato-inversor/${datoInversor.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                          <FontAwesomeIcon icon="eye" />{' '}
-                          <span className="d-none d-md-inline">
-                            <Translate contentKey="entity.action.view">View</Translate>
-                          </span>
-                        </Button>
-                        <Button
-                          tag={Link}
-                          to={`/dato-inversor/${datoInversor.id}/edit`}
-                          color="primary"
-                          size="sm"
-                          data-cy="entityEditButton"
-                        >
-                          <FontAwesomeIcon icon="pencil-alt" />{' '}
-                          <span className="d-none d-md-inline">
-                            <Translate contentKey="entity.action.edit">Edit</Translate>
-                          </span>
-                        </Button>
-                        <Button
-                          onClick={() => (window.location.href = `/dato-inversor/${datoInversor.id}/delete`)}
-                          color="danger"
-                          size="sm"
-                          data-cy="entityDeleteButton"
-                        >
-                          <FontAwesomeIcon icon="trash" />{' '}
-                          <span className="d-none d-md-inline">
-                            <Translate contentKey="entity.action.delete">Delete</Translate>
-                          </span>
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </Table>
+          <Menu anchorEl={columnMenuAnchor} open={Boolean(columnMenuAnchor)} onClose={() => setColumnMenuAnchor(null)}>
+            {ALL_COLUMNS.map(col => (
+              <MenuItem key={col.key} onClick={() => toggleColumn(col.key)}>
+                <ListItemIcon>
+                  <Checkbox checked={visibleColumns.includes(col.key)} size="small" />
+                </ListItemIcon>
+                <ListItemText>{col.label}</ListItemText>
+              </MenuItem>
+            ))}
+          </Menu>
+          <Button variant="outlined" startIcon={<RefreshIcon />} onClick={handleSyncList} disabled={loading}>
+            Actualizar
+          </Button>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openNew}>
+            Nuevo Dato
+          </Button>
+        </Box>
+      </Toolbar>
+
+      {loading && !datoInversorList?.length && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <CircularProgress size={40} sx={{ color: '#2563eb' }} />
+        </Box>
+      )}
+
+      <TextField
+        size="small"
+        placeholder="Buscar..."
+        value={globalFilter}
+        onChange={e => setGlobalFilter(e.target.value)}
+        InputProps={{ startAdornment: <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} /> }}
+        sx={{ mb: 2, width: 300 }}
+      />
+
+      <TableContainer sx={{ overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 1100 }}>
+          <TableHead>
+            <TableRow sx={{ bgcolor: '#f8fafc' }}>
+              {showColumn('id') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('id')}>
+                  Id
+                </TableCell>
+              )}
+              {showColumn('tiempo') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('tiempo')}>
+                  Tiempo
+                </TableCell>
+              )}
+              {showColumn('bateriaVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>Batería V</TableCell>}
+              {showColumn('bateriaCorrienteA') && <TableCell sx={{ fontWeight: 600 }}>Batería A</TableCell>}
+              {showColumn('bateriaPotenciaW') && <TableCell sx={{ fontWeight: 600 }}>Batería W</TableCell>}
+              {showColumn('pvVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>PV V</TableCell>}
+              {showColumn('pvPotenciaW') && <TableCell sx={{ fontWeight: 600 }}>PV W</TableCell>}
+              {showColumn('salidaVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>Salida V</TableCell>}
+              {showColumn('salidaPotenciaW') && <TableCell sx={{ fontWeight: 600 }}>Salida W</TableCell>}
+              {showColumn('cargaPorcentaje') && <TableCell sx={{ fontWeight: 600 }}>Carga %</TableCell>}
+              {showColumn('redVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>Red V</TableCell>}
+              {showColumn('eficienciaPct') && <TableCell sx={{ fontWeight: 600 }}>Eficiencia %</TableCell>}
+              {showColumn('bateriaCargando') && <TableCell sx={{ fontWeight: 600 }}>Cargando</TableCell>}
+              {showColumn('pvActivo') && <TableCell sx={{ fontWeight: 600 }}>PV Activo</TableCell>}
+              {showColumn('crcValido') && <TableCell sx={{ fontWeight: 600 }}>CRC OK</TableCell>}
+              {showColumn('inversor') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('inversor.nombre')}>
+                  Inversor
+                </TableCell>
+              )}
+              <TableCell sx={{ fontWeight: 600 }}>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredList?.map((row: IDatoInversor) => (
+              <TableRow key={row.id} hover>
+                {showColumn('id') && <TableCell>{row.id}</TableCell>}
+                {showColumn('tiempo') && <TableCell>{row.tiempo?.format('DD/MM/YYYY HH:mm:ss')}</TableCell>}
+                {showColumn('bateriaVoltajeV') && <TableCell>{row.bateriaVoltajeV}</TableCell>}
+                {showColumn('bateriaCorrienteA') && <TableCell>{row.bateriaCorrienteA}</TableCell>}
+                {showColumn('bateriaPotenciaW') && <TableCell>{row.bateriaPotenciaW}</TableCell>}
+                {showColumn('pvVoltajeV') && <TableCell>{row.pvVoltajeV}</TableCell>}
+                {showColumn('pvPotenciaW') && <TableCell>{row.pvPotenciaW}</TableCell>}
+                {showColumn('salidaVoltajeV') && <TableCell>{row.salidaVoltajeV}</TableCell>}
+                {showColumn('salidaPotenciaW') && <TableCell>{row.salidaPotenciaW}</TableCell>}
+                {showColumn('cargaPorcentaje') && <TableCell>{row.cargaPorcentaje}</TableCell>}
+                {showColumn('redVoltajeV') && <TableCell>{row.redVoltajeV}</TableCell>}
+                {showColumn('eficienciaPct') && <TableCell>{row.eficienciaPct}</TableCell>}
+                {showColumn('bateriaCargando') && <TableCell>{row.bateriaCargando ? 'Sí' : 'No'}</TableCell>}
+                {showColumn('pvActivo') && <TableCell>{row.pvActivo ? 'Sí' : 'No'}</TableCell>}
+                {showColumn('crcValido') && <TableCell>{row.crcValido ? 'Sí' : 'No'}</TableCell>}
+                {showColumn('inversor') && <TableCell>{row.inversor?.nombre}</TableCell>}
+                <TableCell>
+                  <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    <IconButton size="small" color="warning" onClick={() => openEdit(row)}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" color="error" onClick={() => openDelete(row)}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {totalItems && datoInversorList && datoInversorList.length > 0 ? (
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+          <JhiPagination
+            activePage={paginationState.activePage}
+            onSelect={handlePagination}
+            maxButtons={5}
+            itemsPerPage={paginationState.itemsPerPage}
+            totalItems={totalItems}
+          />
+        </Box>
+      ) : null}
+
+      <Dialog open={isOpen} onClose={closeDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>{selectedEntity ? 'Editar Dato de Inversor' : 'Nuevo Dato de Inversor'}</DialogTitle>
+        <DialogContent>
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
           ) : (
-            !loading && (
-              <div className="alert alert-warning">
-                <Translate contentKey="inversorMonitorApp.datoInversor.home.notFound">No Dato Inversors found</Translate>
-              </div>
-            )
+            <form key={formKey}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+                <TextField
+                  label="Tiempo"
+                  id="dato-tiempo"
+                  name="tiempo"
+                  type="datetime-local"
+                  value={formValues.tiempo}
+                  onChange={handleInputChange}
+                  fullWidth
+                  InputLabelProps={{ shrink: true }}
+                />
+                <TextField
+                  label="Batería Voltaje (V)"
+                  id="dato-bateriaVoltajeV"
+                  name="bateriaVoltajeV"
+                  type="number"
+                  value={formValues.bateriaVoltajeV}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Batería Corriente (A)"
+                  id="dato-bateriaCorrienteA"
+                  name="bateriaCorrienteA"
+                  type="number"
+                  value={formValues.bateriaCorrienteA}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Batería Potencia (W)"
+                  id="dato-bateriaPotenciaW"
+                  name="bateriaPotenciaW"
+                  type="number"
+                  value={formValues.bateriaPotenciaW}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="PV Voltaje (V)"
+                  id="dato-pvVoltajeV"
+                  name="pvVoltajeV"
+                  type="number"
+                  value={formValues.pvVoltajeV}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="PV Potencia (W)"
+                  id="dato-pvPotenciaW"
+                  name="pvPotenciaW"
+                  type="number"
+                  value={formValues.pvPotenciaW}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Salida Voltaje (V)"
+                  id="dato-salidaVoltajeV"
+                  name="salidaVoltajeV"
+                  type="number"
+                  value={formValues.salidaVoltajeV}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Salida Potencia (W)"
+                  id="dato-salidaPotenciaW"
+                  name="salidaPotenciaW"
+                  type="number"
+                  value={formValues.salidaPotenciaW}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Carga (%)"
+                  id="dato-cargaPorcentaje"
+                  name="cargaPorcentaje"
+                  type="number"
+                  value={formValues.cargaPorcentaje}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Eficiencia (%)"
+                  id="dato-eficienciaPct"
+                  name="eficienciaPct"
+                  type="number"
+                  value={formValues.eficienciaPct}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <FormControl fullWidth>
+                  <InputLabel id="dato-inversor-label">Inversor</InputLabel>
+                  <Select
+                    labelId="dato-inversor-label"
+                    id="dato-inversorId"
+                    name="inversorId"
+                    value={formValues.inversorId}
+                    onChange={e => setFormValues(prev => ({ ...prev, inversorId: e.target.value }))}
+                    label="Inversor"
+                  >
+                    <MenuItem value="">— Ninguno —</MenuItem>
+                    {inversorList?.map((i: any) => (
+                      <MenuItem key={i.id} value={i.id}>
+                        {i.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                  <Button onClick={closeDialog}>Cancelar</Button>
+                  <Button variant="contained" onClick={save} disabled={updating}>
+                    <FontAwesomeIcon icon="save" />
+                    &nbsp;Guardar
+                  </Button>
+                </Box>
+              </Box>
+            </form>
           )}
-        </InfiniteScroll>
-      </div>
-    </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleting} onClose={closeDelete} maxWidth="xs" fullWidth>
+        <DialogTitle>Confirmar</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1 }}>
+            <WarningAmberIcon sx={{ fontSize: 40, color: '#f59e0b' }} />
+            {selectedEntity && (
+              <Typography>
+                ¿Seguro que quiere eliminar el Dato ID: <strong>{selectedEntity.id}</strong>?
+              </Typography>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDelete}>No</Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">
+            Sí
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Paper>
   );
 };
 

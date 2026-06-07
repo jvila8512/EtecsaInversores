@@ -2,17 +2,13 @@ import './footer.scss';
 
 import React from 'react';
 import { Translate } from 'react-jhipster';
-import { Col, Row } from 'reactstrap';
+import Typography from '@mui/material/Typography';
 
 const Footer = () => (
   <div className="footer page-content">
-    <Row>
-      <Col md="12">
-        <p>
-          <Translate contentKey="footer">Your footer</Translate>
-        </p>
-      </Col>
-    </Row>
+    <Typography variant="body2" color="text.secondary" align="center">
+      <Translate contentKey="footer">Your footer</Translate>
+    </Typography>
   </div>
 );
 

@@ -1,16 +1,31 @@
-// Override Bootstrap variables
 @import 'bootstrap-variables';
-@import 'bootswatch/dist/cerulean/variables';
-// Import Bootstrap source files from node_modules
 @import 'bootstrap/scss/bootstrap';
-@import 'bootswatch/dist/cerulean/bootswatch';
+
+$primary-blue: #2563eb;
+$primary-blue-light: #3b82f6;
+$primary-blue-dark: #1d4ed8;
+
 body {
+  background: #f8fafc;
   margin: 0;
+  font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+  color: #1e293b;
+}
+
+*:focus,
+*:focus-visible {
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 a {
-  color: #533f03;
-  font-weight: bold;
+  color: $primary-blue;
+  text-decoration: none;
+  transition: color 0.2s ease;
+
+  &:hover {
+    color: $primary-blue-dark;
+  }
 }
 
 * {
@@ -23,22 +38,76 @@ a {
   }
 }
 
+.btn:focus,
+.btn:focus-visible,
+.btn:active,
+.btn:active:focus {
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba($primary-blue, 0.25) !important;
+}
+
+.form-control:focus {
+  border-color: $primary-blue !important;
+  box-shadow: 0 0 0 3px rgba($primary-blue, 0.15) !important;
+}
+
+.dropdown-item:focus,
+.dropdown-item:active {
+  background-color: rgba($primary-blue, 0.1) !important;
+  color: $primary-blue-dark !important;
+}
+
 .app-container {
   box-sizing: border-box;
-  .view-container {
-    width: 100%;
-    height: calc(100% - 40px);
-    overflow-y: auto;
-    overflow-x: hidden;
-    padding: 1rem;
-    .card {
-      padding: 1rem;
+  display: flex;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8fafc;
+
+  .main-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    margin-left: 260px;
+    transition: margin-left 0.3s ease-in-out;
+    min-height: 100vh;
+
+    @media (max-width: 960px) {
+      margin-left: 0;
     }
-    .view-routes {
-      height: 100%;
-      > div {
-        height: 100%;
+
+    .view-container {
+      flex: 1;
+      width: 100%;
+      min-height: calc(100vh - 64px - 50px);
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 24px;
+      box-sizing: border-box;
+
+      .card {
+        padding: 1rem;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
       }
+
+      .view-routes {
+        height: 100%;
+        > div {
+          height: 100%;
+        }
+      }
+    }
+  }
+}
+
+.app-container.sidebar-collapsed {
+  .main-content {
+    margin-left: 72px;
+
+    @media (max-width: 960px) {
+      margin-left: 0;
     }
   }
 }
@@ -54,20 +123,12 @@ a {
   padding: 5px 25px 50px 25px !important;
 }
 
-/* ==========================================================================
-Browser Upgrade Prompt
-========================================================================== */
-
 .browserupgrade {
   margin: 0.2em 0;
   background: #ccc;
   color: #000;
   padding: 0.2em 0;
 }
-
-/* ==========================================================================
-Custom button styles
-========================================================================== */
 
 .icon-button > .btn {
   background-color: transparent;
@@ -84,16 +145,9 @@ Custom button styles
   }
 }
 
-/* ==========================================================================
-Generic styles
-========================================================================== */
-
-/* Temporary workaround for availity-reactstrap-validation */
 .invalid-feedback {
   display: inline;
 }
-
-/* other generic styles */
 
 .title {
   font-size: 1.25em;
@@ -130,8 +184,6 @@ Generic styles
 .preserve-space {
   white-space: pre-wrap;
 }
-
-/* padding helpers */
 
 @mixin pad($size, $side) {
   @if $size== '' {
@@ -221,11 +273,10 @@ Generic styles
 @include no-padding('bottom');
 @include no-padding('all');
 
-/* end of padding helpers */
-
 .no-margin {
   margin: 0;
 }
+
 @mixin voffset($size) {
   @if $size== '' {
     .voffset {
@@ -254,10 +305,6 @@ Generic styles
   opacity: 1;
 }
 
-/* ==========================================================================
-make sure browsers use the pointer cursor for anchors, even with no href
-========================================================================== */
-
 a:hover {
   cursor: pointer;
 }
@@ -278,10 +325,6 @@ button.anchor-btn {
 a.anchor-btn:hover {
   text-decoration: none;
 }
-
-/* ==========================================================================
-Metrics and Health styles
-========================================================================== */
 
 #threadDump .popover,
 #healthCheck .popover {
@@ -306,11 +349,15 @@ Metrics and Health styles
   min-width: 400px;
 }
 
-/* bootstrap 3 input-group 100% width
-http://stackoverflow.com/questions/23436430/bootstrap-3-input-group-100-width */
-
 .width-min {
   width: 1% !important;
+}
+
+.toastify-container {
+  .toastify-toast {
+    border-radius: 8px;
+    border-left: 4px solid $primary-blue;
+  }
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */

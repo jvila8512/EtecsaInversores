@@ -1,43 +1,37 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import {
-  AppBar,
-  Toolbar,
-  IconButton,
   Box,
-  InputBase,
+  IconButton,
   Badge,
   Avatar,
   Menu,
   MenuItem,
-  ListItemIcon,
-  ListItemText,
   Typography,
-  Tooltip,
-  InputAdornment,
   Divider,
   Button,
+  InputBase,
+  ListItemIcon,
+  ListItemText,
 } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsIcon from '@mui/icons-material/Notifications';
-import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import PersonIcon from '@mui/icons-material/Person';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
 import WarningIcon from '@mui/icons-material/Warning';
 import InfoIcon from '@mui/icons-material/Info';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
-import { IUser } from 'app/shared/model/user.model';
+import { useAppSelector } from 'app/config/store';
 
-interface TopBarProps {
-  isAuthenticated: boolean;
-  onToggleSidebar: () => void;
-  account?: IUser;
-}
+const mockNotifications = [{ id: 1, title: 'Sistema', message: 'Nueva actualización disponible', type: 'info' }];
 
-const TopBar: React.FC<TopBarProps> = ({ isAuthenticated, onToggleSidebar, account }) => {
+const TopBar: React.FC = () => {
+  const account = useAppSelector(state => state.authentication.account);
+  const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
+  const [accountMenuAnchor, setAccountMenuAnchor] = useState<null | HTMLElement>(null);
+  const [notificationsAnchor, setNotificationsAnchor] = useState<null | HTMLElement>(null);
+
   const getUserInitials = () => {
     if (!account) return '?';
     const first = account.firstName?.[0] || '';
@@ -49,228 +43,216 @@ const TopBar: React.FC<TopBarProps> = ({ isAuthenticated, onToggleSidebar, accou
     if (!account) return 'Usuario';
     return `${account.firstName || ''} ${account.lastName || ''}`.trim() || account.login || 'Usuario';
   };
-  const navigate = useNavigate();
-  const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
-  const [anchorElNotif, setAnchorElNotif] = useState<null | HTMLElement>(null);
 
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorElUser(event.currentTarget);
-  const handleCloseUserMenu = () => setAnchorElUser(null);
-  const handleOpenNotifMenu = (event: React.MouseEvent<HTMLElement>) => setAnchorElNotif(event.currentTarget);
-  const handleCloseNotifMenu = () => setAnchorElNotif(null);
-
-  const mockNotificaciones = [
-    { id: 1, tipo: 'warning', titulo: 'Alarma activa', mensaje: 'Equipo GEN-001 sin respuesta', tiempo: ' hace 5 min' },
-    { id: 2, tipo: 'info', titulo: 'Actualización', mensaje: 'Firmware actualizado correctamente', tiempo: ' hace 1 hora' },
-    { id: 3, tipo: 'success', titulo: 'Sistema OK', mensaje: 'Todos los equipos operativos', tiempo: ' hace 2 horas' },
-  ];
-
-  const getNotifIcon = (tipo: string) => {
-    if (tipo === 'warning') return <WarningIcon sx={{ color: '#f59e0b', fontSize: 20 }} />;
-    if (tipo === 'error') return <WarningIcon sx={{ color: '#dc2626', fontSize: 20 }} />;
-    if (tipo === 'success') return <CheckCircleIcon sx={{ color: '#22c55e', fontSize: 20 }} />;
-    return <InfoIcon sx={{ color: '#2563eb', fontSize: 20 }} />;
+  const getNotificationIcon = (type: string) => {
+    switch (type) {
+      case 'success':
+        return <CheckCircleIcon fontSize="small" sx={{ color: '#22c55e' }} />;
+      case 'warning':
+        return <WarningIcon fontSize="small" sx={{ color: '#f59e0b' }} />;
+      default:
+        return <InfoIcon fontSize="small" sx={{ color: '#3b82f6' }} />;
+    }
   };
 
   return (
-    <AppBar
-      position="fixed"
-      elevation={0}
+    <Box
+      component="header"
       sx={{
-        zIndex: 1201,
+        height: 64,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        px: 3,
         backgroundColor: '#ffffff',
         borderBottom: '1px solid #e2e8f0',
-        color: '#0f172a',
+        gap: 2,
       }}
     >
-      <Toolbar>
-        <IconButton edge="start" color="inherit" aria-label="menu" onClick={onToggleSidebar} sx={{ mr: 2 }}>
-          <MenuIcon />
-        </IconButton>
-
-        <Box sx={{ flex: 1, maxWidth: 400, display: { xs: 'none', sm: 'block' } }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, maxWidth: 400 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            backgroundColor: '#f8fafc',
+            border: '1px solid #e2e8f0',
+            borderRadius: 2,
+            px: 2,
+            py: 0.5,
+            flex: 1,
+            '&:focus-within': {
+              borderColor: '#2563eb',
+              backgroundColor: '#ffffff',
+            },
+          }}
+        >
+          <SearchIcon sx={{ color: '#64748b', mr: 1 }} />
           <InputBase
-            placeholder="Buscar..."
-            startAdornment={
-              <InputAdornment position="start">
-                <SearchIcon sx={{ color: '#94a3b8' }} />
-              </InputAdornment>
-            }
+            placeholder="Buscar inversores, alertas..."
             sx={{
-              bgcolor: '#f1f5f9',
-              borderRadius: 2,
-              px: 2,
-              py: 0.75,
-              width: '100%',
-              fontSize: '0.875rem',
-              '&:focus-within': { bgcolor: '#e2e8f0' },
+              flex: 1,
+              fontSize: '0.9rem',
+              '& input::placeholder': {
+                color: '#94a3b8',
+                opacity: 1,
+              },
             }}
           />
         </Box>
+      </Box>
 
-        <Box sx={{ flexGrow: 1 }} />
-
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-          {/* Botón Monitor de Alarmas */}
-          {isAuthenticated && (
-            <>
-              <Tooltip title="Monitor de Alarmas">
-                <IconButton color="error" onClick={() => navigate('/alarma/monitor')} sx={{ display: { xs: 'flex', md: 'none' } }}>
-                  <NotificationsActiveIcon />
-                </IconButton>
-              </Tooltip>
-              <Tooltip title="Monitor de Alarmas">
-                <Button
-                  variant="outlined"
-                  color="error"
-                  size="small"
-                  startIcon={<NotificationsActiveIcon />}
-                  onClick={() => navigate('/alarma/monitor')}
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {isAuthenticated && (
+          <>
+            <Box>
+              <IconButton
+                onClick={e => setNotificationsAnchor(e.currentTarget)}
+                sx={{
+                  color: '#64748b',
+                  transition: 'all 0.2s ease',
+                  '&:hover': {
+                    color: '#1e293b',
+                    backgroundColor: 'rgba(30, 41, 59, 0.1)',
+                  },
+                }}
+              >
+                <Badge
+                  badgeContent={mockNotifications.length}
                   sx={{
-                    fontWeight: 600,
-                    fontSize: '0.75rem',
-                    py: 0.5,
-                    px: 1.5,
-                    display: { xs: 'none', md: 'flex' },
+                    '& .MuiBadge-badge': {
+                      backgroundColor: '#2563eb',
+                      color: '#fff',
+                      fontWeight: 600,
+                    },
                   }}
                 >
-                  Alarmas
-                </Button>
-              </Tooltip>
-            </>
-          )}
+                  <NotificationsIcon />
+                </Badge>
+              </IconButton>
+            </Box>
 
-          {/* Notificaciones */}
-          {isAuthenticated && (
-            <>
-              <Tooltip title="Notificaciones">
-                <IconButton color="inherit" onClick={handleOpenNotifMenu}>
-                  <Badge badgeContent={mockNotificaciones.length} color="error">
-                    <NotificationsIcon />
-                  </Badge>
-                </IconButton>
-              </Tooltip>
-              <Menu
-                anchorEl={anchorElNotif}
-                open={Boolean(anchorElNotif)}
-                onClose={handleCloseNotifMenu}
-                PaperProps={{ sx: { width: 320, maxHeight: 400 } }}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
-              >
-                <Box sx={{ px: 2, py: 1.5 }}>
-                  <Typography variant="subtitle1" sx={{ fontWeight: 700 }}>
-                    Notificaciones
-                  </Typography>
-                </Box>
-                <Divider />
-                {mockNotificaciones.map(notif => (
-                  <MenuItem key={notif.id} onClick={handleCloseNotifMenu} sx={{ py: 1.5 }}>
-                    <ListItemIcon>{getNotifIcon(notif.tipo)}</ListItemIcon>
-                    <Box>
-                      <Typography variant="body2" sx={{ fontWeight: 600 }}>
-                        {notif.titulo}
-                      </Typography>
-                      <Typography variant="caption" color="text.secondary">
-                        {notif.mensaje}
-                      </Typography>
-                      <Typography variant="caption" sx={{ display: 'block', color: '#94a3b8', fontSize: '0.7rem' }}>
-                        {notif.tiempo}
-                      </Typography>
-                    </Box>
+            <Menu
+              anchorEl={notificationsAnchor}
+              open={Boolean(notificationsAnchor)}
+              onClose={() => setNotificationsAnchor(null)}
+              PaperProps={{
+                elevation: 4,
+                sx: { mt: 1.5, width: 360, borderRadius: 2, overflow: 'hidden' },
+              }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <Box sx={{ px: 2.5, py: 2, borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 1 }}>
+                <NotificationsIcon sx={{ fontSize: 20, color: '#2563eb' }} />
+                <Typography variant="subtitle1" fontWeight={600}>
+                  Notificaciones
+                </Typography>
+              </Box>
+              <Box sx={{ maxHeight: 320, overflowY: 'auto' }}>
+                {mockNotifications.map((notification, index) => (
+                  <MenuItem
+                    key={notification.id}
+                    onClick={() => setNotificationsAnchor(null)}
+                    sx={{
+                      py: 2,
+                      px: 2.5,
+                      borderBottom: index < mockNotifications.length - 1 ? '1px solid #e2e8f0' : 'none',
+                    }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 36 }}>{getNotificationIcon(notification.type)}</ListItemIcon>
+                    <ListItemText
+                      primary={notification.title}
+                      secondary={notification.message}
+                      primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }}
+                      secondaryTypographyProps={{ variant: 'caption', sx: { color: 'text.secondary' } }}
+                    />
                   </MenuItem>
                 ))}
-                <Divider />
-                <MenuItem onClick={handleCloseNotifMenu} sx={{ justifyContent: 'center' }}>
-                  <Typography variant="body2" color="primary" sx={{ fontWeight: 500 }}>
-                    Ver todas
-                  </Typography>
-                </MenuItem>
-              </Menu>
-            </>
-          )}
+              </Box>
+            </Menu>
+          </>
+        )}
 
-          {/* Cuenta Usuario */}
-          {isAuthenticated ? (
-            <>
-              <Tooltip title={getUserDisplayName()}>
-                <IconButton onClick={handleOpenUserMenu} color="inherit">
-                  {account?.imageUrl ? (
-                    <Avatar src={account.imageUrl} sx={{ width: 36, height: 36 }} />
-                  ) : (
-                    <Avatar sx={{ width: 36, height: 36, bgcolor: '#2563eb' }}>{getUserInitials()}</Avatar>
-                  )}
-                </IconButton>
-              </Tooltip>
-              <Menu
-                anchorEl={anchorElUser}
-                open={Boolean(anchorElUser)}
-                onClose={handleCloseUserMenu}
-                PaperProps={{ sx: { width: 240 } }}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'right' }}
+        {isAuthenticated ? (
+          <>
+            <IconButton
+              onClick={e => setAccountMenuAnchor(e.currentTarget)}
+              size="small"
+              sx={{
+                ml: 1,
+                transition: 'all 0.2s ease',
+                '&:hover': { transform: 'scale(1.05)' },
+              }}
+            >
+              <Avatar
+                sx={{
+                  width: 38,
+                  height: 38,
+                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                  fontSize: '0.9rem',
+                  fontWeight: 600,
+                  boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
+                }}
               >
-                <Box sx={{ px: 2, py: 1.5, bgcolor: '#f8fafc', display: 'flex', alignItems: 'center', gap: 1.5 }}>
-                  {account?.imageUrl ? (
-                    <Avatar src={account.imageUrl} sx={{ width: 40, height: 40 }} />
-                  ) : (
-                    <Avatar sx={{ width: 40, height: 40, bgcolor: '#2563eb' }}>{getUserInitials()}</Avatar>
-                  )}
-                  <Box>
-                    <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                      {getUserDisplayName()}
-                    </Typography>
-                    <Typography variant="caption" color="text.secondary">
-                      {account?.email}
-                    </Typography>
-                  </Box>
-                </Box>
-                <Divider />
-                <MenuItem
-                  onClick={() => {
-                    handleCloseUserMenu();
-                    navigate('/account/settings');
-                  }}
-                >
-                  <ListItemIcon>
-                    <PersonIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Mi Perfil</ListItemText>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    handleCloseUserMenu();
-                    navigate('/account/password');
-                  }}
-                >
-                  <ListItemIcon>
-                    <SettingsIcon fontSize="small" />
-                  </ListItemIcon>
-                  <ListItemText>Cambiar Contraseña</ListItemText>
-                </MenuItem>
-                <Divider />
-                <MenuItem
-                  onClick={() => {
-                    handleCloseUserMenu();
-                    navigate('/logout');
-                  }}
-                >
-                  <ListItemIcon>
-                    <LogoutIcon fontSize="small" sx={{ color: '#dc2626' }} />
-                  </ListItemIcon>
-                  <ListItemText sx={{ color: '#dc2626' }}>Cerrar Sesión</ListItemText>
-                </MenuItem>
-              </Menu>
-            </>
-          ) : (
-            <Tooltip title="Iniciar sesión">
-              <IconButton color="inherit" onClick={() => navigate('/login')}>
-                <AccountCircleIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Box>
-      </Toolbar>
-    </AppBar>
+                {getUserInitials()}
+              </Avatar>
+            </IconButton>
+
+            <Menu
+              anchorEl={accountMenuAnchor}
+              open={Boolean(accountMenuAnchor)}
+              onClose={() => setAccountMenuAnchor(null)}
+              PaperProps={{ elevation: 4, sx: { mt: 1.5, minWidth: 220, borderRadius: 2 } }}
+              transformOrigin={{ horizontal: 'right', vertical: 'top' }}
+              anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
+            >
+              <Box sx={{ px: 2.5, py: 2 }}>
+                <Typography variant="subtitle2" fontWeight={600}>
+                  {getUserDisplayName()}
+                </Typography>
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {account?.email}
+                </Typography>
+              </Box>
+              <Divider />
+              <MenuItem component={Link} to="/account/settings" onClick={() => setAccountMenuAnchor(null)}>
+                <PersonIcon fontSize="small" sx={{ mr: 1.5, color: '#64748b' }} />
+                Ajustes de cuenta
+              </MenuItem>
+              <MenuItem component={Link} to="/account/password" onClick={() => setAccountMenuAnchor(null)}>
+                <SettingsIcon fontSize="small" sx={{ mr: 1.5, color: '#64748b' }} />
+                Cambiar contraseña
+              </MenuItem>
+              <Divider />
+              <MenuItem component={Link} to="/logout" onClick={() => setAccountMenuAnchor(null)} sx={{ color: 'error.main' }}>
+                <LogoutIcon fontSize="small" sx={{ mr: 1.5 }} />
+                Cerrar sesión
+              </MenuItem>
+            </Menu>
+          </>
+        ) : (
+          <Button
+            variant="outlined"
+            startIcon={<PersonIcon />}
+            component={Link}
+            to="/login"
+            sx={{
+              borderColor: '#e2e8f0',
+              color: '#1e293b',
+              fontWeight: 500,
+              px: 2,
+              '&:hover': {
+                borderColor: '#2563eb',
+                backgroundColor: '#eff6ff',
+                color: '#2563eb',
+              },
+            }}
+          >
+            Iniciar Sesión
+          </Button>
+        )}
+      </Box>
+    </Box>
   );
 };
 

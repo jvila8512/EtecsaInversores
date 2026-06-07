@@ -1,0 +1,70 @@
+.sidebar-ribbon {
+  background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+  color: #fff;
+  text-align: center;
+  padding: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.sidebar-profile {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+
+  p {
+    margin: 0;
+    text-align: center;
+    color: #fff;
+  }
+
+  .user-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: #fff;
+  }
+
+  .user-role {
+    font-size: 0.7rem;
+    opacity: 0.85;
+    text-transform: capitalize;
+    color: rgba(255, 255, 255, 0.85);
+  }
+}
+
+.sidebar-nav {
+  background-color: transparent;
+  padding: 8px 0;
+
+  .MuiList-root {
+    padding: 0;
+  }
+
+  .MuiListItemButton-root {
+    border-radius: 8px;
+    margin: 0 8px;
+    width: calc(100% - 16px);
+
+    &:hover {
+      background-color: #eff6ff;
+    }
+
+    &.Mui-selected {
+      background-color: #dbeafe;
+
+      &:hover {
+        background-color: #bfdbfe;
+      }
+    }
+  }
+
+  .MuiMenu-paper {
+    background-color: #fff !important;
+  }
+}

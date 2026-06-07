@@ -1,272 +1,521 @@
+import './sidebar.scss';
+
 import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  Drawer,
-  List,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Collapse,
-  Avatar,
-  IconButton,
-  Divider,
-  Box,
-  Typography,
-  Tooltip,
-} from '@mui/material';
+import { useMediaQuery, useTheme } from '@mui/material';
+import Drawer from '@mui/material/Drawer';
+import Box from '@mui/material/Box';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import IconButton from '@mui/material/IconButton';
+import Divider from '@mui/material/Divider';
+import Tooltip from '@mui/material/Tooltip';
+import Collapse from '@mui/material/Collapse';
+import ExpandLessIcon from '@mui/icons-material/ExpandLess';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import { NavLink } from 'react-router-dom';
+
 import HomeIcon from '@mui/icons-material/Home';
-import CategoryIcon from '@mui/icons-material/Category';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
-import LogoutIcon from '@mui/icons-material/Logout';
-import ExpandLess from '@mui/icons-material/ExpandLess';
-import ExpandMore from '@mui/icons-material/ExpandMore';
+import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import TranslateIcon from '@mui/icons-material/Translate';
+import PersonIcon from '@mui/icons-material/Person';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import BadgeIcon from '@mui/icons-material/Badge';
 import BoltIcon from '@mui/icons-material/Bolt';
+import CategoryIcon from '@mui/icons-material/Category';
+import SettingsIcon from '@mui/icons-material/Settings';
+import MemoryIcon from '@mui/icons-material/Memory';
+import HubIcon from '@mui/icons-material/Hub';
+import SolarPowerIcon from '@mui/icons-material/SolarPower';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+import LockIcon from '@mui/icons-material/Lock';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+import { Translate } from 'react-jhipster';
+import { useAppDispatch } from 'app/config/store';
+import { setLocale } from 'app/shared/reducers/locale';
+import { logout } from 'app/shared/reducers/authentication';
+
+import { UserProfile, ProfileInfo } from './user-profile';
 
 const DRAWER_WIDTH = 260;
-const DRAWER_COLLAPSED_WIDTH = 72;
+const DRAWER_WIDTH_COLLAPSED = 72;
 
-interface SidebarProps {
+export interface ISidebarProps {
   isAuthenticated: boolean;
   isAdmin: boolean;
+  ribbonEnv: string;
+  isInProduction: boolean;
+  isOpenAPIEnabled: boolean;
   currentLocale: string;
-  onLocaleChange: (langKey: string) => void;
-  open: boolean;
-  onToggle: () => void;
+  onCollapse?: (collapsed: boolean) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ isAuthenticated, isAdmin, currentLocale, onLocaleChange, open, onToggle }) => {
-  const [entitiesOpen, setEntitiesOpen] = useState(false);
-  const [monitoreoOpen, setMonitoreoOpen] = useState(true);
-  const [adminOpen, setAdminOpen] = useState(false);
-  const navigate = useNavigate();
-  const location = useLocation();
+interface NavItemProps {
+  to: string;
+  icon: React.ReactNode;
+  label: string;
+  collapsed: boolean;
+  isMobile: boolean;
+  inset?: boolean;
+}
 
-  const subItem = (path: string, label: string) => {
-    const selected = location.pathname === path || location.pathname.startsWith(path + '/');
-    return (
+const NavItem: React.FC<NavItemProps> = ({ to, icon, label, collapsed, isMobile, inset }) => {
+  const content = (
+    <ListItem disablePadding>
       <ListItemButton
-        key={path}
+        component={NavLink}
+        to={to}
         sx={{
-          pl: 4,
-          borderRadius: 2,
+          minHeight: inset ? 36 : 40,
+          px: inset ? 3 : 2,
+          justifyContent: collapsed && !isMobile ? 'center' : 'initial',
+          color: 'text.primary',
+          borderRadius: 1,
           mx: 1,
-          mb: 0.5,
-          '&.Mui-selected': { bgcolor: '#eff6ff', '&:hover': { bgcolor: '#dbeafe' } },
-          '&:hover': { bgcolor: '#f1f5f9' },
+          '&.active': {
+            bgcolor: '#eff6ff',
+            color: '#2563eb',
+            '& .MuiListItemIcon-root': { color: '#2563eb' },
+          },
         }}
-        selected={selected}
-        onClick={() => navigate(path)}
       >
-        <ListItemIcon sx={{ minWidth: 40 }}>
-          <Box sx={{ width: 6, height: 6, borderRadius: '50%', bgcolor: selected ? '#2563eb' : '#94a3b8' }} />
-        </ListItemIcon>
-        <ListItemText primary={label} primaryTypographyProps={{ fontSize: '0.8125rem', fontWeight: selected ? 600 : 400 }} />
+        <ListItemIcon sx={{ minWidth: 0, mr: collapsed && !isMobile ? 0 : 2, color: 'inherit' }}>{icon}</ListItemIcon>
+        {!collapsed && <ListItemText primary={label} primaryTypographyProps={{ fontSize: inset ? '0.8rem' : '0.85rem' }} />}
       </ListItemButton>
-    );
-  };
+    </ListItem>
+  );
 
-  const navItem = (path: string, icon: React.ReactNode, label: string) => {
-    const selected = location.pathname === path || location.pathname.startsWith(path + '/');
+  if (collapsed && !isMobile) {
     return (
-      <ListItemButton
-        key={path}
-        selected={selected}
-        onClick={() => navigate(path)}
-        sx={{
-          borderRadius: 2,
-          mx: 1,
-          mb: 0.5,
-          '&.Mui-selected': { bgcolor: '#eff6ff', '&:hover': { bgcolor: '#dbeafe' } },
-          '&:hover': { bgcolor: '#f1f5f9' },
-        }}
-      >
-        <ListItemIcon sx={{ minWidth: open ? 40 : 'auto', justifyContent: 'center' }}>{icon}</ListItemIcon>
-        {open && <ListItemText primary={label} primaryTypographyProps={{ fontSize: '0.875rem', fontWeight: selected ? 600 : 400 }} />}
-      </ListItemButton>
+      <Tooltip title={label} placement="right">
+        {content}
+      </Tooltip>
     );
-  };
+  }
+  return content;
+};
 
-  return (
-    <Drawer
-      variant="permanent"
-      sx={{
-        width: open ? DRAWER_WIDTH : DRAWER_COLLAPSED_WIDTH,
-        flexShrink: 0,
-        '& .MuiDrawer-paper': {
-          width: open ? DRAWER_WIDTH : DRAWER_COLLAPSED_WIDTH,
-          boxSizing: 'border-box',
-          borderRight: '1px solid #e2e8f0',
-          backgroundColor: '#ffffff',
-          transition: 'width 0.3s ease',
-          overflowX: 'hidden',
-        },
-      }}
-    >
-      {/* Brand Header */}
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          p: 2,
-          borderBottom: '1px solid #e2e8f0',
-          minHeight: 64,
-        }}
-      >
-        {open && (
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
-            <BoltIcon sx={{ color: '#2563eb', fontSize: 28 }} />
-            <Typography variant="subtitle1" sx={{ fontWeight: 700, color: '#0f172a', lineHeight: 1.2 }}>
-              ETECSA
-              <br />
-              <Typography component="span" variant="caption" sx={{ color: '#64748b', fontWeight: 400 }}>
-                Solar Monitoring
-              </Typography>
-            </Typography>
-          </Box>
-        )}
-        {!open && (
-          <Box sx={{ display: 'flex', justifyContent: 'center', width: '100%' }}>
-            <BoltIcon sx={{ color: '#2563eb', fontSize: 24 }} />
-          </Box>
-        )}
-        <IconButton onClick={onToggle} size="small" sx={{ position: open ? 'static' : 'absolute', right: 8 }}>
-          <ChevronLeftIcon sx={{ transition: 'transform 0.3s', transform: open ? 'none' : 'rotate(180deg)' }} />
-        </IconButton>
-      </Box>
+interface ExpandableSectionProps {
+  icon: React.ReactNode;
+  label: string;
+  collapsed: boolean;
+  isMobile: boolean;
+  open: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}
 
-      {/* User Profile */}
-      {isAuthenticated && (
-        <Box
+const ExpandableSection: React.FC<ExpandableSectionProps> = ({ icon, label, collapsed, isMobile, open, onClick, children }) => {
+  const content = (
+    <>
+      <ListItem disablePadding>
+        <ListItemButton
+          onClick={onClick}
           sx={{
-            background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
-            color: '#fff',
-            p: open ? 2 : 1.5,
-            display: 'flex',
-            flexDirection: open ? 'row' : 'column',
-            alignItems: 'center',
-            gap: open ? 1.5 : 1,
+            minHeight: 40,
+            px: 2,
+            justifyContent: collapsed && !isMobile ? 'center' : 'initial',
+            color: 'text.primary',
+            borderRadius: 1,
+            mx: 1,
           }}
         >
-          <Avatar sx={{ bgcolor: 'rgba(255,255,255,0.2)', width: 40, height: 40 }}>
-            <AccountCircleIcon />
-          </Avatar>
-          {open && (
-            <Box>
-              <Typography variant="subtitle2" sx={{ fontWeight: 600 }}>
-                Usuario
-              </Typography>
-              <Typography variant="caption" sx={{ opacity: 0.8 }}>
-                Conectado
-              </Typography>
-            </Box>
+          <ListItemIcon sx={{ minWidth: 0, mr: collapsed && !isMobile ? 0 : 2, color: 'inherit' }}>{icon}</ListItemIcon>
+          {!collapsed && (
+            <>
+              <ListItemText primary={label} primaryTypographyProps={{ fontSize: '0.85rem', fontWeight: 500 }} />
+              {open ? (
+                <ExpandLessIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+              ) : (
+                <ExpandMoreIcon fontSize="small" sx={{ color: 'text.secondary' }} />
+              )}
+            </>
           )}
-        </Box>
+        </ListItemButton>
+      </ListItem>
+      {!collapsed && (
+        <Collapse in={open} timeout="auto">
+          {children}
+        </Collapse>
       )}
+    </>
+  );
 
-      {/* Navigation */}
-      <Box sx={{ py: 1, overflowY: 'auto', flex: 1 }}>
-        {navItem('/', <HomeIcon />, 'Inicio')}
+  if (collapsed && !isMobile) {
+    return (
+      <Tooltip title={label} placement="right">
+        {content}
+      </Tooltip>
+    );
+  }
+  return <>{content}</>;
+};
 
-        {isAuthenticated && (
+const Sidebar = (props: ISidebarProps) => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+
+  const [collapsed, setCollapsed] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [entitiesOpen, setEntitiesOpen] = useState(true);
+  const [adminOpen, setAdminOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+
+  const dispatch = useAppDispatch();
+
+  const handleLocaleChange = () => {
+    const current = sessionStorage.getItem('locale') || 'en';
+    const next = current === 'en' ? 'es' : 'en';
+    sessionStorage.setItem('locale', next);
+    dispatch(setLocale(next));
+  };
+
+  const toggleCollapsed = () => {
+    const newCollapsed = !collapsed;
+    setCollapsed(newCollapsed);
+    props.onCollapse?.(newCollapsed);
+  };
+
+  const toggleMobile = () => setMobileOpen(!mobileOpen);
+
+  const drawerWidth = collapsed && !isMobile ? DRAWER_WIDTH_COLLAPSED : DRAWER_WIDTH;
+
+  const renderDevRibbon = () =>
+    !props.isInProduction ? (
+      <Box className="sidebar-ribbon">
+        <Translate contentKey={`global.ribbon.${props.ribbonEnv}`} />
+      </Box>
+    ) : null;
+
+  const renderDrawerContent = () => (
+    <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
+      {renderDevRibbon()}
+
+      <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minHeight: 64, borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+        <IconButton
+          onClick={toggleCollapsed}
+          sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary', bgcolor: 'rgba(0,0,0,0.06)' } }}
+        >
+          {collapsed && !isMobile ? <MenuIcon /> : <ChevronLeftIcon />}
+        </IconButton>
+        {!collapsed && !isMobile && (
+          <Box sx={{ ml: 1, flex: 1 }}>
+            <Box sx={{ fontSize: '1.1rem', fontWeight: 600, color: 'text.primary' }}>ETECSA</Box>
+            <Box sx={{ fontSize: '0.7rem', color: 'text.secondary' }}>Solar Monitoring</Box>
+          </Box>
+        )}
+      </Box>
+
+      <Box className="sidebar-profile" sx={{ display: collapsed || !props.isAuthenticated ? 'none' : 'flex' }}>
+        <UserProfile collapsed={collapsed} isMobile={isMobile} />
+        <ProfileInfo collapsed={collapsed} isMobile={isMobile} />
+      </Box>
+
+      <Divider sx={{ borderColor: 'rgba(0,0,0,0.08)' }} />
+
+      <Box className="sidebar-nav" sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', py: 1 }}>
+        <List>
+          <NavItem to="/" icon={<HomeIcon />} label="Inicio" collapsed={collapsed} isMobile={isMobile} />
+        </List>
+
+        {props.isAuthenticated && (
           <>
-            {/* Entidades */}
-            <Divider sx={{ my: 1, mx: 2 }} />
-            <ListItemButton
-              onClick={() => setEntitiesOpen(!entitiesOpen)}
-              sx={{ borderRadius: 2, mx: 1, mb: 0.5, '&:hover': { bgcolor: '#f1f5f9' } }}
-            >
-              <ListItemIcon sx={{ minWidth: open ? 40 : 'auto', justifyContent: 'center' }}>
-                <CategoryIcon />
-              </ListItemIcon>
-              {open && <ListItemText primary="Entidades" primaryTypographyProps={{ fontSize: '0.875rem' }} />}
-              {open && (entitiesOpen ? <ExpandLess /> : <ExpandMore />)}
-            </ListItemButton>
-            <Collapse in={entitiesOpen && open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {/* jhipster-needle-add-entity-to-menu - JHipster will add entities to the menu here */}
-              </List>
-            </Collapse>
+            <List>
+              <NavItem to="/monitor" icon={<BoltIcon />} label="Monitor Solar" collapsed={collapsed} isMobile={isMobile} />
+            </List>
 
-            {/* Monitoreo */}
-            <Divider sx={{ my: 1, mx: 2 }} />
-            <ListItemButton
-              onClick={() => setMonitoreoOpen(!monitoreoOpen)}
-              sx={{ borderRadius: 2, mx: 1, mb: 0.5, '&:hover': { bgcolor: '#f1f5f9' } }}
-            >
-              <ListItemIcon sx={{ minWidth: open ? 40 : 'auto', justifyContent: 'center' }}>
-                <NotificationsActiveIcon />
-              </ListItemIcon>
-              {open && <ListItemText primary="Monitoreo" primaryTypographyProps={{ fontSize: '0.875rem' }} />}
-              {open && (monitoreoOpen ? <ExpandLess /> : <ExpandMore />)}
-            </ListItemButton>
-            <Collapse in={monitoreoOpen && open} timeout="auto" unmountOnExit>
-              <List component="div" disablePadding>
-                {/* jhipster-needle-add-monitoring-to-menu - Monitoring entities will be added here */}
-              </List>
-            </Collapse>
-
-            {/* Admin */}
-            {isAdmin && (
-              <>
-                <ListItemButton
-                  onClick={() => setAdminOpen(!adminOpen)}
-                  sx={{ borderRadius: 2, mx: 1, mb: 0.5, '&:hover': { bgcolor: '#f1f5f9' } }}
-                >
-                  <ListItemIcon sx={{ minWidth: open ? 40 : 'auto', justifyContent: 'center' }}>
-                    <AdminPanelSettingsIcon />
-                  </ListItemIcon>
-                  {open && <ListItemText primary="Admin" primaryTypographyProps={{ fontSize: '0.875rem' }} />}
-                  {open && (adminOpen ? <ExpandLess /> : <ExpandMore />)}
-                </ListItemButton>
-                <Collapse in={adminOpen && open} timeout="auto" unmountOnExit>
-                  <List component="div" disablePadding>
-                    {subItem('/admin/user-management', 'Usuarios')}
-                    {subItem('/admin/metrics', 'Métricas')}
-                    {subItem('/admin/health', 'Health Checks')}
-                    {subItem('/admin/configuration', 'Configuración')}
-                    {subItem('/admin/logs', 'Logs')}
-                    {subItem('/admin/tracker', 'Tracker')}
-                    {subItem('/admin/docs', 'API Docs')}
-                  </List>
-                </Collapse>
-              </>
-            )}
+            <List component="nav">
+              <ExpandableSection
+                icon={<CategoryIcon />}
+                label="Entidades"
+                collapsed={collapsed}
+                isMobile={isMobile}
+                open={entitiesOpen}
+                onClick={() => setEntitiesOpen(!entitiesOpen)}
+              >
+                <List disablePadding>
+                  <NavItem
+                    to="/marca"
+                    icon={<CategoryIcon fontSize="small" />}
+                    label="Marcas"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/modelo-inversor"
+                    icon={<SettingsIcon fontSize="small" />}
+                    label="Modelos Inversor"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/mapeo-registro"
+                    icon={<BoltIcon fontSize="small" />}
+                    label="Mapeo Registros"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem to="/sitio" icon={<HubIcon fontSize="small" />} label="Sitios" collapsed={false} isMobile={isMobile} inset />
+                  <NavItem
+                    to="/gateway-tcp"
+                    icon={<MemoryIcon fontSize="small" />}
+                    label="Gateways TCP"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/inversor"
+                    icon={<SolarPowerIcon fontSize="small" />}
+                    label="Inversores"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/dato-inversor"
+                    icon={<BarChartIcon fontSize="small" />}
+                    label="Datos Inversor"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/dato-eficiencia"
+                    icon={<BarChartIcon fontSize="small" />}
+                    label="Datos Eficiencia"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/alerta-config"
+                    icon={<WarningAmberIcon fontSize="small" />}
+                    label="Config. Alertas"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/evento-alerta"
+                    icon={<NotificationsActiveIcon fontSize="small" />}
+                    label="Eventos Alerta"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                </List>
+              </ExpandableSection>
+            </List>
           </>
         )}
 
-        <Divider sx={{ my: 1, mx: 2 }} />
-        {navItem('/account/settings', <AccountCircleIcon />, 'Mi Cuenta')}
-
-        {isAuthenticated && (
-          <ListItemButton onClick={() => navigate('/logout')} sx={{ borderRadius: 2, mx: 1, mb: 0.5, '&:hover': { bgcolor: '#fef2f2' } }}>
-            <ListItemIcon sx={{ minWidth: open ? 40 : 'auto', justifyContent: 'center' }}>
-              <LogoutIcon sx={{ color: '#dc2626' }} />
-            </ListItemIcon>
-            {open && <ListItemText primary="Cerrar Sesión" primaryTypographyProps={{ fontSize: '0.875rem', color: '#dc2626' }} />}
-          </ListItemButton>
+        {props.isAuthenticated && props.isAdmin && (
+          <List component="nav">
+            <ExpandableSection
+              icon={<AdminPanelSettingsIcon />}
+              label="Administración"
+              collapsed={collapsed}
+              isMobile={isMobile}
+              open={adminOpen}
+              onClick={() => setAdminOpen(!adminOpen)}
+            >
+              <List disablePadding>
+                <NavItem
+                  to="/admin/user-management"
+                  icon={<PersonIcon fontSize="small" />}
+                  label="Usuarios"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                <NavItem
+                  to="/admin/metrics"
+                  icon={<BarChartIcon fontSize="small" />}
+                  label="Métricas"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                <NavItem
+                  to="/admin/health"
+                  icon={<MemoryIcon fontSize="small" />}
+                  label="Salud"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                <NavItem
+                  to="/admin/configuration"
+                  icon={<SettingsIcon fontSize="small" />}
+                  label="Configuración"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                <NavItem
+                  to="/admin/logs"
+                  icon={<CategoryIcon fontSize="small" />}
+                  label="Logs"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                {props.isOpenAPIEnabled && (
+                  <NavItem
+                    to="/admin/docs"
+                    icon={<MemoryIcon fontSize="small" />}
+                    label="API"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                )}
+              </List>
+            </ExpandableSection>
+          </List>
         )}
-      </Box>
 
-      {/* Language Toggle */}
-      <Box sx={{ p: 1, borderTop: '1px solid #e2e8f0' }}>
-        <ListItemButton
-          onClick={() => onLocaleChange(currentLocale === 'es' ? 'en' : 'es')}
-          sx={{ borderRadius: 2, '&:hover': { bgcolor: '#f1f5f9' } }}
-        >
-          <ListItemIcon sx={{ minWidth: open ? 40 : 'auto', justifyContent: 'center' }}>
-            <TranslateIcon />
-          </ListItemIcon>
-          {open && (
-            <ListItemText primary={currentLocale === 'es' ? 'Español' : 'English'} primaryTypographyProps={{ fontSize: '0.875rem' }} />
-          )}
-        </ListItemButton>
+        {props.isAuthenticated && (
+          <List component="nav">
+            <ExpandableSection
+              icon={<PersonIcon />}
+              label="Cuenta"
+              collapsed={collapsed}
+              isMobile={isMobile}
+              open={accountOpen}
+              onClick={() => setAccountOpen(!accountOpen)}
+            >
+              <List disablePadding>
+                <NavItem
+                  to="/account/settings"
+                  icon={<SettingsIcon fontSize="small" />}
+                  label="Ajustes"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                <NavItem
+                  to="/account/password"
+                  icon={<LockIcon fontSize="small" />}
+                  label="Contraseña"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                <ListItem disablePadding>
+                  <ListItemButton
+                    onClick={() => dispatch(logout())}
+                    sx={{ minHeight: 36, px: 3, borderRadius: 1, mx: 1, color: 'error.main' }}
+                  >
+                    <ListItemIcon sx={{ minWidth: 0, mr: 2, color: 'error.main' }}>
+                      <LogoutIcon fontSize="small" />
+                    </ListItemIcon>
+                    <ListItemText primary="Cerrar sesión" primaryTypographyProps={{ fontSize: '0.8rem' }} />
+                  </ListItemButton>
+                </ListItem>
+              </List>
+            </ExpandableSection>
+          </List>
+        )}
+
+        <Box sx={{ mt: 'auto' }}>
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={handleLocaleChange}
+                sx={{
+                  minHeight: 40,
+                  px: 2,
+                  justifyContent: collapsed && !isMobile ? 'center' : 'initial',
+                  color: 'text.secondary',
+                  borderRadius: 1,
+                  mx: 1,
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0, mr: collapsed && !isMobile ? 0 : 2, color: 'text.secondary' }}>
+                  <BadgeIcon />
+                </ListItemIcon>
+                {!collapsed && <ListItemText primary={props.currentLocale.toUpperCase()} />}
+              </ListItemButton>
+            </ListItem>
+          </List>
+        </Box>
       </Box>
-    </Drawer>
+    </Box>
+  );
+
+  const renderMobileMenuButton = () =>
+    isMobile && (
+      <IconButton
+        color="inherit"
+        aria-label="open drawer"
+        edge="start"
+        onClick={toggleMobile}
+        sx={{
+          position: 'fixed',
+          top: 8,
+          left: 8,
+          zIndex: theme.zIndex.drawer + 1,
+          bgcolor: '#2563eb',
+          color: '#fff',
+          '&:hover': { bgcolor: '#1d4ed8' },
+        }}
+      >
+        <MenuIcon />
+      </IconButton>
+    );
+
+  return (
+    <>
+      {renderMobileMenuButton()}
+      <Drawer
+        variant="temporary"
+        open={mobileOpen}
+        onClose={toggleMobile}
+        ModalProps={{ keepMounted: true }}
+        sx={{
+          display: { xs: 'block', md: 'none' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: DRAWER_WIDTH,
+            bgcolor: '#ffffff',
+            color: 'text.primary',
+          },
+        }}
+      >
+        {renderDrawerContent()}
+      </Drawer>
+      <Drawer
+        variant="permanent"
+        sx={{
+          display: { xs: 'none', md: 'block' },
+          '& .MuiDrawer-paper': {
+            boxSizing: 'border-box',
+            width: drawerWidth,
+            bgcolor: '#ffffff',
+            color: 'text.primary',
+            borderRight: '1px solid #e2e8f0',
+            transition: theme.transitions.create('width', {
+              easing: theme.transitions.easing.sharp,
+              duration: theme.transitions.duration.leavingScreen,
+            }),
+            overflowX: 'hidden',
+          },
+        }}
+        open
+      >
+        {renderDrawerContent()}
+      </Drawer>
+    </>
   );
 };
 

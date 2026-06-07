@@ -1,28 +1,125 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Button, Table } from 'reactstrap';
-import { JhiItemCount, JhiPagination, Translate, getPaginationState } from 'react-jhipster';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { JhiPagination, getPaginationState } from 'react-jhipster';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faSort, faSortDown, faSortUp } from '@fortawesome/free-solid-svg-icons';
+import {
+  Box,
+  Button,
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  IconButton,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Checkbox,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  TextField,
+  Toolbar,
+  Typography,
+  FormControlLabel,
+  FormControl,
+  InputLabel,
+  Select,
+  Chip,
+} from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/Delete';
+import SearchIcon from '@mui/icons-material/Search';
+import ViewColumnIcon from '@mui/icons-material/ViewColumn';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { ASC, DESC, ITEMS_PER_PAGE, SORT } from 'app/shared/util/pagination.constants';
 import { overridePaginationStateWithQueryParams } from 'app/shared/util/entity-utils';
 import { useAppDispatch, useAppSelector } from 'app/config/store';
+import { getEntities, createEntity, updateEntity, deleteEntity } from './alerta-config.reducer';
+import { getEntities as getInversores } from 'app/entities/inversor/inversor.reducer';
+import { IAlertaConfig } from 'app/shared/model/alerta-config.model';
 
-import { getEntities } from './alerta-config.reducer';
+const ALL_COLUMNS = [
+  { key: 'id', label: 'Id', default: true },
+  { key: 'nombre', label: 'Nombre', default: true },
+  { key: 'descripcion', label: 'Descripción', default: false },
+  { key: 'campoMonitorizado', label: 'Campo Monitorizado', default: true },
+  { key: 'operador', label: 'Operador', default: true },
+  { key: 'umbral', label: 'Umbral', default: true },
+  { key: 'activa', label: 'Activa', default: true },
+  { key: 'nivelSeveridad', label: 'Severidad', default: true },
+  { key: 'canalNotificacion', label: 'Canal Notif.', default: false },
+  { key: 'cooldownMinutos', label: 'Cooldown (min)', default: false },
+  { key: 'inversor', label: 'Inversor', default: true },
+];
+
+const emptyForm = {
+  nombre: '',
+  descripcion: '',
+  campoMonitorizado: '',
+  operador: '',
+  umbral: '',
+  activa: false,
+  nivelSeveridad: '',
+  canalNotificacion: '',
+  cooldownMinutos: '',
+  inversorId: '',
+};
+
+const severidadColors: Record<string, 'error' | 'warning' | 'info' | 'default'> = {
+  CRITICO: 'error',
+  ALTO: 'warning',
+  MEDIO: 'info',
+  BAJO: 'default',
+};
 
 export const AlertaConfig = () => {
   const dispatch = useAppDispatch();
-
   const pageLocation = useLocation();
   const navigate = useNavigate();
+
+  const alertaConfigList = useAppSelector(state => state.alertaConfig.entities);
+  const loading = useAppSelector(state => state.alertaConfig.loading);
+  const updating = useAppSelector(state => state.alertaConfig.updating);
+  const updateSuccess = useAppSelector(state => state.alertaConfig.updateSuccess);
+  const totalItems = useAppSelector(state => state.alertaConfig.totalItems);
+  const inversorList = useAppSelector(state => state.inversor.entities);
 
   const [paginationState, setPaginationState] = useState(
     overridePaginationStateWithQueryParams(getPaginationState(pageLocation, ITEMS_PER_PAGE, 'id'), pageLocation.search),
   );
+  const [selectedEntity, setSelectedEntity] = useState<IAlertaConfig | null>(null);
+  const [isOpen, setIsOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [columnMenuAnchor, setColumnMenuAnchor] = useState<null | HTMLElement>(null);
+  const [visibleColumns, setVisibleColumns] = useState<string[]>(() => {
+    const saved = localStorage.getItem('alerta-config-columns');
+    if (saved) return JSON.parse(saved);
+    return ALL_COLUMNS.filter(c => c.default).map(c => c.key);
+  });
+  const [formKey, setFormKey] = useState(0);
+  const [formValues, setFormValues] = useState(emptyForm);
 
-  const alertaConfigList = useAppSelector(state => state.alertaConfig.entities);
-  const loading = useAppSelector(state => state.alertaConfig.loading);
-  const totalItems = useAppSelector(state => state.alertaConfig.totalItems);
+  const saveColumns = (cols: string[]) => {
+    setVisibleColumns(cols);
+    localStorage.setItem('alerta-config-columns', JSON.stringify(cols));
+  };
+  const toggleColumn = (key: string) => {
+    if (visibleColumns.includes(key)) {
+      if (visibleColumns.length > 1) saveColumns(visibleColumns.filter(c => c !== key));
+    } else {
+      saveColumns([...visibleColumns, key]);
+    }
+  };
+  const showColumn = (key: string) => visibleColumns.includes(key);
 
   const getAllEntities = () => {
     dispatch(
@@ -33,214 +130,398 @@ export const AlertaConfig = () => {
       }),
     );
   };
-
   const sortEntities = () => {
     getAllEntities();
     const endURL = `?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`;
-    if (pageLocation.search !== endURL) {
-      navigate(`${pageLocation.pathname}${endURL}`);
-    }
+    if (pageLocation.search !== endURL) navigate(`${pageLocation.pathname}${endURL}`);
   };
 
   useEffect(() => {
     sortEntities();
   }, [paginationState.activePage, paginationState.order, paginationState.sort]);
-
   useEffect(() => {
     const params = new URLSearchParams(pageLocation.search);
     const page = params.get('page');
     const sort = params.get(SORT);
     if (page && sort) {
       const sortSplit = sort.split(',');
-      setPaginationState({
-        ...paginationState,
-        activePage: +page,
-        sort: sortSplit[0],
-        order: sortSplit[1],
-      });
+      setPaginationState({ ...paginationState, activePage: +page, sort: sortSplit[0], order: sortSplit[1] });
     }
   }, [pageLocation.search]);
-
-  const sort = p => () => {
-    setPaginationState({
-      ...paginationState,
-      order: paginationState.order === ASC ? DESC : ASC,
-      sort: p,
-    });
-  };
-
-  const handlePagination = currentPage =>
-    setPaginationState({
-      ...paginationState,
-      activePage: currentPage,
-    });
-
-  const handleSyncList = () => {
-    sortEntities();
-  };
-
-  const getSortIconByFieldName = (fieldName: string) => {
-    const sortFieldName = paginationState.sort;
-    const order = paginationState.order;
-    if (sortFieldName !== fieldName) {
-      return faSort;
+  useEffect(() => {
+    if (updateSuccess) {
+      setIsOpen(false);
+      setSelectedEntity(null);
+      setFormValues(emptyForm);
     }
-    return order === ASC ? faSortUp : faSortDown;
+  }, [updateSuccess]);
+  useEffect(() => {
+    dispatch(getInversores({ page: 0, size: 1000, sort: 'id,asc' }));
+  }, []);
+
+  const sort = (field: string) =>
+    setPaginationState({ ...paginationState, order: paginationState.order === ASC ? DESC : ASC, sort: field });
+  const handlePagination = (currentPage: number) => setPaginationState({ ...paginationState, activePage: currentPage });
+  const handleSyncList = () => sortEntities();
+
+  const filteredList = alertaConfigList?.filter(
+    e =>
+      !globalFilter ||
+      e.nombre?.toLowerCase().includes(globalFilter.toLowerCase()) ||
+      e.campoMonitorizado?.toLowerCase().includes(globalFilter.toLowerCase()) ||
+      e.inversor?.nombre?.toLowerCase().includes(globalFilter.toLowerCase()),
+  );
+
+  const openNew = () => {
+    setSelectedEntity(null);
+    setFormValues(emptyForm);
+    setFormKey(prev => prev + 1);
+    setIsOpen(true);
+  };
+  const openEdit = (row: IAlertaConfig) => {
+    setSelectedEntity(row);
+    setFormValues({
+      nombre: row.nombre || '',
+      descripcion: row.descripcion || '',
+      campoMonitorizado: row.campoMonitorizado || '',
+      operador: row.operador || '',
+      umbral: row.umbral?.toString() || '',
+      activa: row.activa ?? false,
+      nivelSeveridad: row.nivelSeveridad || '',
+      canalNotificacion: row.canalNotificacion || '',
+      cooldownMinutos: row.cooldownMinutos?.toString() || '',
+      inversorId: row.inversor?.id?.toString() || '',
+    });
+    setFormKey(prev => prev + 1);
+    setIsOpen(true);
+  };
+  const closeDialog = () => {
+    setIsOpen(false);
+    setSelectedEntity(null);
+    setFormValues(emptyForm);
+  };
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value, type, checked } = e.target;
+    setFormValues(prev => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+  };
+  const save = () => {
+    const entity: any = {
+      nombre: formValues.nombre,
+      descripcion: formValues.descripcion || null,
+      campoMonitorizado: formValues.campoMonitorizado,
+      operador: formValues.operador,
+      umbral: formValues.umbral ? parseFloat(formValues.umbral) : undefined,
+      activa: formValues.activa,
+      nivelSeveridad: formValues.nivelSeveridad || null,
+      canalNotificacion: formValues.canalNotificacion || null,
+      cooldownMinutos: formValues.cooldownMinutos ? parseInt(formValues.cooldownMinutos, 10) : null,
+      inversor: formValues.inversorId ? { id: parseInt(formValues.inversorId, 10) } : null,
+    };
+    if (selectedEntity?.id) entity.id = selectedEntity.id;
+    dispatch(selectedEntity?.id ? updateEntity(entity) : createEntity(entity));
+  };
+  const openDelete = (row: IAlertaConfig) => {
+    setSelectedEntity(row);
+    setIsDeleting(true);
+  };
+  const confirmDelete = () => {
+    if (selectedEntity?.id) dispatch(deleteEntity(selectedEntity.id));
+    setIsDeleting(false);
+    setSelectedEntity(null);
+  };
+  const closeDelete = () => {
+    setIsDeleting(false);
+    setSelectedEntity(null);
   };
 
   return (
-    <div>
-      <h2 id="alerta-config-heading" data-cy="AlertaConfigHeading">
-        <Translate contentKey="inversorMonitorApp.alertaConfig.home.title">Alerta Configs</Translate>
-        <div className="d-flex justify-content-end">
-          <Button className="me-2" color="info" onClick={handleSyncList} disabled={loading}>
-            <FontAwesomeIcon icon="sync" spin={loading} />{' '}
-            <Translate contentKey="inversorMonitorApp.alertaConfig.home.refreshListLabel">Refresh List</Translate>
+    <Paper sx={{ p: 3 }}>
+      <Toolbar sx={{ justifyContent: 'space-between', mb: 2, px: 0 }}>
+        <Typography variant="h5" sx={{ fontWeight: 700 }}>
+          Configuración de Alertas
+        </Typography>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button variant="outlined" startIcon={<ViewColumnIcon />} onClick={e => setColumnMenuAnchor(e.currentTarget)}>
+            Columnas
           </Button>
-          <Link to="/alerta-config/new" className="btn btn-primary jh-create-entity" id="jh-create-entity" data-cy="entityCreateButton">
-            <FontAwesomeIcon icon="plus" />
-            &nbsp;
-            <Translate contentKey="inversorMonitorApp.alertaConfig.home.createLabel">Create new Alerta Config</Translate>
-          </Link>
-        </div>
-      </h2>
-      <div className="table-responsive">
-        {alertaConfigList && alertaConfigList.length > 0 ? (
-          <Table responsive>
-            <thead>
-              <tr>
-                <th className="hand" onClick={sort('id')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.id">ID</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('id')} />
-                </th>
-                <th className="hand" onClick={sort('nombre')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.nombre">Nombre</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('nombre')} />
-                </th>
-                <th className="hand" onClick={sort('descripcion')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.descripcion">Descripcion</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('descripcion')} />
-                </th>
-                <th className="hand" onClick={sort('campoMonitorizado')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.campoMonitorizado">Campo Monitorizado</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('campoMonitorizado')} />
-                </th>
-                <th className="hand" onClick={sort('operador')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.operador">Operador</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('operador')} />
-                </th>
-                <th className="hand" onClick={sort('umbral')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.umbral">Umbral</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('umbral')} />
-                </th>
-                <th className="hand" onClick={sort('activa')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.activa">Activa</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('activa')} />
-                </th>
-                <th className="hand" onClick={sort('nivelSeveridad')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.nivelSeveridad">Nivel Severidad</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('nivelSeveridad')} />
-                </th>
-                <th className="hand" onClick={sort('canalNotificacion')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.canalNotificacion">Canal Notificacion</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('canalNotificacion')} />
-                </th>
-                <th className="hand" onClick={sort('cooldownMinutos')}>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.cooldownMinutos">Cooldown Minutos</Translate>{' '}
-                  <FontAwesomeIcon icon={getSortIconByFieldName('cooldownMinutos')} />
-                </th>
-                <th>
-                  <Translate contentKey="inversorMonitorApp.alertaConfig.inversor">Inversor</Translate> <FontAwesomeIcon icon="sort" />
-                </th>
-                <th />
-              </tr>
-            </thead>
-            <tbody>
-              {alertaConfigList.map((alertaConfig, i) => (
-                <tr key={`entity-${i}`} data-cy="entityTable">
-                  <td>
-                    <Button tag={Link} to={`/alerta-config/${alertaConfig.id}`} color="link" size="sm">
-                      {alertaConfig.id}
-                    </Button>
-                  </td>
-                  <td>{alertaConfig.nombre}</td>
-                  <td>{alertaConfig.descripcion}</td>
-                  <td>{alertaConfig.campoMonitorizado}</td>
-                  <td>{alertaConfig.operador}</td>
-                  <td>{alertaConfig.umbral}</td>
-                  <td>{alertaConfig.activa ? 'true' : 'false'}</td>
-                  <td>{alertaConfig.nivelSeveridad}</td>
-                  <td>{alertaConfig.canalNotificacion}</td>
-                  <td>{alertaConfig.cooldownMinutos}</td>
-                  <td>
-                    {alertaConfig.inversor ? <Link to={`/inversor/${alertaConfig.inversor.id}`}>{alertaConfig.inversor.nombre}</Link> : ''}
-                  </td>
-                  <td className="text-end">
-                    <div className="btn-group flex-btn-group-container">
-                      <Button tag={Link} to={`/alerta-config/${alertaConfig.id}`} color="info" size="sm" data-cy="entityDetailsButton">
-                        <FontAwesomeIcon icon="eye" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.view">View</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        tag={Link}
-                        to={`/alerta-config/${alertaConfig.id}/edit?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`}
-                        color="primary"
-                        size="sm"
-                        data-cy="entityEditButton"
-                      >
-                        <FontAwesomeIcon icon="pencil-alt" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.edit">Edit</Translate>
-                        </span>
-                      </Button>
-                      <Button
-                        onClick={() =>
-                          (window.location.href = `/alerta-config/${alertaConfig.id}/delete?page=${paginationState.activePage}&sort=${paginationState.sort},${paginationState.order}`)
-                        }
-                        color="danger"
-                        size="sm"
-                        data-cy="entityDeleteButton"
-                      >
-                        <FontAwesomeIcon icon="trash" />{' '}
-                        <span className="d-none d-md-inline">
-                          <Translate contentKey="entity.action.delete">Delete</Translate>
-                        </span>
-                      </Button>
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </Table>
-        ) : (
-          !loading && (
-            <div className="alert alert-warning">
-              <Translate contentKey="inversorMonitorApp.alertaConfig.home.notFound">No Alerta Configs found</Translate>
-            </div>
-          )
-        )}
-      </div>
-      {totalItems ? (
-        <div className={alertaConfigList && alertaConfigList.length > 0 ? '' : 'd-none'}>
-          <div className="justify-content-center d-flex">
-            <JhiItemCount page={paginationState.activePage} total={totalItems} itemsPerPage={paginationState.itemsPerPage} i18nEnabled />
-          </div>
-          <div className="justify-content-center d-flex">
-            <JhiPagination
-              activePage={paginationState.activePage}
-              onSelect={handlePagination}
-              maxButtons={5}
-              itemsPerPage={paginationState.itemsPerPage}
-              totalItems={totalItems}
-            />
-          </div>
-        </div>
-      ) : (
-        ''
+          <Menu anchorEl={columnMenuAnchor} open={Boolean(columnMenuAnchor)} onClose={() => setColumnMenuAnchor(null)}>
+            {ALL_COLUMNS.map(col => (
+              <MenuItem key={col.key} onClick={() => toggleColumn(col.key)}>
+                <ListItemIcon>
+                  <Checkbox checked={visibleColumns.includes(col.key)} size="small" />
+                </ListItemIcon>
+                <ListItemText>{col.label}</ListItemText>
+              </MenuItem>
+            ))}
+          </Menu>
+          <Button variant="outlined" startIcon={<RefreshIcon />} onClick={handleSyncList} disabled={loading}>
+            Actualizar
+          </Button>
+          <Button variant="contained" startIcon={<AddIcon />} onClick={openNew}>
+            Nueva Alerta Config
+          </Button>
+        </Box>
+      </Toolbar>
+
+      {loading && !alertaConfigList?.length && (
+        <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+          <CircularProgress size={40} sx={{ color: '#2563eb' }} />
+        </Box>
       )}
-    </div>
+
+      <TextField
+        size="small"
+        placeholder="Buscar..."
+        value={globalFilter}
+        onChange={e => setGlobalFilter(e.target.value)}
+        InputProps={{ startAdornment: <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} /> }}
+        sx={{ mb: 2, width: 300 }}
+      />
+
+      <TableContainer sx={{ overflowX: 'auto' }}>
+        <Table sx={{ minWidth: 900 }}>
+          <TableHead>
+            <TableRow sx={{ bgcolor: '#f8fafc' }}>
+              {showColumn('id') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('id')}>
+                  Id
+                </TableCell>
+              )}
+              {showColumn('nombre') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('nombre')}>
+                  Nombre
+                </TableCell>
+              )}
+              {showColumn('descripcion') && <TableCell sx={{ fontWeight: 600 }}>Descripción</TableCell>}
+              {showColumn('campoMonitorizado') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('campoMonitorizado')}>
+                  Campo
+                </TableCell>
+              )}
+              {showColumn('operador') && <TableCell sx={{ fontWeight: 600 }}>Operador</TableCell>}
+              {showColumn('umbral') && <TableCell sx={{ fontWeight: 600 }}>Umbral</TableCell>}
+              {showColumn('activa') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('activa')}>
+                  Activa
+                </TableCell>
+              )}
+              {showColumn('nivelSeveridad') && <TableCell sx={{ fontWeight: 600 }}>Severidad</TableCell>}
+              {showColumn('canalNotificacion') && <TableCell sx={{ fontWeight: 600 }}>Canal</TableCell>}
+              {showColumn('cooldownMinutos') && <TableCell sx={{ fontWeight: 600 }}>Cooldown</TableCell>}
+              {showColumn('inversor') && (
+                <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('inversor.nombre')}>
+                  Inversor
+                </TableCell>
+              )}
+              <TableCell sx={{ fontWeight: 600 }}>Acciones</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filteredList?.map((row: IAlertaConfig) => (
+              <TableRow key={row.id} hover>
+                {showColumn('id') && <TableCell>{row.id}</TableCell>}
+                {showColumn('nombre') && <TableCell>{row.nombre}</TableCell>}
+                {showColumn('descripcion') && (
+                  <TableCell sx={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                    {row.descripcion}
+                  </TableCell>
+                )}
+                {showColumn('campoMonitorizado') && <TableCell>{row.campoMonitorizado}</TableCell>}
+                {showColumn('operador') && <TableCell>{row.operador}</TableCell>}
+                {showColumn('umbral') && <TableCell>{row.umbral}</TableCell>}
+                {showColumn('activa') && <TableCell>{row.activa ? 'Sí' : 'No'}</TableCell>}
+                {showColumn('nivelSeveridad') && (
+                  <TableCell>
+                    <Chip label={row.nivelSeveridad} color={severidadColors[row.nivelSeveridad || ''] || 'default'} size="small" />
+                  </TableCell>
+                )}
+                {showColumn('canalNotificacion') && <TableCell>{row.canalNotificacion}</TableCell>}
+                {showColumn('cooldownMinutos') && <TableCell>{row.cooldownMinutos}</TableCell>}
+                {showColumn('inversor') && <TableCell>{row.inversor?.nombre}</TableCell>}
+                <TableCell>
+                  <Box sx={{ display: 'flex', gap: 0.5 }}>
+                    <IconButton size="small" color="warning" onClick={() => openEdit(row)}>
+                      <EditIcon fontSize="small" />
+                    </IconButton>
+                    <IconButton size="small" color="error" onClick={() => openDelete(row)}>
+                      <DeleteIcon fontSize="small" />
+                    </IconButton>
+                  </Box>
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
+      {totalItems && alertaConfigList && alertaConfigList.length > 0 ? (
+        <Box sx={{ mt: 2, display: 'flex', justifyContent: 'center' }}>
+          <JhiPagination
+            activePage={paginationState.activePage}
+            onSelect={handlePagination}
+            maxButtons={5}
+            itemsPerPage={paginationState.itemsPerPage}
+            totalItems={totalItems}
+          />
+        </Box>
+      ) : null}
+
+      <Dialog open={isOpen} onClose={closeDialog} maxWidth="sm" fullWidth>
+        <DialogTitle>{selectedEntity ? 'Editar Configuración de Alerta' : 'Nueva Configuración de Alerta'}</DialogTitle>
+        <DialogContent>
+          {loading ? (
+            <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
+              <CircularProgress />
+            </Box>
+          ) : (
+            <form key={formKey}>
+              <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2, mt: 1 }}>
+                <TextField
+                  label="Nombre"
+                  id="alerta-nombre"
+                  name="nombre"
+                  value={formValues.nombre}
+                  onChange={handleInputChange}
+                  fullWidth
+                  required
+                  error={!formValues.nombre}
+                  helperText={!formValues.nombre ? 'Requerido' : ''}
+                />
+                <TextField
+                  label="Descripción"
+                  id="alerta-descripcion"
+                  name="descripcion"
+                  value={formValues.descripcion}
+                  onChange={handleInputChange}
+                  fullWidth
+                  multiline
+                  rows={2}
+                />
+                <TextField
+                  label="Campo Monitorizado"
+                  id="alerta-campoMonitorizado"
+                  name="campoMonitorizado"
+                  value={formValues.campoMonitorizado}
+                  onChange={handleInputChange}
+                  fullWidth
+                  required
+                  error={!formValues.campoMonitorizado}
+                  helperText={!formValues.campoMonitorizado ? 'Requerido' : ''}
+                />
+                <FormControl fullWidth>
+                  <InputLabel id="alerta-operador-label">Operador</InputLabel>
+                  <Select
+                    labelId="alerta-operador-label"
+                    id="alerta-operador"
+                    name="operador"
+                    value={formValues.operador}
+                    onChange={e => setFormValues(prev => ({ ...prev, operador: e.target.value }))}
+                    label="Operador"
+                  >
+                    <MenuItem value="">— Seleccionar —</MenuItem>
+                    <MenuItem value=">">{'>'} (Mayor que)</MenuItem>
+                    <MenuItem value="<">{'<'} (Menor que)</MenuItem>
+                    <MenuItem value=">=">{'≥'} (Mayor o igual)</MenuItem>
+                    <MenuItem value="<=">{'≤'} (Menor o igual)</MenuItem>
+                    <MenuItem value="==">{'='} (Igual)</MenuItem>
+                  </Select>
+                </FormControl>
+                <TextField
+                  label="Umbral"
+                  id="alerta-umbral"
+                  name="umbral"
+                  type="number"
+                  value={formValues.umbral}
+                  onChange={handleInputChange}
+                  fullWidth
+                  required
+                  error={!formValues.umbral}
+                  helperText={!formValues.umbral ? 'Requerido' : ''}
+                />
+                <FormControlLabel
+                  control={<Checkbox name="activa" checked={formValues.activa} onChange={handleInputChange} />}
+                  label="Activa"
+                />
+                <TextField
+                  label="Nivel Severidad"
+                  id="alerta-nivelSeveridad"
+                  name="nivelSeveridad"
+                  value={formValues.nivelSeveridad}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Canal Notificación"
+                  id="alerta-canalNotificacion"
+                  name="canalNotificacion"
+                  value={formValues.canalNotificacion}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Cooldown (minutos)"
+                  id="alerta-cooldownMinutos"
+                  name="cooldownMinutos"
+                  type="number"
+                  value={formValues.cooldownMinutos}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <FormControl fullWidth>
+                  <InputLabel id="alerta-inversor-label">Inversor</InputLabel>
+                  <Select
+                    labelId="alerta-inversor-label"
+                    id="alerta-inversorId"
+                    name="inversorId"
+                    value={formValues.inversorId}
+                    onChange={e => setFormValues(prev => ({ ...prev, inversorId: e.target.value }))}
+                    label="Inversor"
+                  >
+                    <MenuItem value="">— Ninguno —</MenuItem>
+                    {inversorList?.map((i: any) => (
+                      <MenuItem key={i.id} value={i.id}>
+                        {i.nombre}
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+                <Box sx={{ display: 'flex', justifyContent: 'flex-end', gap: 1, mt: 2 }}>
+                  <Button onClick={closeDialog}>Cancelar</Button>
+                  <Button
+                    variant="contained"
+                    onClick={save}
+                    disabled={updating || !formValues.nombre || !formValues.campoMonitorizado || !formValues.umbral}
+                  >
+                    <FontAwesomeIcon icon="save" />
+                    &nbsp;Guardar
+                  </Button>
+                </Box>
+              </Box>
+            </form>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={isDeleting} onClose={closeDelete} maxWidth="xs" fullWidth>
+        <DialogTitle>Confirmar</DialogTitle>
+        <DialogContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1 }}>
+            <WarningAmberIcon sx={{ fontSize: 40, color: '#f59e0b' }} />
+            {selectedEntity && (
+              <Typography>
+                ¿Seguro que quiere eliminar la Alerta: <strong>{selectedEntity.nombre}</strong>?
+              </Typography>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={closeDelete}>No</Button>
+          <Button onClick={confirmDelete} color="error" variant="contained">
+            Sí
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </Paper>
   );
 };
 
