@@ -24,6 +24,7 @@ import PersonIcon from '@mui/icons-material/Person';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import BadgeIcon from '@mui/icons-material/Badge';
 import BoltIcon from '@mui/icons-material/Bolt';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import CategoryIcon from '@mui/icons-material/Category';
 import SettingsIcon from '@mui/icons-material/Settings';
 import MemoryIcon from '@mui/icons-material/Memory';
@@ -163,6 +164,7 @@ const Sidebar = (props: ISidebarProps) => {
   const [collapsed, setCollapsed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [entitiesOpen, setEntitiesOpen] = useState(true);
+  const [monitorOpen, setMonitorOpen] = useState(true);
   const [adminOpen, setAdminOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
 
@@ -225,8 +227,50 @@ const Sidebar = (props: ISidebarProps) => {
 
         {props.isAuthenticated && (
           <>
-            <List>
-              <NavItem to="/monitor" icon={<BoltIcon />} label="Monitor Solar" collapsed={collapsed} isMobile={isMobile} />
+            <List component="nav">
+              <ExpandableSection
+                icon={<BoltIcon />}
+                label="Monitor Solar"
+                collapsed={collapsed}
+                isMobile={isMobile}
+                open={monitorOpen}
+                onClick={() => setMonitorOpen(!monitorOpen)}
+              >
+                <List disablePadding>
+                  <NavItem
+                    to="/monitor"
+                    icon={<DashboardIcon fontSize="small" />}
+                    label="Dashboard"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/monitor/history"
+                    icon={<BarChartIcon fontSize="small" />}
+                    label="Historial"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/monitor/alerts"
+                    icon={<NotificationsActiveIcon fontSize="small" />}
+                    label="Alertas"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                  <NavItem
+                    to="/monitor/settings"
+                    icon={<SettingsIcon fontSize="small" />}
+                    label="Configuración"
+                    collapsed={false}
+                    isMobile={isMobile}
+                    inset
+                  />
+                </List>
+              </ExpandableSection>
             </List>
 
             <List component="nav">

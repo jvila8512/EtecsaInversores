@@ -72,8 +72,7 @@ export const MONITOR_THEME_CSS = `
   background: var(--bg);
   color: var(--tx);
   font-family: 'IBM Plex Sans', -apple-system, BlinkMacSystemFont, sans-serif;
-  min-height: calc(100vh - 60px);
-  padding-bottom: 62px; /* bottom nav height */
+  min-height: calc(100vh - 64px);
   position: relative;
   overflow-x: hidden;
 }
