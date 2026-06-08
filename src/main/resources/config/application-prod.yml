@@ -26,6 +26,9 @@ management:
         enabled: false
 
 spring:
+  docker:
+    compose:
+      enabled: false
   devtools:
     restart:
       enabled: false
@@ -33,7 +36,7 @@ spring:
       enabled: false
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
-    url: jdbc:postgresql://localhost:5432/inversorMonitor
+    url: jdbc:postgresql://localhost:5432/inversorMonitor?stringtype=unspecified
     username: inversorMonitor
     password:
     hikari:
@@ -121,4 +124,7 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+app:
+  upload:
+    dir: /app/profile-images
 # application:

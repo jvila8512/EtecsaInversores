@@ -1,4 +1,4 @@
-# This configuration is intended for development purpose, it's **your** responsibility to harden it for production
+# Inversor Monitor — Application + PostgreSQL
 name: inversormonitor
 services:
   app:
@@ -6,11 +6,18 @@ services:
     environment:
       - _JAVA_OPTIONS=-Xmx512m -Xms256m
       - SPRING_PROFILES_ACTIVE=prod,api-docs
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/inversorMonitor?stringtype=unspecified
+      - SPRING_DATASOURCE_USERNAME=inversorMonitor
+      - SPRING_DATASOURCE_PASSWORD=etecsa2026
+      - SPRING_LIQUIBASE_URL=jdbc:postgresql://postgresql:5432/inversorMonitor?stringtype=unspecified
+      - SPRING_LIQUIBASE_USER=inversorMonitor
+      - SPRING_LIQUIBASE_PASSWORD=etecsa2026
+      - APP_UPLOAD_DIR=/app/profile-images
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgresql:5432/inversorMonitor
-      - SPRING_LIQUIBASE_URL=jdbc:postgresql://postgresql:5432/inversorMonitor
     ports:
-      - 127.0.0.1:8080:8080
+      - 127.0.0.1:8081:8080
+    volumes:
+      - profile-images:/app/profile-images
     healthcheck:
       test:
         - CMD
@@ -27,3 +34,6 @@ services:
     extends:
       file: ./postgresql.yml
       service: postgresql
+volumes:
+  profile-images:
+  pgdata:

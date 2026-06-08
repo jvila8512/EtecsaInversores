@@ -229,14 +229,11 @@ public class InversorResource {
     ) throws URISyntaxException {
         LOG.debug("REST request to register slave under master {} : {}", masterId, inversorDTO);
 
-        // Verificar que el master existe y es master
-        var masterOpt = inversorRepository.findOneWithEagerRelationships(masterId);
-        if (masterOpt.isEmpty()) {
-            throw new BadRequestAlertException("Master inversor not found", ENTITY_NAME, "masternotfound");
-        }
-
-        var master = masterOpt.get();
-        if (!Boolean.TRUE.equals(master.getEsMaster())) {
+  // Verificar que el master existe y es master
+  var master = inversorRepository
+    .findOneWithEagerRelationships(masterId)
+    .orElseThrow(() -> new BadRequestAlertException("Master inversor not found", ENTITY_NAME, "masternotfound"));
+  if (!Boolean.TRUE.equals(master.getEsMaster())) {
             throw new BadRequestAlertException("The referenced inversor is not a master", ENTITY_NAME, "notamaster");
         }
 

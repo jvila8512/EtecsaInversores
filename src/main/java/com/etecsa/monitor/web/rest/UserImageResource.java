@@ -6,6 +6,7 @@ import com.etecsa.monitor.security.SecurityUtils;
 import com.etecsa.monitor.service.UserService;
 import java.io.IOException;
 import java.nio.file.*;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,11 +47,11 @@ public class UserImageResource {
             return ResponseEntity.badRequest().body("Invalid file type. Allowed: JPEG, PNG, GIF, WebP");
         }
 
-        String userLogin = SecurityUtils.getCurrentUserLogin().orElseThrow();
-        User user = userRepository.findOneByLogin(userLogin).orElseThrow();
+    String userLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new IllegalStateException("No authenticated user"));
+    User user = userRepository.findOneByLogin(userLogin).orElseThrow(() -> new IllegalStateException("User not found: " + userLogin));
 
-        try {
-            Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+    try {
+      Path uploadPath = Path.of(uploadDir).toAbsolutePath().normalize();
             Files.createDirectories(uploadPath);
 
             String extension = getExtension(contentType);
@@ -78,14 +79,14 @@ public class UserImageResource {
 
     @DeleteMapping("/account/image")
     public ResponseEntity<Void> deleteProfileImage() {
-        String userLogin = SecurityUtils.getCurrentUserLogin().orElseThrow();
-        User user = userRepository.findOneByLogin(userLogin).orElseThrow();
+    String userLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new IllegalStateException("No authenticated user"));
+    User user = userRepository.findOneByLogin(userLogin).orElseThrow(() -> new IllegalStateException("User not found: " + userLogin));
 
-        String oldImageUrl = user.getImageUrl();
+    String oldImageUrl = user.getImageUrl();
         if (oldImageUrl != null && oldImageUrl.startsWith("/content/profile-images/")) {
             try {
                 String oldFilename = oldImageUrl.substring(oldImageUrl.lastIndexOf('/') + 1);
-                Path oldFile = Paths.get(uploadDir).toAbsolutePath().normalize().resolve(oldFilename);
+                Path oldFile = Path.of(uploadDir).toAbsolutePath().normalize().resolve(oldFilename);
                 Files.deleteIfExists(oldFile);
             } catch (IOException e) {
                 LOG.warn("Could not delete old profile image for user {}", userLogin, e);
