@@ -107,4 +107,7 @@ jhipster:
 # https://www.jhipster.tech/common-application-properties/
 # ===================================================================
 
+app:
+  upload:
+    dir: uploads/profile-images
 # application:

@@ -1,7 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { Translate, ValidatedField, ValidatedForm, translate } from 'react-jhipster';
-import { Button, Col, Row } from 'reactstrap';
+import { Translate, translate } from 'react-jhipster';
 import { toast } from 'react-toastify';
+
+import Box from '@mui/material/Box';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
+import Divider from '@mui/material/Divider';
+import LockIcon from '@mui/icons-material/Lock';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getSession } from 'app/shared/reducers/authentication';
@@ -9,8 +17,15 @@ import PasswordStrengthBar from 'app/shared/layout/password/password-strength-ba
 import { reset, savePassword } from './password.reducer';
 
 export const PasswordPage = () => {
-  const [password, setPassword] = useState('');
   const dispatch = useAppDispatch();
+  const account = useAppSelector(state => state.authentication.account);
+  const successMessage = useAppSelector(state => state.password.successMessage);
+  const errorMessage = useAppSelector(state => state.password.errorMessage);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   useEffect(() => {
     dispatch(reset());
@@ -20,79 +35,92 @@ export const PasswordPage = () => {
     };
   }, []);
 
-  const handleValidSubmit = ({ currentPassword, newPassword }) => {
-    dispatch(savePassword({ currentPassword, newPassword }));
-  };
-
-  const updatePassword = event => setPassword(event.target.value);
-
-  const account = useAppSelector(state => state.authentication.account);
-  const successMessage = useAppSelector(state => state.password.successMessage);
-  const errorMessage = useAppSelector(state => state.password.errorMessage);
-
   useEffect(() => {
     if (successMessage) {
       toast.success(translate(successMessage));
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmPassword('');
     } else if (errorMessage) {
       toast.error(translate(errorMessage));
     }
     dispatch(reset());
   }, [successMessage, errorMessage]);
 
+  const validate = () => {
+    const newErrors: Record<string, string> = {};
+    if (!currentPassword) newErrors.currentPassword = translate('global.messages.validate.newpassword.required');
+    if (!newPassword || newPassword.length < 4) newErrors.newPassword = translate('global.messages.validate.newpassword.minlength');
+    if (newPassword.length > 50) newErrors.newPassword = translate('global.messages.validate.newpassword.maxlength');
+    if (!confirmPassword) newErrors.confirmPassword = translate('global.messages.validate.confirmpassword.required');
+    if (newPassword && confirmPassword && newPassword !== confirmPassword)
+      newErrors.confirmPassword = translate('global.messages.error.dontmatch');
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleSubmit = () => {
+    if (!validate()) return;
+    dispatch(savePassword({ currentPassword, newPassword }));
+  };
+
   return (
-    <div>
-      <Row className="justify-content-center">
-        <Col md="8">
-          <h2 id="password-title">
-            <Translate contentKey="password.title" interpolate={{ username: account.login }}>
-              Password for {account.login}
-            </Translate>
-          </h2>
-          <ValidatedForm id="password-form" onSubmit={handleValidSubmit}>
-            <ValidatedField
-              name="currentPassword"
+    <Box sx={{ maxWidth: 600, mx: 'auto', p: 3 }}>
+      <Typography variant="h5" sx={{ mb: 3, fontWeight: 600 }}>
+        <Translate contentKey="password.title" interpolate={{ username: account?.login || '' }}>
+          Contraseña
+        </Translate>
+      </Typography>
+
+      <Card>
+        <CardContent>
+          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 2 }}>
+            <LockIcon color="action" />
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              Cambiar contraseña
+            </Typography>
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+            <TextField
               label={translate('global.form.currentpassword.label')}
-              placeholder={translate('global.form.currentpassword.placeholder')}
               type="password"
-              validate={{
-                required: { value: true, message: translate('global.messages.validate.newpassword.required') },
-              }}
-              data-cy="currentPassword"
+              value={currentPassword}
+              onChange={e => setCurrentPassword(e.target.value)}
+              error={!!errors.currentPassword}
+              helperText={errors.currentPassword}
+              size="small"
+              fullWidth
             />
-            <ValidatedField
-              name="newPassword"
+            <TextField
               label={translate('global.form.newpassword.label')}
-              placeholder={translate('global.form.newpassword.placeholder')}
               type="password"
-              validate={{
-                required: { value: true, message: translate('global.messages.validate.newpassword.required') },
-                minLength: { value: 4, message: translate('global.messages.validate.newpassword.minlength') },
-                maxLength: { value: 50, message: translate('global.messages.validate.newpassword.maxlength') },
-              }}
-              onChange={updatePassword}
-              data-cy="newPassword"
+              value={newPassword}
+              onChange={e => setNewPassword(e.target.value)}
+              error={!!errors.newPassword}
+              helperText={errors.newPassword}
+              size="small"
+              fullWidth
             />
-            <PasswordStrengthBar password={password} />
-            <ValidatedField
-              name="confirmPassword"
+            {newPassword && <PasswordStrengthBar password={newPassword} />}
+            <TextField
               label={translate('global.form.confirmpassword.label')}
-              placeholder={translate('global.form.confirmpassword.placeholder')}
               type="password"
-              validate={{
-                required: { value: true, message: translate('global.messages.validate.confirmpassword.required') },
-                minLength: { value: 4, message: translate('global.messages.validate.confirmpassword.minlength') },
-                maxLength: { value: 50, message: translate('global.messages.validate.confirmpassword.maxlength') },
-                validate: v => v === password || translate('global.messages.error.dontmatch'),
-              }}
-              data-cy="confirmPassword"
+              value={confirmPassword}
+              onChange={e => setConfirmPassword(e.target.value)}
+              error={!!errors.confirmPassword}
+              helperText={errors.confirmPassword}
+              size="small"
+              fullWidth
             />
-            <Button color="success" type="submit" data-cy="submit">
-              <Translate contentKey="password.form.button">Save</Translate>
+            <Divider />
+            <Button variant="contained" color="success" onClick={handleSubmit} startIcon={<LockIcon />} sx={{ alignSelf: 'flex-start' }}>
+              <Translate contentKey="password.form.button">Guardar</Translate>
             </Button>
-          </ValidatedForm>
-        </Col>
-      </Row>
-    </div>
+          </Box>
+        </CardContent>
+      </Card>
+    </Box>
   );
 };
 
