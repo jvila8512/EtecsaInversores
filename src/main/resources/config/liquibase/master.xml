@@ -40,8 +40,14 @@
     <include file="changelog/20260603043155_added_entity_EventoAlerta.xml" relativeToChangelogFile="true"/>
     <include file="changelog/20260603043155_added_entity_constraints_EventoAlerta.xml" relativeToChangelogFile="true"/>
 
-    <!-- Multi-Master constraints and indexes -->
-    <include file="changelog/20260604000001_added_constraints_and_indexes.xml" relativeToChangelogFile="true"/>
-    <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add constraints changelogs here -->
+  <!-- Multi-Master constraints and indexes -->
+  <include file="changelog/20260604000001_added_constraints_and_indexes.xml" relativeToChangelogFile="true"/>
+  <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add constraints changelogs here -->
+
+  <!-- PostgreSQL partitioning for dato_inversor (monthly by tiempo) -->
+  <include file="changelog/20260609000001_partition_dato_inversor.xml" relativeToChangelogFile="true"/>
+
+  <!-- Seed data for inverter brands, models, and register mappings (all profiles, no faker context) -->
+  <include file="changelog/20260611000001_seed_inverter_brands.xml" relativeToChangelogFile="true"/>
 
 </databaseChangeLog>

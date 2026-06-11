@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import axios from 'axios';
 import type { IInversor } from 'app/shared/model/inversor.model';
 import type { IGatewayTcp } from 'app/shared/model/gateway-tcp.model';
+import type { IDatoInversor } from 'app/shared/model/dato-inversor.model';
 import type { IDatoEficiencia } from 'app/shared/model/dato-eficiencia.model';
 import type { IEventoAlerta } from 'app/shared/model/evento-alerta.model';
 import type { InversorGroup, DashboardKPIs } from '../types';
@@ -10,6 +11,7 @@ const API_URL = 'api';
 
 interface UseInversoresResult {
   inversores: IInversor[];
+  latestReadings: IDatoInversor[];
   gateways: IGatewayTcp[];
   groups: InversorGroup[];
   kpis: DashboardKPIs;
@@ -21,6 +23,7 @@ interface UseInversoresResult {
 
 export function useInversores(): UseInversoresResult {
   const [inversores, setInversores] = useState<IInversor[]>([]);
+  const [latestReadings, setLatestReadings] = useState<IDatoInversor[]>([]);
   const [gateways, setGateways] = useState<IGatewayTcp[]>([]);
   const [eficiencias, setEficiencias] = useState<IDatoEficiencia[]>([]);
   const [alertas, setAlertas] = useState<IEventoAlerta[]>([]);
@@ -29,13 +32,15 @@ export function useInversores(): UseInversoresResult {
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [invRes, gwRes, efRes, alertRes] = await Promise.all([
-        axios.get<IInversor[]>(`${API_URL}/inversors?size=200`),
+      const [invRes, readingsRes, gwRes, efRes, alertRes] = await Promise.all([
+        axios.get<IInversor[]>(`${API_URL}/inversors/all`),
+        axios.get<IDatoInversor[]>(`${API_URL}/dato-inversors/latest-readings`),
         axios.get<IGatewayTcp[]>(`${API_URL}/gateway-tcps?size=50`),
         axios.get<IDatoEficiencia[]>(`${API_URL}/dato-eficiencias?size=200`),
         axios.get<IEventoAlerta[]>(`${API_URL}/evento-alertas?sort=timestamp,desc&size=50`),
       ]);
       setInversores(invRes.data || []);
+      setLatestReadings(readingsRes.data || []);
       setGateways((gwRes.data || []).filter(g => g.activo));
       setEficiencias(efRes.data || []);
       setAlertas(alertRes.data || []);
@@ -94,6 +99,7 @@ export function useInversores(): UseInversoresResult {
 
   return {
     inversores,
+    latestReadings,
     gateways,
     groups,
     kpis,

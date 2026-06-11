@@ -1,6 +1,7 @@
 package com.etecsa.monitor.repository;
 
 import com.etecsa.monitor.domain.DatoInversor;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Page;
@@ -37,4 +38,28 @@ public interface DatoInversorRepository extends JpaRepository<DatoInversor, Long
 
     @Query("select datoInversor from DatoInversor datoInversor left join fetch datoInversor.inversor where datoInversor.id =:id")
     Optional<DatoInversor> findOneWithToOneRelationships(@Param("id") Long id);
+
+    /**
+     * Find the latest reading for each inversor using a native query.
+     * Uses DISTINCT ON (PostgreSQL-specific) which is the most efficient way
+     * to get the most recent row per group.
+     *
+     * @return list of latest DatoInversor rows, one per inversor
+     */
+    @Query(
+        value = "SELECT di.* FROM dato_inversor di " +
+                "INNER JOIN (SELECT inversor_id, MAX(tiempo) AS max_tiempo FROM dato_inversor GROUP BY inversor_id) latest " +
+                "ON di.inversor_id = latest.inversor_id AND di.tiempo = latest.max_tiempo",
+        nativeQuery = true
+    )
+    List<DatoInversor> findLatestReadings();
+
+    /**
+     * Delete all readings older than the specified instant.
+     *
+     * @param cutoff the timestamp before which data will be deleted
+     */
+    @Modifying
+    @Query(value = "DELETE FROM dato_inversor WHERE tiempo < :cutoff", nativeQuery = true)
+    int deleteOlderThan(@Param("cutoff") Instant cutoff);
 }

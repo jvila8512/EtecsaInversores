@@ -4,6 +4,7 @@ import com.etecsa.monitor.domain.Inversor;
 import com.etecsa.monitor.repository.InversorRepository;
 import com.etecsa.monitor.service.dto.InversorDTO;
 import com.etecsa.monitor.service.mapper.InversorMapper;
+import java.util.List;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -97,13 +98,26 @@ public class InversorService {
         return inversorRepository.findOneWithEagerRelationships(id).map(inversorMapper::toDto);
     }
 
-    /**
-     * Delete the inversor by id.
-     *
-     * @param id the id of the entity.
-     */
-    public void delete(Long id) {
-        LOG.debug("Request to delete Inversor : {}", id);
-        inversorRepository.deleteById(id);
-    }
+  /**
+   * Delete the inversor by id.
+   *
+   * @param id the id of the entity.
+   */
+  public void delete(Long id) {
+    LOG.debug("Request to delete Inversor : {}", id);
+    inversorRepository.deleteById(id);
+  }
+
+  /**
+   * Get all inversors without pagination, with eager relationships.
+   * Used by the Monitor Solar dashboard to populate dropdowns and cards.
+   * With 300 inversores, this returns 300 lightweight rows — no need to paginate.
+   *
+   * @return the list of all inversor DTOs.
+   */
+  @Transactional(readOnly = true)
+  public List<InversorDTO> findAllWithEagerRelationships() {
+    LOG.debug("Request to get all Inversors without pagination");
+    return inversorRepository.findAllWithEagerRelationships().stream().map(inversorMapper::toDto).toList();
+  }
 }

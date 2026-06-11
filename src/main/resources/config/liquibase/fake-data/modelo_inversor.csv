@@ -1,3 +1,7 @@
 id;nombre;capacidad_va;voltaje_sistema_nom;descripcion;marca_id
 1;Lumin Plus 5.5K;5500;48;Inversor hibrido 5.5kVA 48V — 5.5kW MPPT;1
 2;Lumin Plus 3.5K;3500;24;Inversor hibrido 3.5kVA 24V — 3.5kW MPPT;1
+3;PH1800 5K;5000;48;Inversor hibrido 5kVA 48V — MUST PH1800 series;2
+4;PV1800 5K;5000;48;Inversor off-grid 5kVA 48V — MUST PV1800 series;2
+5;PH18-5448 PRO;5400;48;Inversor hibrido 5.4kVA 48V — MUST PH18 Pro series (19200 bps);2
+6;PV18-5048 VHM;5000;48;Inversor off-grid 5kVA 48V — MUST PV18 series;2

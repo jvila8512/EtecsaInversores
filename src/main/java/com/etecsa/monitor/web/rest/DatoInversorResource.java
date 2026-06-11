@@ -164,8 +164,27 @@ public class DatoInversorResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /dato-inversors/count} : count all the datoInversors.
+  /**
+   * {@code GET /dato-inversors/latest-readings} : get the latest reading for each inversor.
+   *
+   * This is the primary endpoint for the Solar Monitor dashboard.
+   * Returns exactly one row per inversor — the most recent reading —
+   * using an efficient INNER JOIN on MAX(tiempo).
+   *
+   * With 300 inversores this returns 300 rows instead of
+   * having to paginate through millions of historical rows.
+   *
+   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of latest readings.
+   */
+  @GetMapping("/latest-readings")
+  public ResponseEntity<List<DatoInversorDTO>> getLatestReadings() {
+    LOG.debug("REST request to get latest readings for all inversores");
+    List<DatoInversorDTO> readings = datoInversorService.findLatestReadings();
+    return ResponseEntity.ok().body(readings);
+  }
+
+  /**
+   * {@code GET /dato-inversors/count} : count all the datoInversors.
      *
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.

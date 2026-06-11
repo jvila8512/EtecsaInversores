@@ -168,8 +168,25 @@ public class InversorResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-    /**
-     * {@code GET  /inversors/count} : count all the inversors.
+  /**
+   * {@code GET /inversors/all} : get all inversors without pagination.
+   *
+   * Returns all active inversors with their relationships eagerly loaded.
+   * Used by the Solar Monitor dashboard for dropdowns, cards, and navigation.
+   * With 300 inversores, returning 300 lightweight rows in a single request
+   * is far more efficient than paginating through multiple requests.
+   *
+   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of inversors.
+   */
+  @GetMapping("/all")
+  public ResponseEntity<List<InversorDTO>> getAllInversorsWithoutPagination() {
+    LOG.debug("REST request to get all Inversors without pagination");
+    List<InversorDTO> inversors = inversorService.findAllWithEagerRelationships();
+    return ResponseEntity.ok().body(inversors);
+  }
+
+  /**
+   * {@code GET /inversors/count} : count all the inversors.
      *
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.

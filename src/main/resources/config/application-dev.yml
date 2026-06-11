@@ -110,4 +110,5 @@ jhipster:
 app:
   upload:
     dir: uploads/profile-images
-# application:
+  data-retention-days: 90
+  # application:

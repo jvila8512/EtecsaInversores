@@ -35,6 +35,7 @@ import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import LockIcon from '@mui/icons-material/Lock';
 import LogoutIcon from '@mui/icons-material/Logout';
+import TrackChangesIcon from '@mui/icons-material/TrackChanges';
 
 import { Translate } from 'react-jhipster';
 import { useAppDispatch } from 'app/config/store';
@@ -409,6 +410,14 @@ const Sidebar = (props: ISidebarProps) => {
                   to="/admin/logs"
                   icon={<CategoryIcon fontSize="small" />}
                   label="Logs"
+                  collapsed={false}
+                  isMobile={isMobile}
+                  inset
+                />
+                <NavItem
+                  to="/admin/tracker"
+                  icon={<TrackChangesIcon fontSize="small" />}
+                  label="Tracker"
                   collapsed={false}
                   isMobile={isMobile}
                   inset

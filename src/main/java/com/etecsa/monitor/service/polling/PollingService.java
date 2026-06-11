@@ -315,10 +315,11 @@ public class PollingService {
         dato.setRedActiva(raw.get("red_activa") != null && raw.get("red_activa") > 0);
         dato.setCrcValido(true); // Si llegó hasta acá, el CRC fue válido
 
-        // Modo operación (viene como entero, mapear a string)
+        // Modo operación (viene como entero, mapear a string según marca)
         Double modoOpRaw = raw.get("modo_operacion");
         if (modoOpRaw != null) {
-            dato.setModoOperacion(decodeModoOperacion(modoOpRaw.intValue()));
+            String marcaNombre = inversor.getMarca() != null ? inversor.getMarca().getNombre() : "";
+            dato.setModoOperacion(decodeModoOperacion(modoOpRaw.intValue(), marcaNombre));
         }
 
         // Código de fallo
@@ -330,21 +331,29 @@ public class PollingService {
         return dato;
     }
 
-    /** Decodifica el modo de operación Felicity Solar */
-    private String decodeModoOperacion(int code) {
+    /** Decodifica el modo de operación según la marca del inversor */
+    private String decodeModoOperacion(int code, String marcaNombre) {
+        if ("MUST".equalsIgnoreCase(marcaNombre)) {
+            // MUST Inverter Work State (reg. 25201)
+            switch (code) {
+                case 0: return "POWER_ON";
+                case 1: return "SELF_TEST";
+                case 2: return "OFF_GRID";
+                case 3: return "GRID_TIE";
+                case 4: return "BYPASS";
+                case 5: return "CHARGING";
+                case 6: return "FAULT";
+                default: return "DESCONOCIDO_" + code;
+            }
+        }
+        // Felicity Solar (y otras marcas por defecto)
         switch (code) {
-            case 0:
-                return "SIN_RED";
-            case 1:
-                return "RED";
-            case 2:
-                return "SOLAR";
-            case 3:
-                return "HIBRIDO";
-            case 4:
-                return "BATERIA";
-            default:
-                return "DESCONOCIDO_" + code;
+            case 0: return "SIN_RED";
+            case 1: return "RED";
+            case 2: return "SOLAR";
+            case 3: return "HIBRIDO";
+            case 4: return "BATERIA";
+            default: return "DESCONOCIDO_" + code;
         }
     }
 

@@ -26,3 +26,20 @@ id;direccion_registro;nombre_registro;campo_sql;tipo_dato;escala;unidad;activo;d
 25;8496;Max AC Charging Current;max_ac_charging_current;UnsignedInt16;1;A;true;0x2130 — Corriente maxima de carga AC (config);1
 26;8534;Battery Back-to-Charge V;battery_back_charge_v;UnsignedInt16;10;V;true;0x2156 — Voltaje de retorno a carga (config, valor/10);1
 27;8537;Battery Back-to-Discharge;battery_back_discharge_v;UnsignedInt16;10;V;true;0x2159 — Voltaje de retorno a descarga (config, valor/10);1
+28;15203;PV Charging State;bateria_cargando;UnsignedInt16;1;;true;Bloque B 15203 — Estado de carga PV (0=Silent,1=Bulk,2=Abs,3=Float);2
+29;15204;PV Charger Fault Code;codigo_fallo;UnsignedInt16;1;;true;Bloque B 15204 — Codigo de fallo del cargador PV;2
+30;15205;PV Voltage;pv_voltaje_v;UnsignedInt16;10;V;true;Bloque B 15205 — Tension del panel solar (valor/10);2
+31;15206;Battery Voltage (Charger);bateria_voltaje_v;UnsignedInt16;10;V;true;Bloque B 15206 — Tension de bateria desde cargador (valor/10);2
+32;15208;PV Charging Power;pv_potencia_w;UnsignedInt16;1;W;true;Bloque B 15208 — Potencia de carga PV;2
+33;25201;Inverter Work State;modo_operacion;UnsignedInt16;1;;true;Bloque D 25201 — Estado del inversor (0=PowerOn,1=SelfTest,2=OffGrid,3=GridTie,4=Bypass,5=Charging,6=Fault);2
+34;25205;Battery Voltage;bateria_voltaje_v;UnsignedInt16;10;V;true;Bloque D 25205 — Tension de bateria desde inversor (valor/10, sobreescribe B);2
+35;25206;Output Voltage;salida_voltaje_v;UnsignedInt16;10;V;true;Bloque D 25206 — Tension de salida AC (valor/10);2
+36;25207;Grid Voltage;red_voltaje_v;UnsignedInt16;10;V;true;Bloque D 25207 — Tension de red AC (valor/10);2
+37;25209;Battery Current;bateria_corriente_a;SignedInt16;10;A;true;Bloque D 25209 — Corriente de bateria (signed, valor/10);2
+38;25213;Inverter Power;salida_potencia_w;SignedInt16;1;W;true;Bloque D 25213 — Potencia de salida del inversor (signed);2
+39;25214;Grid Power;consumo_red_w;SignedInt16;1;W;true;Bloque D 25214 — Potencia de red (signed, negativo=exportar);2
+40;25216;System Load Percentage;carga_porcentaje;UnsignedInt16;1;%;true;Bloque D 25216 — Porcentaje de carga del sistema;2
+42;25217;Inverter Efficiency;eficiencia_pct;UnsignedInt16;10;%;true;Bloque D 25217 — Eficiencia del inversor (valor/10);2
+43;25218;Output Frequency;red_frecuencia_hz;UnsignedInt16;100;Hz;true;Bloque D 25218 — Frecuencia de salida (valor/100);2
+44;25221;Battery Power;bateria_potencia_w;SignedInt16;1;W;true;Bloque D 25221 — Potencia de bateria (signed, +cargando, -descargando);2
+45;25228;Inverter Apparent Power;salida_aparente_va;UnsignedInt16;1;VA;true;Bloque D 25228 — Potencia aparente del inversor;2

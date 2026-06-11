@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+  xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+  http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog-ext.xsd">
+
+  <!--
+    PostgreSQL RANGE partitioning for dato_inversor by tiempo (monthly).
+
+    WHY: With 300 inversores generating readings every 5 seconds,
+    dato_inversor grows ~5.2M rows/day. A monolithic table becomes
+    slow for both queries and purges. Partitioning by month gives:
+    - Partition pruning: queries on recent data only scan current month
+    - Instant purge: DROP PARTITION instead of DELETE millions of rows
+    - Smaller indexes per partition: better cache hit ratio
+    - Faster VACUUM: operates on small partitions, not a giant table
+
+    STRATEGY: Create a new partitioned table, migrate existing data,
+    swap names. This is safe for existing data and JPA mappings.
+
+    NOTE: The auto-purge @Scheduled task should be updated to use
+    DROP PARTITION instead of DELETE for expired months. This can
+    be done in a future iteration — for now the DELETE still works
+    because PostgreSQL routes it to the correct partition automatically.
+  -->
+
+  <!-- Step 1: Rename the old table (preserves existing data) -->
+  <changeSet id="20260609000001-1" author="etecsa" dbms="postgresql">
+    <comment>Rename existing dato_inversor table to preserve data during migration</comment>
+    <sql>
+      ALTER TABLE dato_inversor RENAME TO dato_inversor_legacy;
+      ALTER INDEX dato_inversor_pkey RENAME TO dato_inversor_legacy_pkey;
+    </sql>
+  </changeSet>
+
+  <!-- Step 2: Create the new partitioned table -->
+  <changeSet id="20260609000001-2" author="etecsa" dbms="postgresql">
+    <comment>Create dato_inversor as a RANGE-partitioned table on tiempo column (monthly)</comment>
+    <sql>
+      CREATE TABLE dato_inversor (
+        id                BIGINT NOT NULL,
+        tiempo            TIMESTAMP NOT NULL,
+        bateria_voltaje_v DOUBLE PRECISION,
+        bateria_corriente_a DOUBLE PRECISION,
+        bateria_potencia_w  DOUBLE PRECISION,
+        pv_voltaje_v      DOUBLE PRECISION,
+        pv_potencia_w     DOUBLE PRECISION,
+        salida_voltaje_v  DOUBLE PRECISION,
+        salida_potencia_w DOUBLE PRECISION,
+        salida_aparente_va DOUBLE PRECISION,
+        carga_porcentaje  INTEGER,
+        red_voltaje_v     DOUBLE PRECISION,
+        red_frecuencia_hz DOUBLE PRECISION,
+        modo_operacion    VARCHAR(20),
+        codigo_fallo      INTEGER,
+        eficiencia_pct    DOUBLE PRECISION,
+        consumo_red_w     DOUBLE PRECISION,
+        bateria_cargando  BOOLEAN,
+        pv_activo         BOOLEAN,
+        red_activa        BOOLEAN,
+        crc_valido        BOOLEAN,
+        latencia_ms       INTEGER,
+        inversor_id       BIGINT
+      ) PARTITION BY RANGE (tiempo);
+
+      -- Primary key includes tiempo for partitioned tables (PostgreSQL requirement)
+      ALTER TABLE dato_inversor ADD PRIMARY KEY (id, tiempo);
+    </sql>
+  </changeSet>
+
+  <!-- Step 3: Create initial monthly partitions (Jun-Dec 2026) -->
+  <changeSet id="20260609000001-3" author="etecsa" dbms="postgresql">
+    <comment>Create monthly partitions for Jun-Dec 2026</comment>
+    <sql>
+      CREATE TABLE dato_inversor_2026_06 PARTITION OF dato_inversor
+        FOR VALUES FROM ('2026-06-01') TO ('2026-07-01');
+      CREATE TABLE dato_inversor_2026_07 PARTITION OF dato_inversor
+        FOR VALUES FROM ('2026-07-01') TO ('2026-08-01');
+      CREATE TABLE dato_inversor_2026_08 PARTITION OF dato_inversor
+        FOR VALUES FROM ('2026-08-01') TO ('2026-09-01');
+      CREATE TABLE dato_inversor_2026_09 PARTITION OF dato_inversor
+        FOR VALUES FROM ('2026-09-01') TO ('2026-10-01');
+      CREATE TABLE dato_inversor_2026_10 PARTITION OF dato_inversor
+        FOR VALUES FROM ('2026-10-01') TO ('2026-11-01');
+      CREATE TABLE dato_inversor_2026_11 PARTITION OF dato_inversor
+        FOR VALUES FROM ('2026-11-01') TO ('2026-12-01');
+      CREATE TABLE dato_inversor_2026_12 PARTITION OF dato_inversor
+        FOR VALUES FROM ('2026-12-01') TO ('2027-01-01');
+
+      -- Default partition for any data outside the defined ranges
+      CREATE TABLE dato_inversor_default PARTITION OF dato_inversor DEFAULT;
+    </sql>
+  </changeSet>
+
+  <!-- Step 4: Create indexes on each partition -->
+  <changeSet id="20260609000001-4" author="etecsa" dbms="postgresql">
+    <comment>Create inversor_id index on the partitioned table (applies to all partitions)</comment>
+    <sql>
+      CREATE INDEX idx_dato_inversor_inversor_id ON dato_inversor (inversor_id);
+      CREATE INDEX idx_dato_inversor_tiempo ON dato_inversor (tiempo);
+    </sql>
+  </changeSet>
+
+  <!-- Step 5: Migrate data from legacy table -->
+  <changeSet id="20260609000001-5" author="etecsa" dbms="postgresql">
+    <comment>Copy data from legacy table into the new partitioned table</comment>
+    <sql>
+      INSERT INTO dato_inversor SELECT * FROM dato_inversor_legacy ON CONFLICT DO NOTHING;
+    </sql>
+  </changeSet>
+
+  <!-- Step 6: Re-add foreign key constraint -->
+  <changeSet id="20260609000001-6" author="etecsa" dbms="postgresql">
+    <comment>Re-add FK constraint from dato_inversor.inversor_id to inversor.id</comment>
+    <sql>
+      ALTER TABLE dato_inversor
+        ADD CONSTRAINT fk_dato_inversor_inversor_id
+        FOREIGN KEY (inversor_id) REFERENCES inversor(id);
+    </sql>
+  </changeSet>
+
+  <!-- Step 7: Drop the legacy table (data already migrated) -->
+  <changeSet id="20260609000001-7" author="etecsa" dbms="postgresql">
+    <comment>Drop the legacy (non-partitioned) table after successful migration</comment>
+    <sql>
+      DROP TABLE dato_inversor_legacy;
+    </sql>
+  </changeSet>
+
+</databaseChangeLog>

@@ -10,11 +10,13 @@ import AlertsScreen from './screens/AlertsScreen';
 import SettingsScreen from './screens/SettingsScreen';
 import type { ThemeMode, WsStatus, LiveDataMap, InversorGroup, DashboardKPIs } from './types';
 import type { IInversor } from 'app/shared/model/inversor.model';
+import type { IDatoInversor } from 'app/shared/model/dato-inversor.model';
 import type { IGatewayTcp } from 'app/shared/model/gateway-tcp.model';
 import type { IEventoAlerta } from 'app/shared/model/evento-alerta.model';
 
 interface MonitorContextValue {
   inversores: IInversor[];
+  latestReadings: IDatoInversor[];
   gateways: IGatewayTcp[];
   groups: InversorGroup[];
   kpis: DashboardKPIs;
@@ -40,7 +42,7 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const [theme, setTheme] = useState<ThemeMode>(readTheme);
   const [liveAlertas, setLiveAlertas] = useState<IEventoAlerta[]>([]);
 
-  const { inversores, gateways, groups, kpis, alertas, alertCount, loading, refresh } = useInversores();
+  const { inversores, latestReadings, gateways, groups, kpis, alertas, alertCount, loading, refresh } = useInversores();
 
   const inversorIds = useMemo(
     () =>
@@ -84,6 +86,7 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const value = useMemo(
     () => ({
       inversores,
+      latestReadings,
       gateways,
       groups,
       kpis,
@@ -96,7 +99,7 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
       theme,
       toggleTheme,
     }),
-    [inversores, gateways, groups, kpis, allAlertas, alertCount, loading, refresh, liveData, wsStatus, theme, toggleTheme],
+    [inversores, latestReadings, gateways, groups, kpis, allAlertas, alertCount, loading, refresh, liveData, wsStatus, theme, toggleTheme],
   );
 
   return <MonitorContext.Provider value={value}>{children}</MonitorContext.Provider>;

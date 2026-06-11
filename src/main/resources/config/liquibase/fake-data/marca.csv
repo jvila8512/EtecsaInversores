@@ -1,2 +1,3 @@
 id;nombre;fabricante;registro_inicio;registro_fin;registro_info_inicio;registro_info_fin;baud_rate_default;descripcion;activa_marca_default
 1;Felicity;Felicity Solar;4353;4394;8192;8207;2400;Rangos lectura 0x1101-0x112A, configuracion 0x211F-0x2159. BaudRate 2400 por defecto para RS485.;true
+2;MUST;MUST Power;15201;25243;20101;20146;9600;Bloque B 15201-15221 (cargador PV), Bloque D 25201-25243 (inversor). BaudRate 9600 para PH1800/PV1800, 19200 para PH18/PV18 Pro. Slave ID 0x04.;true
