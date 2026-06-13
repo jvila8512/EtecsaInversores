@@ -55,9 +55,21 @@ public class DatoInversorDTO implements Serializable {
 
     private Boolean crcValido;
 
-    private Integer latenciaMs;
+  private Integer latenciaMs;
 
-    private InversorDTO inversor;
+  private Double pvCorrienteA;
+
+  private Double salidaCorrienteA;
+
+  private Double salidaFrecuenciaHz;
+
+  private Double temperaturaC;
+
+  private Double busVoltajeV;
+
+  private Integer socPct;
+
+  private InversorDTO inversor;
 
     public Long getId() {
         return id;
@@ -231,11 +243,59 @@ public class DatoInversorDTO implements Serializable {
         return latenciaMs;
     }
 
-    public void setLatenciaMs(Integer latenciaMs) {
-        this.latenciaMs = latenciaMs;
-    }
+  public void setLatenciaMs(Integer latenciaMs) {
+    this.latenciaMs = latenciaMs;
+  }
 
-    public InversorDTO getInversor() {
+  public Double getPvCorrienteA() {
+    return pvCorrienteA;
+  }
+
+  public void setPvCorrienteA(Double pvCorrienteA) {
+    this.pvCorrienteA = pvCorrienteA;
+  }
+
+  public Double getSalidaCorrienteA() {
+    return salidaCorrienteA;
+  }
+
+  public void setSalidaCorrienteA(Double salidaCorrienteA) {
+    this.salidaCorrienteA = salidaCorrienteA;
+  }
+
+  public Double getSalidaFrecuenciaHz() {
+    return salidaFrecuenciaHz;
+  }
+
+  public void setSalidaFrecuenciaHz(Double salidaFrecuenciaHz) {
+    this.salidaFrecuenciaHz = salidaFrecuenciaHz;
+  }
+
+  public Double getTemperaturaC() {
+    return temperaturaC;
+  }
+
+  public void setTemperaturaC(Double temperaturaC) {
+    this.temperaturaC = temperaturaC;
+  }
+
+  public Double getBusVoltajeV() {
+    return busVoltajeV;
+  }
+
+  public void setBusVoltajeV(Double busVoltajeV) {
+    this.busVoltajeV = busVoltajeV;
+  }
+
+  public Integer getSocPct() {
+    return socPct;
+  }
+
+  public void setSocPct(Integer socPct) {
+    this.socPct = socPct;
+  }
+
+  public InversorDTO getInversor() {
         return inversor;
     }
 
@@ -289,8 +349,14 @@ public class DatoInversorDTO implements Serializable {
             ", pvActivo='" + getPvActivo() + "'" +
             ", redActiva='" + getRedActiva() + "'" +
             ", crcValido='" + getCrcValido() + "'" +
-            ", latenciaMs=" + getLatenciaMs() +
-            ", inversor=" + getInversor() +
+      ", latenciaMs=" + getLatenciaMs() +
+      ", pvCorrienteA=" + getPvCorrienteA() +
+      ", salidaCorrienteA=" + getSalidaCorrienteA() +
+      ", salidaFrecuenciaHz=" + getSalidaFrecuenciaHz() +
+      ", temperaturaC=" + getTemperaturaC() +
+      ", busVoltajeV=" + getBusVoltajeV() +
+      ", socPct=" + getSocPct() +
+      ", inversor=" + getInversor() +
             "}";
     }
 }

@@ -90,6 +90,24 @@ public class DatoInversor implements Serializable {
     @Column(name = "latencia_ms")
     private Integer latenciaMs;
 
+    @Column(name = "pv_corriente_a")
+    private Double pvCorrienteA;
+
+    @Column(name = "salida_corriente_a")
+    private Double salidaCorrienteA;
+
+    @Column(name = "salida_frecuencia_hz")
+    private Double salidaFrecuenciaHz;
+
+    @Column(name = "temperatura_c")
+    private Double temperaturaC;
+
+    @Column(name = "bus_voltaje_v")
+    private Double busVoltajeV;
+
+    @Column(name = "soc_pct")
+    private Integer socPct;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(value = { "sitio", "marca", "modelo", "gateway", "masterReferencia" }, allowSetters = true)
     private Inversor inversor;
@@ -378,21 +396,99 @@ public class DatoInversor implements Serializable {
         return this;
     }
 
-    public void setLatenciaMs(Integer latenciaMs) {
-        this.latenciaMs = latenciaMs;
-    }
+  public void setLatenciaMs(Integer latenciaMs) {
+    this.latenciaMs = latenciaMs;
+  }
+
+  public Double getPvCorrienteA() {
+    return this.pvCorrienteA;
+  }
+
+  public DatoInversor pvCorrienteA(Double pvCorrienteA) {
+    this.setPvCorrienteA(pvCorrienteA);
+    return this;
+  }
+
+  public void setPvCorrienteA(Double pvCorrienteA) {
+    this.pvCorrienteA = pvCorrienteA;
+  }
+
+  public Double getSalidaCorrienteA() {
+    return this.salidaCorrienteA;
+  }
+
+  public DatoInversor salidaCorrienteA(Double salidaCorrienteA) {
+    this.setSalidaCorrienteA(salidaCorrienteA);
+    return this;
+  }
+
+  public void setSalidaCorrienteA(Double salidaCorrienteA) {
+    this.salidaCorrienteA = salidaCorrienteA;
+  }
+
+  public Double getSalidaFrecuenciaHz() {
+    return this.salidaFrecuenciaHz;
+  }
+
+  public DatoInversor salidaFrecuenciaHz(Double salidaFrecuenciaHz) {
+    this.setSalidaFrecuenciaHz(salidaFrecuenciaHz);
+    return this;
+  }
+
+  public void setSalidaFrecuenciaHz(Double salidaFrecuenciaHz) {
+    this.salidaFrecuenciaHz = salidaFrecuenciaHz;
+  }
+
+  public Double getTemperaturaC() {
+    return this.temperaturaC;
+  }
+
+  public DatoInversor temperaturaC(Double temperaturaC) {
+    this.setTemperaturaC(temperaturaC);
+    return this;
+  }
+
+  public void setTemperaturaC(Double temperaturaC) {
+    this.temperaturaC = temperaturaC;
+  }
+
+  public Double getBusVoltajeV() {
+    return this.busVoltajeV;
+  }
+
+  public DatoInversor busVoltajeV(Double busVoltajeV) {
+    this.setBusVoltajeV(busVoltajeV);
+    return this;
+  }
+
+  public void setBusVoltajeV(Double busVoltajeV) {
+    this.busVoltajeV = busVoltajeV;
+  }
+
+  public Integer getSocPct() {
+    return this.socPct;
+  }
+
+  public DatoInversor socPct(Integer socPct) {
+    this.setSocPct(socPct);
+    return this;
+  }
+
+  public void setSocPct(Integer socPct) {
+    this.socPct = socPct;
+  }
 
     public Inversor getInversor() {
         return this.inversor;
     }
 
-    public void setInversor(Inversor inversor) {
-        this.inversor = inversor;
-    }
-
     public DatoInversor inversor(Inversor inversor) {
         this.setInversor(inversor);
         return this;
+    }
+
+    public void setInversor(Inversor inversor) {
+        this.inversor = inversor;
     }
 
     // jhipster-needle-entity-add-getters-setters - JHipster will add getters and setters here
@@ -439,7 +535,13 @@ public class DatoInversor implements Serializable {
             ", pvActivo='" + getPvActivo() + "'" +
             ", redActiva='" + getRedActiva() + "'" +
             ", crcValido='" + getCrcValido() + "'" +
-            ", latenciaMs=" + getLatenciaMs() +
-            "}";
+      ", latenciaMs=" + getLatenciaMs() +
+      ", pvCorrienteA=" + getPvCorrienteA() +
+      ", salidaCorrienteA=" + getSalidaCorrienteA() +
+      ", salidaFrecuenciaHz=" + getSalidaFrecuenciaHz() +
+      ", temperaturaC=" + getTemperaturaC() +
+      ", busVoltajeV=" + getBusVoltajeV() +
+      ", socPct=" + getSocPct() +
+      "}";
     }
 }

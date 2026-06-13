@@ -1,0 +1,420 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+  <!--
+    Complete register mappings for Felicity Solar and MUST Power.
+    Adds all telemetry registers that map to dato_inversor columns,
+    including new columns (pv_corriente_a, salida_corriente_a, salida_frecuencia_hz,
+    temperatura_c, bus_voltaje_v, soc_pct).
+
+    Existing mapeos from 20260611000001 are NOT modified — these are ADDITIONAL mappings.
+    No context="faker" → runs in all profiles.
+  -->
+
+  <!-- ============================================================ -->
+  <!-- Felicity Solar — additional telemetry registers               -->
+  <!-- Protocol: 0x1101–0x112A (Holding Registers, FC03)            -->
+  <!-- Reference: Felicity Lumin Plus Modbus Protocol v2.x          -->
+  <!-- ============================================================ -->
+  <changeSet id="20260611000003-1" author="etecsa">
+
+    <!-- 0x1105 (4357) PV Input Current -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="16"/>
+      <column name="direccion_registro" value="4357"/>
+      <column name="nombre_registro" value="PV Input Current"/>
+      <column name="campo_sql" value="pv_corriente_a"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="0x1105 — Corriente de entrada del panel solar"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x1106 (4358) PV Input Power — redundant with 0x112A, but useful for cross-check -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="17"/>
+      <column name="direccion_registro" value="4358"/>
+      <column name="nombre_registro" value="PV Input Power L"/>
+      <column name="campo_sql" value="pv_potencia_w"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="W"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="0x1106 — Potencia PV baja (redundante con 0x112A, inactivo)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x1107 (4359) Equipment Status / Temperature -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="18"/>
+      <column name="direccion_registro" value="4359"/>
+      <column name="nombre_registro" value="Temperature"/>
+      <column name="campo_sql" value="temperatura_c"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="°C"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="0x1107 — Temperatura interna del equipo"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x110B (4363) Battery SOC from SCC -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="19"/>
+      <column name="direccion_registro" value="4363"/>
+      <column name="nombre_registro" value="Battery SOC"/>
+      <column name="campo_sql" value="soc_pct"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="%"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="0x110B — Estado de carga de bateria (SOC)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x1112 (4370) AC Output Current -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="20"/>
+      <column name="direccion_registro" value="4370"/>
+      <column name="nombre_registro" value="AC Output Current"/>
+      <column name="campo_sql" value="salida_corriente_a"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="0x1112 — Corriente de salida AC"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x1113 (4371) AC Output Frequency -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="21"/>
+      <column name="direccion_registro" value="4371"/>
+      <column name="nombre_registro" value="AC Output Frequency"/>
+      <column name="campo_sql" value="salida_frecuencia_hz"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="100"/>
+      <column name="unidad" value="Hz"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="0x1113 — Frecuencia de salida AC (valor/100)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x1114 (4372) AC Input Current -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="22"/>
+      <column name="direccion_registro" value="4372"/>
+      <column name="nombre_registro" value="AC Input Current"/>
+      <column name="campo_sql" value="consumo_red_w"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="0x1114 — Corriente de entrada AC/red (inactivo, consumo_red_w ya mapeado por potencia)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x1115 (4373) Battery Charge Current (from AC charger) -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="23"/>
+      <column name="direccion_registro" value="4373"/>
+      <column name="nombre_registro" value="Battery Charge Current (AC)"/>
+      <column name="campo_sql" value="bateria_corriente_a"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="0x1115 — Corriente de carga desde AC (redundante con 0x1109, inactivo)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x1116 (4374) Battery Discharge Current -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="24"/>
+      <column name="direccion_registro" value="4374"/>
+      <column name="nombre_registro" value="Battery Discharge Current"/>
+      <column name="campo_sql" value="bateria_corriente_a"/>
+      <column name="tipo_dato" value="SignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="0x1116 — Corriente de descarga de bateria (redundante con 0x1109, inactivo)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x111A (4378) Battery Voltage from SCC -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="25"/>
+      <column name="direccion_registro" value="4378"/>
+      <column name="nombre_registro" value="Battery Voltage (SCC)"/>
+      <column name="campo_sql" value="bateria_voltaje_v"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="100"/>
+      <column name="unidad" value="V"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="0x111A — Voltaje de bateria desde SCC (redundante con 0x1108, inactivo)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+    <!-- 0x111B (4379) Battery Voltage from Battery -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="26"/>
+      <column name="direccion_registro" value="4379"/>
+      <column name="nombre_registro" value="Battery Voltage (Battery)"/>
+      <column name="campo_sql" value="bateria_voltaje_v"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="100"/>
+      <column name="unidad" value="V"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="0x111B — Voltaje de bateria directo (redundante con 0x1108, inactivo)"/>
+      <column name="marca_id" value="1"/>
+    </insert>
+
+  </changeSet>
+
+  <!-- ============================================================ -->
+  <!-- MUST Power — Block B additional registers (Charger PV)       -->
+  <!-- Protocol: 15201–15221 (Holding Registers, FC03 RO)          -->
+  <!-- ============================================================ -->
+  <changeSet id="20260611000003-2" author="etecsa">
+
+    <!-- 15201 PV Charger Work State → pv_activo (Work Mode = 2 means PV active) -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="50"/>
+      <column name="direccion_registro" value="15201"/>
+      <column name="nombre_registro" value="PV Charger Work State"/>
+      <column name="campo_sql" value="pv_activo"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value=""/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque B 15201 — Estado del cargador PV (0=Init,1=SelfTest,2=Work,3=Stop). &gt;0 = PV activo"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 15202 PV Charger MPPT State -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="51"/>
+      <column name="direccion_registro" value="15202"/>
+      <column name="nombre_registro" value="PV Charger MPPT State"/>
+      <column name="campo_sql" value="modo_operacion"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value=""/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="Bloque B 15202 — Estado MPPT del cargador (inactivo, modo_operacion ya mapeado por Block D 25201)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 15207 PV Charging Current -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="52"/>
+      <column name="direccion_registro" value="15207"/>
+      <column name="nombre_registro" value="PV Charging Current"/>
+      <column name="campo_sql" value="pv_corriente_a"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="10"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque B 15207 — Corriente de carga PV (valor/10)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 15209 PV Radiator Temperature -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="53"/>
+      <column name="direccion_registro" value="15209"/>
+      <column name="nombre_registro" value="PV Radiator Temperature"/>
+      <column name="campo_sql" value="temperatura_c"/>
+      <column name="tipo_dato" value="SignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="°C"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque B 15209 — Temperatura del disipador PV"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+  </changeSet>
+
+  <!-- ============================================================ -->
+  <!-- MUST Power — Block D additional registers (Inverter)         -->
+  <!-- Protocol: 25201–25258 (Holding Registers, FC03 RO)          -->
+  <!-- ============================================================ -->
+  <changeSet id="20260611000003-3" author="etecsa">
+
+    <!-- 25202 Inverter Fault Code High -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="54"/>
+      <column name="direccion_registro" value="25202"/>
+      <column name="nombre_registro" value="Inverter Fault Code High"/>
+      <column name="campo_sql" value="codigo_fallo"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value=""/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque D 25202 — Codigo de fallo del inversor (parte alta). Sobreescribe Block B 15204"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25204 Inverter Warning Code — info only, no campo_sql match -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="55"/>
+      <column name="direccion_registro" value="25204"/>
+      <column name="nombre_registro" value="Inverter Warning Code"/>
+      <column name="campo_sql" value="codigo_fallo"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value=""/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="Bloque D 25204 — Codigo de advertencia (inactivo, codigo_fallo ya mapeado por 25202)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25208 BUS Voltage -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="56"/>
+      <column name="direccion_registro" value="25208"/>
+      <column name="nombre_registro" value="BUS Voltage"/>
+      <column name="campo_sql" value="bus_voltaje_v"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="10"/>
+      <column name="unidad" value="V"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque D 25208 — Tension del bus DC interno (valor/10)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25210 Inverter Output Current -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="57"/>
+      <column name="direccion_registro" value="25210"/>
+      <column name="nombre_registro" value="Inverter Output Current"/>
+      <column name="campo_sql" value="salida_corriente_a"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="10"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque D 25210 — Corriente de salida del inversor (valor/10)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25212 Load Current -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="58"/>
+      <column name="direccion_registro" value="25212"/>
+      <column name="nombre_registro" value="Load Current"/>
+      <column name="campo_sql" value="salida_corriente_a"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="10"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="Bloque D 25212 — Corriente de carga (redundante con 25210, inactivo)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25215 Load Power -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="59"/>
+      <column name="direccion_registro" value="25215"/>
+      <column name="nombre_registro" value="Load Power"/>
+      <column name="campo_sql" value="salida_potencia_w"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="W"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="Bloque D 25215 — Potencia consumida por carga (redundante con 25213, inactivo)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25219 Battery Capacity (SOC) -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="60"/>
+      <column name="direccion_registro" value="25219"/>
+      <column name="nombre_registro" value="Battery Capacity SOC"/>
+      <column name="campo_sql" value="soc_pct"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="%"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque D 25219 — Estado de carga de bateria (SOC)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25220 Battery Current (AC Charger) -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="61"/>
+      <column name="direccion_registro" value="25220"/>
+      <column name="nombre_registro" value="Battery Current (AC Charger)"/>
+      <column name="campo_sql" value="bateria_corriente_a"/>
+      <column name="tipo_dato" value="SignedInt16"/>
+      <column name="escala" value="10"/>
+      <column name="unidad" value="A"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="Bloque D 25220 — Corriente de bateria desde cargador AC (redundante con 25209, inactivo)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25222 Grid Frequency -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="62"/>
+      <column name="direccion_registro" value="25222"/>
+      <column name="nombre_registro" value="Grid Frequency"/>
+      <column name="campo_sql" value="red_frecuencia_hz"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="100"/>
+      <column name="unidad" value="Hz"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="Bloque D 25222 — Frecuencia de red (redundante con 25218, inactivo)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25226 Inverter Active Power — more precise than 25213 -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="63"/>
+      <column name="direccion_registro" value="25226"/>
+      <column name="nombre_registro" value="Inverter Active Power"/>
+      <column name="campo_sql" value="salida_potencia_w"/>
+      <column name="tipo_dato" value="SignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="W"/>
+      <column name="activo" value="false"/>
+      <column name="descripcion" value="Bloque D 25226 — Potencia activa del inversor (redundante con 25213, inactivo)"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25233 AC Radiator Temperature — overrides Block B 15209 -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="64"/>
+      <column name="direccion_registro" value="25233"/>
+      <column name="nombre_registro" value="AC Radiator Temperature"/>
+      <column name="campo_sql" value="temperatura_c"/>
+      <column name="tipo_dato" value="SignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value="°C"/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque D 25233 — Temperatura del disipador AC. Sobreescribe Block B 15209"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+    <!-- 25237 Inverter Relay State → red_activa (bit0 = grid relay closed) -->
+    <insert tableName="mapeo_registro">
+      <column name="id" value="65"/>
+      <column name="direccion_registro" value="25237"/>
+      <column name="nombre_registro" value="Inverter Relay State"/>
+      <column name="campo_sql" value="red_activa"/>
+      <column name="tipo_dato" value="UnsignedInt16"/>
+      <column name="escala" value="1"/>
+      <column name="unidad" value=""/>
+      <column name="activo" value="true"/>
+      <column name="descripcion" value="Bloque D 25237 — Estado de reles del inversor (bit0=grid relay). &gt;0 = red activa"/>
+      <column name="marca_id" value="2"/>
+    </insert>
+
+  </changeSet>
+
+</databaseChangeLog>

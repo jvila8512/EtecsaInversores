@@ -43,3 +43,17 @@ id;direccion_registro;nombre_registro;campo_sql;tipo_dato;escala;unidad;activo;d
 43;25218;Output Frequency;red_frecuencia_hz;UnsignedInt16;100;Hz;true;Bloque D 25218 — Frecuencia de salida (valor/100);2
 44;25221;Battery Power;bateria_potencia_w;SignedInt16;1;W;true;Bloque D 25221 — Potencia de bateria (signed, +cargando, -descargando);2
 45;25228;Inverter Apparent Power;salida_aparente_va;UnsignedInt16;1;VA;true;Bloque D 25228 — Potencia aparente del inversor;2
+46;4357;PV Input Current;pv_corriente_a;UnsignedInt16;1;A;true;0x1105 — Corriente de entrada del panel solar;1
+47;4359;Temperature;temperatura_c;UnsignedInt16;1;°C;true;0x1107 — Temperatura interna del equipo;1
+48;4363;Battery SOC;soc_pct;UnsignedInt16;1;%;true;0x110B — Estado de carga de bateria (SOC);1
+49;4370;AC Output Current;salida_corriente_a;UnsignedInt16;1;A;true;0x1112 — Corriente de salida AC;1
+50;4371;AC Output Frequency;salida_frecuencia_hz;UnsignedInt16;100;Hz;true;0x1113 — Frecuencia de salida AC (valor/100);1
+51;15201;PV Charger Work State;pv_activo;UnsignedInt16;1;;true;Bloque B 15201 — Estado del cargador PV (>0 = PV activo);2
+52;15207;PV Charging Current;pv_corriente_a;UnsignedInt16;10;A;true;Bloque B 15207 — Corriente de carga PV (valor/10);2
+53;15209;PV Radiator Temperature;temperatura_c;SignedInt16;1;°C;true;Bloque B 15209 — Temperatura del disipador PV;2
+54;25202;Inverter Fault Code High;codigo_fallo;UnsignedInt16;1;;true;Bloque D 25202 — Codigo de fallo del inversor (parte alta);2
+55;25208;BUS Voltage;bus_voltaje_v;UnsignedInt16;10;V;true;Bloque D 25208 — Tension del bus DC interno (valor/10);2
+56;25210;Inverter Output Current;salida_corriente_a;UnsignedInt16;10;A;true;Bloque D 25210 — Corriente de salida del inversor (valor/10);2
+57;25219;Battery Capacity SOC;soc_pct;UnsignedInt16;1;%;true;Bloque D 25219 — Estado de carga de bateria (SOC);2
+58;25233;AC Radiator Temperature;temperatura_c;SignedInt16;1;°C;true;Bloque D 25233 — Temperatura del disipador AC;2
+59;25237;Inverter Relay State;red_activa;UnsignedInt16;1;;true;Bloque D 25237 — Estado de reles del inversor (>0 = red activa);2

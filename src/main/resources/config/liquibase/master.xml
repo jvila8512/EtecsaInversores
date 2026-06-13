@@ -50,4 +50,10 @@
   <!-- Seed data for inverter brands, models, and register mappings (all profiles, no faker context) -->
   <include file="changelog/20260611000001_seed_inverter_brands.xml" relativeToChangelogFile="true"/>
 
+  <!-- Additional telemetry columns for complete register mapping -->
+  <include file="changelog/20260611000002_add_telemetry_columns.xml" relativeToChangelogFile="true"/>
+
+  <!-- Complete register mappings for Felicity and MUST (all telemetry registers) -->
+  <include file="changelog/20260611000003_complete_register_mappings.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

@@ -306,8 +306,14 @@ public class PollingService {
         dato.setCargaPorcentaje(raw.get("carga_porcentaje") != null ? raw.get("carga_porcentaje").intValue() : null);
         dato.setRedVoltajeV(raw.get("red_voltaje_v"));
         dato.setRedFrecuenciaHz(raw.get("red_frecuencia_hz"));
-        dato.setEficienciaPct(raw.get("eficiencia_pct"));
-        dato.setConsumoRedW(raw.get("consumo_red_w"));
+    dato.setEficienciaPct(raw.get("eficiencia_pct"));
+    dato.setConsumoRedW(raw.get("consumo_red_w"));
+    dato.setPvCorrienteA(raw.get("pv_corriente_a"));
+    dato.setSalidaCorrienteA(raw.get("salida_corriente_a"));
+    dato.setSalidaFrecuenciaHz(raw.get("salida_frecuencia_hz"));
+    dato.setTemperaturaC(raw.get("temperatura_c"));
+    dato.setBusVoltajeV(raw.get("bus_voltaje_v"));
+    dato.setSocPct(raw.get("soc_pct") != null ? raw.get("soc_pct").intValue() : null);
 
         // Flags booleanos derivados de bits de estado
         dato.setBateriaCargando(raw.get("bateria_cargando") != null && raw.get("bateria_cargando") > 0);
