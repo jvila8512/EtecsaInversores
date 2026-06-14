@@ -24,6 +24,12 @@ export interface IDatoInversor {
   redActiva?: boolean | null;
   crcValido?: boolean | null;
   latenciaMs?: number | null;
+  pvCorrienteA?: number | null;
+  salidaCorrienteA?: number | null;
+  salidaFrecuenciaHz?: number | null;
+  temperaturaC?: number | null;
+  busVoltajeV?: number | null;
+  socPct?: number | null;
   inversor?: IInversor | null;
 }
 

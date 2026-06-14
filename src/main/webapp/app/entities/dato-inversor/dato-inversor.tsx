@@ -51,12 +51,19 @@ const ALL_COLUMNS = [
   { key: 'bateriaCorrienteA', label: 'Batería A', default: false },
   { key: 'bateriaPotenciaW', label: 'Batería W', default: false },
   { key: 'pvVoltajeV', label: 'PV V', default: true },
+  { key: 'pvCorrienteA', label: 'PV A', default: false },
   { key: 'pvPotenciaW', label: 'PV W', default: true },
   { key: 'salidaVoltajeV', label: 'Salida V', default: false },
+  { key: 'salidaCorrienteA', label: 'Salida A', default: false },
   { key: 'salidaPotenciaW', label: 'Salida W', default: false },
+  { key: 'salidaFrecuenciaHz', label: 'Salida Hz', default: false },
   { key: 'cargaPorcentaje', label: 'Carga %', default: true },
+  { key: 'socPct', label: 'SOC %', default: true },
   { key: 'redVoltajeV', label: 'Red V', default: false },
+  { key: 'redFrecuenciaHz', label: 'Red Hz', default: false },
   { key: 'eficienciaPct', label: 'Eficiencia %', default: true },
+  { key: 'temperaturaC', label: 'Temp °C', default: true },
+  { key: 'busVoltajeV', label: 'Bus V', default: false },
   { key: 'bateriaCargando', label: 'Cargando', default: true },
   { key: 'pvActivo', label: 'PV Activo', default: false },
   { key: 'crcValido', label: 'CRC OK', default: false },
@@ -85,6 +92,12 @@ const emptyForm = {
   redActiva: false,
   crcValido: false,
   latenciaMs: '',
+  pvCorrienteA: '',
+  salidaCorrienteA: '',
+  salidaFrecuenciaHz: '',
+  temperaturaC: '',
+  busVoltajeV: '',
+  socPct: '',
   inversorId: '',
 };
 
@@ -209,6 +222,12 @@ export const DatoInversor = () => {
       redActiva: row.redActiva ?? false,
       crcValido: row.crcValido ?? false,
       latenciaMs: row.latenciaMs?.toString() || '',
+      pvCorrienteA: row.pvCorrienteA?.toString() || '',
+      salidaCorrienteA: row.salidaCorrienteA?.toString() || '',
+      salidaFrecuenciaHz: row.salidaFrecuenciaHz?.toString() || '',
+      temperaturaC: row.temperaturaC?.toString() || '',
+      busVoltajeV: row.busVoltajeV?.toString() || '',
+      socPct: row.socPct?.toString() || '',
       inversorId: row.inversor?.id?.toString() || '',
     });
     setFormKey(prev => prev + 1);
@@ -246,6 +265,12 @@ export const DatoInversor = () => {
       redActiva: formValues.redActiva,
       crcValido: formValues.crcValido,
       latenciaMs: formValues.latenciaMs ? parseInt(formValues.latenciaMs, 10) : null,
+      pvCorrienteA: formValues.pvCorrienteA ? parseFloat(formValues.pvCorrienteA) : null,
+      salidaCorrienteA: formValues.salidaCorrienteA ? parseFloat(formValues.salidaCorrienteA) : null,
+      salidaFrecuenciaHz: formValues.salidaFrecuenciaHz ? parseFloat(formValues.salidaFrecuenciaHz) : null,
+      temperaturaC: formValues.temperaturaC ? parseFloat(formValues.temperaturaC) : null,
+      busVoltajeV: formValues.busVoltajeV ? parseFloat(formValues.busVoltajeV) : null,
+      socPct: formValues.socPct ? parseInt(formValues.socPct, 10) : null,
       inversor: formValues.inversorId ? { id: parseInt(formValues.inversorId, 10) } : null,
     };
     if (selectedEntity?.id) entity.id = selectedEntity.id;
@@ -327,12 +352,19 @@ export const DatoInversor = () => {
               {showColumn('bateriaCorrienteA') && <TableCell sx={{ fontWeight: 600 }}>Batería A</TableCell>}
               {showColumn('bateriaPotenciaW') && <TableCell sx={{ fontWeight: 600 }}>Batería W</TableCell>}
               {showColumn('pvVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>PV V</TableCell>}
+              {showColumn('pvCorrienteA') && <TableCell sx={{ fontWeight: 600 }}>PV A</TableCell>}
               {showColumn('pvPotenciaW') && <TableCell sx={{ fontWeight: 600 }}>PV W</TableCell>}
               {showColumn('salidaVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>Salida V</TableCell>}
+              {showColumn('salidaCorrienteA') && <TableCell sx={{ fontWeight: 600 }}>Salida A</TableCell>}
               {showColumn('salidaPotenciaW') && <TableCell sx={{ fontWeight: 600 }}>Salida W</TableCell>}
+              {showColumn('salidaFrecuenciaHz') && <TableCell sx={{ fontWeight: 600 }}>Salida Hz</TableCell>}
               {showColumn('cargaPorcentaje') && <TableCell sx={{ fontWeight: 600 }}>Carga %</TableCell>}
+              {showColumn('socPct') && <TableCell sx={{ fontWeight: 600 }}>SOC %</TableCell>}
               {showColumn('redVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>Red V</TableCell>}
+              {showColumn('redFrecuenciaHz') && <TableCell sx={{ fontWeight: 600 }}>Red Hz</TableCell>}
               {showColumn('eficienciaPct') && <TableCell sx={{ fontWeight: 600 }}>Eficiencia %</TableCell>}
+              {showColumn('temperaturaC') && <TableCell sx={{ fontWeight: 600 }}>Temp °C</TableCell>}
+              {showColumn('busVoltajeV') && <TableCell sx={{ fontWeight: 600 }}>Bus V</TableCell>}
               {showColumn('bateriaCargando') && <TableCell sx={{ fontWeight: 600 }}>Cargando</TableCell>}
               {showColumn('pvActivo') && <TableCell sx={{ fontWeight: 600 }}>PV Activo</TableCell>}
               {showColumn('crcValido') && <TableCell sx={{ fontWeight: 600 }}>CRC OK</TableCell>}
@@ -353,12 +385,19 @@ export const DatoInversor = () => {
                 {showColumn('bateriaCorrienteA') && <TableCell>{row.bateriaCorrienteA}</TableCell>}
                 {showColumn('bateriaPotenciaW') && <TableCell>{row.bateriaPotenciaW}</TableCell>}
                 {showColumn('pvVoltajeV') && <TableCell>{row.pvVoltajeV}</TableCell>}
+                {showColumn('pvCorrienteA') && <TableCell>{row.pvCorrienteA}</TableCell>}
                 {showColumn('pvPotenciaW') && <TableCell>{row.pvPotenciaW}</TableCell>}
                 {showColumn('salidaVoltajeV') && <TableCell>{row.salidaVoltajeV}</TableCell>}
+                {showColumn('salidaCorrienteA') && <TableCell>{row.salidaCorrienteA}</TableCell>}
                 {showColumn('salidaPotenciaW') && <TableCell>{row.salidaPotenciaW}</TableCell>}
+                {showColumn('salidaFrecuenciaHz') && <TableCell>{row.salidaFrecuenciaHz}</TableCell>}
                 {showColumn('cargaPorcentaje') && <TableCell>{row.cargaPorcentaje}</TableCell>}
+                {showColumn('socPct') && <TableCell>{row.socPct}</TableCell>}
                 {showColumn('redVoltajeV') && <TableCell>{row.redVoltajeV}</TableCell>}
+                {showColumn('redFrecuenciaHz') && <TableCell>{row.redFrecuenciaHz}</TableCell>}
                 {showColumn('eficienciaPct') && <TableCell>{row.eficienciaPct}</TableCell>}
+                {showColumn('temperaturaC') && <TableCell>{row.temperaturaC}</TableCell>}
+                {showColumn('busVoltajeV') && <TableCell>{row.busVoltajeV}</TableCell>}
                 {showColumn('bateriaCargando') && <TableCell>{row.bateriaCargando ? 'Sí' : 'No'}</TableCell>}
                 {showColumn('pvActivo') && <TableCell>{row.pvActivo ? 'Sí' : 'No'}</TableCell>}
                 {showColumn('crcValido') && <TableCell>{row.crcValido ? 'Sí' : 'No'}</TableCell>}
@@ -489,6 +528,60 @@ export const DatoInversor = () => {
                   name="eficienciaPct"
                   type="number"
                   value={formValues.eficienciaPct}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="PV Corriente (A)"
+                  id="dato-pvCorrienteA"
+                  name="pvCorrienteA"
+                  type="number"
+                  value={formValues.pvCorrienteA}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Salida Corriente (A)"
+                  id="dato-salidaCorrienteA"
+                  name="salidaCorrienteA"
+                  type="number"
+                  value={formValues.salidaCorrienteA}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Salida Frecuencia (Hz)"
+                  id="dato-salidaFrecuenciaHz"
+                  name="salidaFrecuenciaHz"
+                  type="number"
+                  value={formValues.salidaFrecuenciaHz}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Temperatura (°C)"
+                  id="dato-temperaturaC"
+                  name="temperaturaC"
+                  type="number"
+                  value={formValues.temperaturaC}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="Bus Voltaje (V)"
+                  id="dato-busVoltajeV"
+                  name="busVoltajeV"
+                  type="number"
+                  value={formValues.busVoltajeV}
+                  onChange={handleInputChange}
+                  fullWidth
+                />
+                <TextField
+                  label="SOC (%)"
+                  id="dato-socPct"
+                  name="socPct"
+                  type="number"
+                  value={formValues.socPct}
                   onChange={handleInputChange}
                   fullWidth
                 />
