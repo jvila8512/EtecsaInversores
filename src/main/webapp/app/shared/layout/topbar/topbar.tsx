@@ -185,16 +185,17 @@ const TopBar: React.FC = () => {
               }}
             >
               <Avatar
+                src={account?.imageUrl || undefined}
                 sx={{
                   width: 38,
                   height: 38,
-                  background: 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                  background: account?.imageUrl ? 'none' : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
                   fontSize: '0.9rem',
                   fontWeight: 600,
                   boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
                 }}
               >
-                {getUserInitials()}
+                {!account?.imageUrl && getUserInitials()}
               </Avatar>
             </IconButton>
 

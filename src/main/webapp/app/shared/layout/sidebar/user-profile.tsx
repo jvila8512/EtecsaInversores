@@ -19,6 +19,20 @@ export const UserProfile: React.FC<UserProfileProps> = ({ collapsed, isMobile })
       ? account.login.charAt(0).toUpperCase()
       : '?';
 
+  if (account?.imageUrl) {
+    return (
+      <Avatar
+        src={account.imageUrl}
+        alt={initials}
+        sx={{
+          width: 48,
+          height: 48,
+          border: '2px solid rgba(255, 255, 255, 0.3)',
+        }}
+      />
+    );
+  }
+
   return (
     <Avatar
       sx={{

@@ -12,12 +12,9 @@ services:
       - SPRING_LIQUIBASE_URL=jdbc:postgresql://postgresql:5432/inversorMonitor?stringtype=unspecified
       - SPRING_LIQUIBASE_USER=inversorMonitor
       - SPRING_LIQUIBASE_PASSWORD=etecsa2026
-      - APP_UPLOAD_DIR=/app/profile-images
       - MANAGEMENT_PROMETHEUS_METRICS_EXPORT_ENABLED=true
     ports:
       - 127.0.0.1:8081:8080
-    volumes:
-      - profile-images:/app/profile-images
     healthcheck:
       test:
         - CMD
@@ -35,5 +32,4 @@ services:
       file: ./postgresql.yml
       service: postgresql
 volumes:
-  profile-images:
   pgdata:
