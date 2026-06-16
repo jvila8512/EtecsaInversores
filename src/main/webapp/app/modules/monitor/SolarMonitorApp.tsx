@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
 import { Routes, Route, useNavigate, useParams, useLocation } from 'react-router-dom';
-import { MONITOR_THEME_CSS, applyTheme, readTheme } from './theme';
+import { useThemeMode } from 'app/app';
 import { useLiveData } from './hooks/useLiveData';
 import { useInversores } from './hooks/useInversores';
 import DashboardScreen from './screens/DashboardScreen';
@@ -39,7 +39,7 @@ export const useMonitorContext = () => {
 };
 
 const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [theme, setTheme] = useState<ThemeMode>(readTheme);
+  const { mode, toggleMode } = useThemeMode();
   const [liveAlertas, setLiveAlertas] = useState<IEventoAlerta[]>([]);
 
   const { inversores, latestReadings, gateways, groups, kpis, alertas, alertCount, loading, refresh } = useInversores();
@@ -59,29 +59,11 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   const { liveData, wsStatus } = useLiveData({ inversorIds, onAlert: handleNewAlert });
 
-  useEffect(() => {
-    applyTheme(theme);
-  }, [theme]);
-
-  useEffect(() => {
-    const existingStyle = document.getElementById('solar-monitor-theme');
-    if (!existingStyle) {
-      const style = document.createElement('style');
-      style.id = 'solar-monitor-theme';
-      style.textContent = MONITOR_THEME_CSS;
-      document.head.appendChild(style);
-    }
-  }, []);
-
   const allAlertas = useMemo(() => {
     const existingIds = new Set(alertas.map(a => a.id));
     const liveOnly = liveAlertas.filter(a => !existingIds.has(a.id));
     return [...liveOnly, ...alertas];
   }, [alertas, liveAlertas]);
-
-  const toggleTheme = useCallback(() => {
-    setTheme(prev => (prev === 'dark' ? 'light' : 'dark'));
-  }, []);
 
   const value = useMemo(
     () => ({
@@ -96,10 +78,10 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
       refresh,
       liveData,
       wsStatus,
-      theme,
-      toggleTheme,
+      theme: mode as ThemeMode,
+      toggleTheme: toggleMode,
     }),
-    [inversores, latestReadings, gateways, groups, kpis, allAlertas, alertCount, loading, refresh, liveData, wsStatus, theme, toggleTheme],
+    [inversores, latestReadings, gateways, groups, kpis, allAlertas, alertCount, loading, refresh, liveData, wsStatus, mode, toggleMode],
   );
 
   return <MonitorContext.Provider value={value}>{children}</MonitorContext.Provider>;
@@ -172,16 +154,14 @@ const SolarMonitorApp: React.FC = () => {
 
   return (
     <MonitorProvider>
-      <div id="app">
-        <div className="solar-monitor-root">
-          <Routes>
-            <Route index element={<DashboardRoute />} />
-            <Route path="inversor/:id" element={<InversorDetailRoute />} />
-            <Route path="history" element={<HistoryRoute />} />
-            <Route path="alerts" element={<AlertsRoute />} />
-            <Route path="settings" element={<SettingsRoute />} />
-          </Routes>
-        </div>
+      <div className="solar-monitor-root">
+        <Routes>
+          <Route index element={<DashboardRoute />} />
+          <Route path="inversor/:id" element={<InversorDetailRoute />} />
+          <Route path="history" element={<HistoryRoute />} />
+          <Route path="alerts" element={<AlertsRoute />} />
+          <Route path="settings" element={<SettingsRoute />} />
+        </Routes>
       </div>
     </MonitorProvider>
   );

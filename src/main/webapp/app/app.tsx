@@ -2,15 +2,18 @@ import 'react-toastify/dist/ReactToastify.css';
 import './app.scss';
 import 'app/config/dayjs';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, createContext, useContext, useCallback, useMemo } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import { ThemeProvider } from '@mui/material/styles';
+import type { PaletteMode } from '@mui/material';
 import CssBaseline from '@mui/material/CssBaseline';
 
 import { useAppDispatch, useAppSelector } from 'app/config/store';
 import { getSession } from 'app/shared/reducers/authentication';
 import { getProfile } from 'app/shared/reducers/application-profile';
+import { getTheme } from 'app/shared/layout/theme/mui-theme';
+import { MONITOR_THEME_CSS } from 'app/modules/monitor/theme';
 import Sidebar from 'app/shared/layout/sidebar/sidebar';
 import TopBar from 'app/shared/layout/topbar/topbar';
 import Footer from 'app/shared/layout/footer/footer';
@@ -20,104 +23,62 @@ import AppRoutes from 'app/routes';
 
 const baseHref = document.querySelector('base').getAttribute('href').replace(/\/$/, '');
 
-const theme = createTheme({
-  palette: {
-    mode: 'light',
-    primary: {
-      main: '#2563eb',
-      light: '#3b82f6',
-      dark: '#1d4ed8',
-      contrastText: '#fff',
-    },
-    secondary: {
-      main: '#059669',
-      light: '#10b981',
-      dark: '#047857',
-    },
-    background: {
-      default: '#f8fafc',
-      paper: '#ffffff',
-    },
-    text: {
-      primary: '#1e293b',
-      secondary: '#64748b',
-    },
-    divider: '#e2e8f0',
-    success: {
-      main: '#22c55e',
-    },
-    warning: {
-      main: '#f59e0b',
-    },
-    error: {
-      main: '#ef4444',
-    },
-  },
-  typography: {
-    fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
-    h6: { fontWeight: 600 },
-    subtitle1: { fontWeight: 500 },
-  },
-  shape: {
-    borderRadius: 8,
-  },
-  components: {
-    MuiCssBaseline: {
-      styleOverrides: {
-        '*': {
-          '&:focus': {
-            outline: 'none !important',
-          },
-        },
-        body: {
-          '&::-webkit-scrollbar': {
-            width: '8px',
-          },
-          '&::-webkit-scrollbar-track': {
-            background: '#f1f1f1',
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: '#c1c1c1',
-            borderRadius: '4px',
-          },
-        },
-      },
-    },
-    MuiButton: {
-      styleOverrides: {
-        root: {
-          textTransform: 'none',
-          fontWeight: 500,
-          borderRadius: 8,
-        },
-      },
-    },
-    MuiCard: {
-      styleOverrides: {
-        root: {
-          boxShadow: '0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)',
-          borderRadius: 12,
-        },
-      },
-    },
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          borderRadius: 12,
-        },
-      },
-    },
-  },
-});
+/* --- Global Theme Context --- */
+interface ThemeCtxValue {
+  mode: PaletteMode;
+  toggleMode: () => void;
+}
+
+const readThemeMode = (): PaletteMode => {
+  return (localStorage.getItem('app-theme-mode') as PaletteMode) || 'dark';
+};
+
+const ThemeCtx = createContext<ThemeCtxValue>({ mode: 'dark', toggleMode: () => {} });
+
+export const useThemeMode = () => useContext(ThemeCtx);
 
 export const App = () => {
   const dispatch = useAppDispatch();
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mode, setMode] = useState<PaletteMode>(readThemeMode);
 
   useEffect(() => {
     dispatch(getSession());
     dispatch(getProfile());
   }, []);
+
+  // Inject Solar Monitor CSS variables once at app level
+  useEffect(() => {
+    const existing = document.getElementById('solar-monitor-theme');
+    if (!existing) {
+      const style = document.createElement('style');
+      style.id = 'solar-monitor-theme';
+      style.textContent = MONITOR_THEME_CSS;
+      document.head.appendChild(style);
+    }
+  }, []);
+
+  const toggleMode = useCallback(() => {
+    setMode(prev => {
+      const next: PaletteMode = prev === 'dark' ? 'light' : 'dark';
+      localStorage.setItem('app-theme-mode', next);
+      return next;
+    });
+  }, []);
+
+  const theme = useMemo(() => getTheme(mode), [mode]);
+
+  useEffect(() => {
+    // Sync CSS variable for Solar Monitor (which reads #app[data-light])
+    const appEl = document.getElementById('app');
+    if (appEl) {
+      if (mode === 'light') {
+        appEl.setAttribute('data-light', '');
+      } else {
+        appEl.removeAttribute('data-light');
+      }
+    }
+  }, [mode]);
 
   const currentLocale = useAppSelector(state => state.locale.currentLocale);
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
@@ -131,34 +92,36 @@ export const App = () => {
   };
 
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <BrowserRouter basename={baseHref}>
-        <div className={`app-container${sidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
-          <ToastContainer position="top-left" className="toastify-container" toastClassName="toastify-toast" />
-          <ErrorBoundary>
-            <Sidebar
-              isAuthenticated={isAuthenticated}
-              isAdmin={isAdmin}
-              currentLocale={currentLocale}
-              ribbonEnv={ribbonEnv}
-              isInProduction={isInProduction}
-              isOpenAPIEnabled={isOpenAPIEnabled}
-              onCollapse={handleSidebarCollapse}
-            />
-          </ErrorBoundary>
-          <div className="main-content">
-            <TopBar />
-            <div className="view-container" id="app-view-container">
-              <ErrorBoundary>
-                <AppRoutes />
-              </ErrorBoundary>
+    <ThemeCtx.Provider value={{ mode, toggleMode }}>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <BrowserRouter basename={baseHref}>
+          <div className={`app-container${sidebarCollapsed ? ' sidebar-collapsed' : ''}`}>
+            <ToastContainer position="top-left" className="toastify-container" toastClassName="toastify-toast" />
+            <ErrorBoundary>
+              <Sidebar
+                isAuthenticated={isAuthenticated}
+                isAdmin={isAdmin}
+                currentLocale={currentLocale}
+                ribbonEnv={ribbonEnv}
+                isInProduction={isInProduction}
+                isOpenAPIEnabled={isOpenAPIEnabled}
+                onCollapse={handleSidebarCollapse}
+              />
+            </ErrorBoundary>
+            <div className="main-content">
+              <TopBar />
+              <div className="view-container" id="app-view-container">
+                <ErrorBoundary>
+                  <AppRoutes />
+                </ErrorBoundary>
+              </div>
+              <Footer />
             </div>
-            <Footer />
           </div>
-        </div>
-      </BrowserRouter>
-    </ThemeProvider>
+        </BrowserRouter>
+      </ThemeProvider>
+    </ThemeCtx.Provider>
   );
 };
 

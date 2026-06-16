@@ -158,9 +158,9 @@ export const SettingsPage = () => {
                 onClick={() => fileInputRef.current?.click()}
                 disabled={uploading}
                 sx={{
-                  bgcolor: '#2563eb',
+                  bgcolor: 'primary.main',
                   color: '#fff',
-                  '&:hover': { bgcolor: '#1d4ed8' },
+                  '&:hover': { bgcolor: 'primary.dark' },
                   width: 28,
                   height: 28,
                 }}
@@ -169,7 +169,7 @@ export const SettingsPage = () => {
               </IconButton>
             }
           >
-            <Avatar src={imageUrl || undefined} sx={{ width: 80, height: 80, fontSize: 28, bgcolor: '#2563eb' }}>
+            <Avatar src={imageUrl || undefined} sx={{ width: 80, height: 80, fontSize: 28, bgcolor: 'primary.main' }}>
               {userInitials}
             </Avatar>
           </Badge>

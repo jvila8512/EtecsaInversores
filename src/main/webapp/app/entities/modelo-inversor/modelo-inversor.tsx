@@ -230,7 +230,7 @@ export const ModeloInversor = () => {
 
       {loading && !modeloInversorList?.length && (
         <Box sx={{ display: 'flex', justifyContent: 'center', py: 4 }}>
-          <CircularProgress size={40} sx={{ color: '#2563eb' }} />
+          <CircularProgress size={40} sx={{ color: 'primary.main' }} />
         </Box>
       )}
 

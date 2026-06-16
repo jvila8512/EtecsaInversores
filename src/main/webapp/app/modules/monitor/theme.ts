@@ -1,38 +1,19 @@
-import type { ThemeMode } from './types';
-
-/* ─── Apply theme to the DOM ─── */
-export function applyTheme(mode: ThemeMode): void {
-  const app = document.getElementById('app');
-  if (!app) return;
-  if (mode === 'light') {
-    app.setAttribute('data-light', '');
-  } else {
-    app.removeAttribute('data-light');
-  }
-  localStorage.setItem('solar-monitor-theme', mode);
-}
-
-/* ─── Read persisted theme or default to dark ─── */
-export function readTheme(): ThemeMode {
-  return (localStorage.getItem('solar-monitor-theme') as ThemeMode) || 'dark';
-}
-
-/* ─── CSS custom properties injected via <style> tag ─── */
+/* ─── CSS custom properties — aligned with MUI industrial theme ─── */
 export const MONITOR_THEME_CSS = `
 /* ─── DARK MODE (default) ─── */
 #app {
-  --bg: #0a0f0d;
-  --bg2: #111814;
-  --bg3: #1a2119;
-  --card: #141c17;
-  --bdr: #1f2d24;
-  --bdr2: #2a3d30;
-  --tx: #e8f0ea;
-  --tx2: #7a9882;
-  --tx3: #4a6454;
+  --bg: #0f1412;
+  --bg2: #141b18;
+  --bg3: #1a211e;
+  --card: #1a211e;
+  --bdr: #2a342e;
+  --bdr2: #354033;
+  --tx: #e8edeb;
+  --tx2: #889a91;
+  --tx3: #4a5c54;
 
-  --bl: #2563eb;
-  --bl2: #1d4ed8;
+  --bl: #3b82f6;
+  --bl2: #2563eb;
   --gr: #22c55e;
   --am: #f59e0b;
   --rd: #ef4444;
@@ -40,15 +21,15 @@ export const MONITOR_THEME_CSS = `
 
 /* ─── LIGHT MODE ─── */
 #app[data-light] {
-  --bg: #f0f4f1;
+  --bg: #f0f3f2;
   --bg2: #e8ece9;
   --bg3: #dce4de;
   --card: #ffffff;
-  --bdr: #ccd8d0;
+  --bdr: #d0d8d4;
   --bdr2: #b3c4bc;
-  --tx: #0d1a11;
-  --tx2: #3d6b4f;
-  --tx3: #6b9278;
+  --tx: #0f1a15;
+  --tx2: #5b6b63;
+  --tx3: #a3b1ab;
 }
 
 /* ─── Animations ─── */

@@ -72,7 +72,7 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, label, collapsed, isMobile,
       <ListItemButton
         component={NavLink}
         to={to}
-        sx={{
+        sx={theme => ({
           minHeight: inset ? 36 : 40,
           px: inset ? 3 : 2,
           justifyContent: collapsed && !isMobile ? 'center' : 'initial',
@@ -80,11 +80,11 @@ const NavItem: React.FC<NavItemProps> = ({ to, icon, label, collapsed, isMobile,
           borderRadius: 1,
           mx: 1,
           '&.active': {
-            bgcolor: '#eff6ff',
-            color: '#2563eb',
-            '& .MuiListItemIcon-root': { color: '#2563eb' },
+            bgcolor: theme.palette.mode === 'dark' ? 'rgba(59, 130, 246, 0.12)' : '#eff6ff',
+            color: 'primary.main',
+            '& .MuiListItemIcon-root': { color: 'primary.main' },
           },
-        }}
+        })}
       >
         <ListItemIcon sx={{ minWidth: 0, mr: collapsed && !isMobile ? 0 : 2, color: 'inherit' }}>{icon}</ListItemIcon>
         {!collapsed && <ListItemText primary={label} primaryTypographyProps={{ fontSize: inset ? '0.8rem' : '0.85rem' }} />}
@@ -199,10 +199,19 @@ const Sidebar = (props: ISidebarProps) => {
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden' }}>
       {renderDevRibbon()}
 
-      <Box sx={{ display: 'flex', alignItems: 'center', px: 2, minHeight: 64, borderBottom: '1px solid rgba(0,0,0,0.08)' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          px: 2,
+          minHeight: 64,
+          borderBottom: '1px solid',
+          borderColor: 'divider',
+        }}
+      >
         <IconButton
           onClick={toggleCollapsed}
-          sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary', bgcolor: 'rgba(0,0,0,0.06)' } }}
+          sx={{ color: 'text.secondary', '&:hover': { color: 'text.primary', bgcolor: 'action.hover' } }}
         >
           {collapsed && !isMobile ? <MenuIcon /> : <ChevronLeftIcon />}
         </IconButton>
@@ -219,7 +228,7 @@ const Sidebar = (props: ISidebarProps) => {
         <ProfileInfo collapsed={collapsed} isMobile={isMobile} />
       </Box>
 
-      <Divider sx={{ borderColor: 'rgba(0,0,0,0.08)' }} />
+      <Divider />
 
       <Box className="sidebar-nav" sx={{ flex: 1, overflowY: 'auto', overflowX: 'hidden', py: 1 }}>
         <List>
@@ -518,9 +527,9 @@ const Sidebar = (props: ISidebarProps) => {
           top: 8,
           left: 8,
           zIndex: theme.zIndex.drawer + 1,
-          bgcolor: '#2563eb',
+          bgcolor: 'primary.main',
           color: '#fff',
-          '&:hover': { bgcolor: '#1d4ed8' },
+          '&:hover': { bgcolor: 'primary.dark' },
         }}
       >
         <MenuIcon />
@@ -540,8 +549,6 @@ const Sidebar = (props: ISidebarProps) => {
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: DRAWER_WIDTH,
-            bgcolor: '#ffffff',
-            color: 'text.primary',
           },
         }}
       >
@@ -554,9 +561,8 @@ const Sidebar = (props: ISidebarProps) => {
           '& .MuiDrawer-paper': {
             boxSizing: 'border-box',
             width: drawerWidth,
-            bgcolor: '#ffffff',
-            color: 'text.primary',
-            borderRight: '1px solid #e2e8f0',
+            borderRight: '1px solid',
+            borderColor: 'divider',
             transition: theme.transitions.create('width', {
               easing: theme.transitions.easing.sharp,
               duration: theme.transitions.duration.leavingScreen,

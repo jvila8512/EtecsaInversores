@@ -13,6 +13,7 @@ import {
   InputBase,
   ListItemIcon,
   ListItemText,
+  Tooltip,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -22,7 +23,10 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import WarningIcon from '@mui/icons-material/Warning';
 import InfoIcon from '@mui/icons-material/Info';
 import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
 import { useAppSelector } from 'app/config/store';
+import { useThemeMode } from 'app/app';
 
 const mockNotifications = [{ id: 1, title: 'Sistema', message: 'Nueva actualización disponible', type: 'info' }];
 
@@ -31,6 +35,7 @@ const TopBar: React.FC = () => {
   const isAuthenticated = useAppSelector(state => state.authentication.isAuthenticated);
   const [accountMenuAnchor, setAccountMenuAnchor] = useState<null | HTMLElement>(null);
   const [notificationsAnchor, setNotificationsAnchor] = useState<null | HTMLElement>(null);
+  const { mode, toggleMode } = useThemeMode();
 
   const getUserInitials = () => {
     if (!account) return '?';
@@ -47,53 +52,55 @@ const TopBar: React.FC = () => {
   const getNotificationIcon = (type: string) => {
     switch (type) {
       case 'success':
-        return <CheckCircleIcon fontSize="small" sx={{ color: '#22c55e' }} />;
+        return <CheckCircleIcon fontSize="small" sx={{ color: 'success.main' }} />;
       case 'warning':
-        return <WarningIcon fontSize="small" sx={{ color: '#f59e0b' }} />;
+        return <WarningIcon fontSize="small" sx={{ color: 'warning.main' }} />;
       default:
-        return <InfoIcon fontSize="small" sx={{ color: '#3b82f6' }} />;
+        return <InfoIcon fontSize="small" sx={{ color: 'info.main' }} />;
     }
   };
 
   return (
     <Box
       component="header"
-      sx={{
+      sx={theme => ({
         height: 64,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         px: 3,
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid #e2e8f0',
+        backgroundColor: theme.palette.background.paper,
+        borderBottom: '1px solid',
+        borderColor: 'divider',
         gap: 2,
-      }}
+      })}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', flex: 1, maxWidth: 400 }}>
         <Box
-          sx={{
+          sx={theme => ({
             display: 'flex',
             alignItems: 'center',
-            backgroundColor: '#f8fafc',
-            border: '1px solid #e2e8f0',
+            backgroundColor: theme.palette.mode === 'dark' ? '#141b18' : '#f8fafc',
+            border: '1px solid',
+            borderColor: 'divider',
             borderRadius: 2,
             px: 2,
             py: 0.5,
             flex: 1,
             '&:focus-within': {
-              borderColor: '#2563eb',
-              backgroundColor: '#ffffff',
+              borderColor: 'primary.main',
+              backgroundColor: theme.palette.mode === 'dark' ? '#1a211e' : '#ffffff',
             },
-          }}
+          })}
         >
-          <SearchIcon sx={{ color: '#64748b', mr: 1 }} />
+          <SearchIcon sx={{ color: 'text.secondary', mr: 1 }} />
           <InputBase
             placeholder="Buscar inversores, alertas..."
             sx={{
               flex: 1,
               fontSize: '0.9rem',
               '& input::placeholder': {
-                color: '#94a3b8',
+                color: 'text.disabled',
                 opacity: 1,
               },
             }}
@@ -102,17 +109,34 @@ const TopBar: React.FC = () => {
       </Box>
 
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1 }}>
+        {/* Theme toggle */}
+        <Tooltip title={mode === 'dark' ? 'Modo claro' : 'Modo oscuro'}>
+          <IconButton
+            onClick={toggleMode}
+            sx={{
+              color: 'text.secondary',
+              transition: 'all 0.2s ease',
+              '&:hover': {
+                color: 'primary.main',
+                backgroundColor: 'action.hover',
+              },
+            }}
+          >
+            {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+          </IconButton>
+        </Tooltip>
+
         {isAuthenticated && (
           <>
             <Box>
               <IconButton
                 onClick={e => setNotificationsAnchor(e.currentTarget)}
                 sx={{
-                  color: '#64748b',
+                  color: 'text.secondary',
                   transition: 'all 0.2s ease',
                   '&:hover': {
-                    color: '#1e293b',
-                    backgroundColor: 'rgba(30, 41, 59, 0.1)',
+                    color: 'text.primary',
+                    backgroundColor: 'action.hover',
                   },
                 }}
               >
@@ -120,7 +144,7 @@ const TopBar: React.FC = () => {
                   badgeContent={mockNotifications.length}
                   sx={{
                     '& .MuiBadge-badge': {
-                      backgroundColor: '#2563eb',
+                      backgroundColor: 'primary.main',
                       color: '#fff',
                       fontWeight: 600,
                     },
@@ -142,8 +166,18 @@ const TopBar: React.FC = () => {
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
-              <Box sx={{ px: 2.5, py: 2, borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', gap: 1 }}>
-                <NotificationsIcon sx={{ fontSize: 20, color: '#2563eb' }} />
+              <Box
+                sx={{
+                  px: 2.5,
+                  py: 2,
+                  borderBottom: '1px solid',
+                  borderColor: 'divider',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 1,
+                }}
+              >
+                <NotificationsIcon sx={{ fontSize: 20, color: 'primary.main' }} />
                 <Typography variant="subtitle1" fontWeight={600}>
                   Notificaciones
                 </Typography>
@@ -156,7 +190,8 @@ const TopBar: React.FC = () => {
                     sx={{
                       py: 2,
                       px: 2.5,
-                      borderBottom: index < mockNotifications.length - 1 ? '1px solid #e2e8f0' : 'none',
+                      borderBottom: index < mockNotifications.length - 1 ? '1px solid' : 'none',
+                      borderColor: 'divider',
                     }}
                   >
                     <ListItemIcon sx={{ minWidth: 36 }}>{getNotificationIcon(notification.type)}</ListItemIcon>
@@ -164,7 +199,7 @@ const TopBar: React.FC = () => {
                       primary={notification.title}
                       secondary={notification.message}
                       primaryTypographyProps={{ variant: 'body2', fontWeight: 500 }}
-                      secondaryTypographyProps={{ variant: 'caption', sx: { color: 'text.secondary' } }}
+                      secondaryTypographyProps={{ variant: 'caption' }}
                     />
                   </MenuItem>
                 ))}
@@ -186,14 +221,16 @@ const TopBar: React.FC = () => {
             >
               <Avatar
                 src={account?.imageUrl || undefined}
-                sx={{
+                sx={theme => ({
                   width: 38,
                   height: 38,
-                  background: account?.imageUrl ? 'none' : 'linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%)',
+                  background: account?.imageUrl
+                    ? 'none'
+                    : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  boxShadow: '0 2px 8px rgba(37, 99, 235, 0.3)',
-                }}
+                  boxShadow: theme => `0 2px 8px ${theme.palette.primary.main}4D`,
+                })}
               >
                 {!account?.imageUrl && getUserInitials()}
               </Avatar>
@@ -217,11 +254,11 @@ const TopBar: React.FC = () => {
               </Box>
               <Divider />
               <MenuItem component={Link} to="/account/settings" onClick={() => setAccountMenuAnchor(null)}>
-                <PersonIcon fontSize="small" sx={{ mr: 1.5, color: '#64748b' }} />
+                <PersonIcon fontSize="small" sx={{ mr: 1.5, color: 'text.secondary' }} />
                 Ajustes de cuenta
               </MenuItem>
               <MenuItem component={Link} to="/account/password" onClick={() => setAccountMenuAnchor(null)}>
-                <SettingsIcon fontSize="small" sx={{ mr: 1.5, color: '#64748b' }} />
+                <SettingsIcon fontSize="small" sx={{ mr: 1.5, color: 'text.secondary' }} />
                 Cambiar contraseña
               </MenuItem>
               <Divider />
@@ -238,14 +275,14 @@ const TopBar: React.FC = () => {
             component={Link}
             to="/login"
             sx={{
-              borderColor: '#e2e8f0',
-              color: '#1e293b',
+              borderColor: 'divider',
+              color: 'text.primary',
               fontWeight: 500,
               px: 2,
               '&:hover': {
-                borderColor: '#2563eb',
-                backgroundColor: '#eff6ff',
-                color: '#2563eb',
+                borderColor: 'primary.main',
+                backgroundColor: 'action.selected',
+                color: 'primary.main',
               },
             }}
           >

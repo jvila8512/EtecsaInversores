@@ -304,7 +304,7 @@ export const UserManagement = () => {
       <TableContainer sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: 800 }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: '#f8fafc' }}>
+            <TableRow sx={{ bgcolor: 'action.hover' }}>
               {showColumn('id') && (
                 <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('id')}>
                   Id
@@ -362,7 +362,7 @@ export const UserManagement = () => {
                         key={i}
                         variant="caption"
                         sx={{
-                          bgcolor: auth === 'ROLE_ADMIN' ? '#dc2626' : auth === 'ROLE_USER' ? '#16a34a' : '#64748b',
+                          bgcolor: auth === 'ROLE_ADMIN' ? 'error.main' : auth === 'ROLE_USER' ? 'success.main' : 'text.secondary',
                           color: 'white',
                           px: 1,
                           borderRadius: 1,

@@ -4,7 +4,7 @@ import { Box, CircularProgress } from '@mui/material';
 const SpinnerCar = () => {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', py: 2 }}>
-      <CircularProgress size={50} sx={{ color: '#2563eb' }} />
+      <CircularProgress size={50} sx={{ color: 'primary.main' }} />
     </Box>
   );
 };
