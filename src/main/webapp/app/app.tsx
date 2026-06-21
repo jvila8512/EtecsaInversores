@@ -33,7 +33,7 @@ const readThemeMode = (): PaletteMode => {
   return (localStorage.getItem('app-theme-mode') as PaletteMode) || 'dark';
 };
 
-const ThemeCtx = createContext<ThemeCtxValue>({ mode: 'dark', toggleMode: () => {} });
+const ThemeCtx = createContext<ThemeCtxValue>({ mode: 'dark' as PaletteMode, toggleMode() {} });
 
 export const useThemeMode = () => useContext(ThemeCtx);
 

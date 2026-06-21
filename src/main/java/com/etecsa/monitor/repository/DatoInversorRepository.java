@@ -48,11 +48,32 @@ public interface DatoInversorRepository extends JpaRepository<DatoInversor, Long
      */
     @Query(
         value = "SELECT di.* FROM dato_inversor di " +
-                "INNER JOIN (SELECT inversor_id, MAX(tiempo) AS max_tiempo FROM dato_inversor GROUP BY inversor_id) latest " +
-                "ON di.inversor_id = latest.inversor_id AND di.tiempo = latest.max_tiempo",
+        "INNER JOIN (SELECT inversor_id, MAX(tiempo) AS max_tiempo FROM dato_inversor GROUP BY inversor_id) latest " +
+        "ON di.inversor_id = latest.inversor_id AND di.tiempo = latest.max_tiempo",
         nativeQuery = true
     )
     List<DatoInversor> findLatestReadings();
+
+    /**
+     * Get hourly aggregate (AVG of pvPotenciaW) for the last 24 hours.
+     * Returns one row per hour with hour index (0-23) and average power in watts.
+     * Uses PostgreSQL's EXTRACT and date_trunc for efficient hourly grouping.
+     *
+     * @return list of Object[] where [0]=hour (Integer), [1]=avgPotenciaW (Double)
+     */
+    @Query(
+        value = "SELECT " +
+        "  EXTRACT(HOUR FROM tiempo)::int AS hora, " +
+        "  AVG(pv_potenciaw) AS avg_potencia " +
+        "FROM dato_inversor " +
+        "WHERE tiempo >= NOW() - INTERVAL '24 hours' " +
+        "  AND pv_potenciaw IS NOT NULL " +
+        "  AND pv_potenciaw > 0 " +
+        "GROUP BY EXTRACT(HOUR FROM tiempo) " +
+        "ORDER BY hora",
+        nativeQuery = true
+    )
+    List<Object[]> findHourlyTrend24h();
 
     /**
      * Delete all readings older than the specified instant.

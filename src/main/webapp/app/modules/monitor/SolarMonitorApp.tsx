@@ -28,6 +28,7 @@ interface MonitorContextValue {
   wsStatus: WsStatus;
   theme: ThemeMode;
   toggleTheme: () => void;
+  trend24h: number[];
 }
 
 const MonitorContext = createContext<MonitorContextValue | null>(null);
@@ -42,7 +43,7 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
   const { mode, toggleMode } = useThemeMode();
   const [liveAlertas, setLiveAlertas] = useState<IEventoAlerta[]>([]);
 
-  const { inversores, latestReadings, gateways, groups, kpis, alertas, alertCount, loading, refresh } = useInversores();
+  const { inversores, latestReadings, gateways, groups, kpis, alertas, alertCount, loading, refresh, trend24h } = useInversores();
 
   const inversorIds = useMemo(
     () =>
@@ -80,17 +81,32 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
       wsStatus,
       theme: mode as ThemeMode,
       toggleTheme: toggleMode,
+      trend24h,
     }),
-    [inversores, latestReadings, gateways, groups, kpis, allAlertas, alertCount, loading, refresh, liveData, wsStatus, mode, toggleMode],
+    [
+      inversores,
+      latestReadings,
+      gateways,
+      groups,
+      kpis,
+      allAlertas,
+      alertCount,
+      loading,
+      refresh,
+      liveData,
+      wsStatus,
+      mode,
+      toggleMode,
+      trend24h,
+    ],
   );
 
   return <MonitorContext.Provider value={value}>{children}</MonitorContext.Provider>;
 };
 
 const DashboardRoute = () => {
-  const { groups, kpis, liveData, loading, inversores } = useMonitorContext();
+  const { groups, kpis, liveData, loading, inversores, trend24h } = useMonitorContext();
   const navigate = useNavigate();
-  const trendValues = useMemo(() => Array.from({ length: 24 }, (_, i) => (i >= 6 && i < 20 ? Math.random() * 3000 + 500 : 0)), []);
 
   const handleInversorTap = (inv: IInversor) => {
     navigate(`/monitor/inversor/${inv.id}`);
@@ -100,7 +116,7 @@ const DashboardRoute = () => {
     return <div style={{ textAlign: 'center', padding: 40, color: 'var(--tx3)', fontSize: 12 }}>Cargando datos del monitor...</div>;
   }
 
-  return <DashboardScreen groups={groups} kpis={kpis} liveData={liveData} onInversorTap={handleInversorTap} trendValues={trendValues} />;
+  return <DashboardScreen groups={groups} kpis={kpis} liveData={liveData} onInversorTap={handleInversorTap} trendValues={trend24h} />;
 };
 
 const InversorDetailRoute = () => {

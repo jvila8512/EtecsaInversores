@@ -175,156 +175,157 @@ public class DatoInversorResource {
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
 
-  /**
-   * {@code GET /dato-inversors/latest-readings} : get the latest reading for each inversor.
-   *
-   * This is the primary endpoint for the Solar Monitor dashboard.
-   * Returns exactly one row per inversor — the most recent reading —
-   * using an efficient INNER JOIN on MAX(tiempo).
-   *
-   * With 300 inversores this returns 300 rows instead of
-   * having to paginate through millions of historical rows.
-   *
-   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of latest readings.
-   */
-  @GetMapping("/latest-readings")
-  public ResponseEntity<List<DatoInversorDTO>> getLatestReadings() {
-    LOG.debug("REST request to get latest readings for all inversores");
-    List<DatoInversorDTO> readings = datoInversorService.findLatestReadings();
-    return ResponseEntity.ok().body(readings);
-  }
-
-  /**
-   * {@code GET /dato-inversors/trend-24h} : get hourly aggregated trend for the dashboard.
-   *
-   * Returns an array of 24 objects, one per hour, with average PV power.
-   * Hours without data will have null values — the frontend fills them as zero.
-   *
-   * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the trend array in body.
-   */
-  @GetMapping("/trend-24h")
-  public ResponseEntity<List<Object[]>> getHourlyTrend() {
-    LOG.debug("REST request to get hourly trend for last 24h");
-    List<Object[]> trend = datoInversorService.findHourlyTrend24h();
-    return ResponseEntity.ok().body(trend);
-  }
-
-  /**
-   * {@code GET /dato-inversors/export-csv} : export filtered data as CSV.
-   *
-   * Streams a CSV file with all DatoInversor fields filtered by
-   * inversor ID and/or date range. Useful for downloading historical
-   * data for external analysis or compliance.
-   *
-   * @param inversorId optional — filter by inversor
-   * @param from optional — start date (YYYY-MM-DD), inclusive
-   * @param to optional — end date (YYYY-MM-DD), inclusive
-   * @param response the servlet response to stream the CSV into
-   */
-  @GetMapping("/export-csv")
-  public void exportCsv(
-      @RequestParam(required = false) Long inversorId,
-      @RequestParam(required = false) String from,
-      @RequestParam(required = false) String to,
-      HttpServletResponse response
-  ) throws IOException {
-    LOG.debug("REST request to export CSV: inversorId={}, from={}, to={}", inversorId, from, to);
-
-    // Build criteria
-    DatoInversorCriteria criteria = new DatoInversorCriteria();
-    if (from != null || to != null) {
-      var tiempoFilter = criteria.tiempo();
-      ZoneId zone = ZoneId.of("America/Havana");
-      if (from != null) {
-        Instant fromInstant = LocalDate.parse(from, DateTimeFormatter.ISO_LOCAL_DATE)
-            .atStartOfDay(zone).toInstant();
-        tiempoFilter.setGreaterThanOrEqual(fromInstant);
-      }
-      if (to != null) {
-        Instant toInstant = LocalDate.parse(to, DateTimeFormatter.ISO_LOCAL_DATE)
-            .plusDays(1).atStartOfDay(zone).toInstant();
-        tiempoFilter.setLessThan(toInstant);
-      }
-    }
-    if (inversorId != null) {
-      var inversorFilter = criteria.inversorId();
-      inversorFilter.setEquals(inversorId);
+    /**
+     * {@code GET /dato-inversors/latest-readings} : get the latest reading for each inversor.
+     *
+     * This is the primary endpoint for the Solar Monitor dashboard.
+     * Returns exactly one row per inversor — the most recent reading —
+     * using an efficient INNER JOIN on MAX(tiempo).
+     *
+     * With 300 inversores this returns 300 rows instead of
+     * having to paginate through millions of historical rows.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of latest readings.
+     */
+    @GetMapping("/latest-readings")
+    public ResponseEntity<List<DatoInversorDTO>> getLatestReadings() {
+        LOG.debug("REST request to get latest readings for all inversores");
+        List<DatoInversorDTO> readings = datoInversorService.findLatestReadings();
+        return ResponseEntity.ok().body(readings);
     }
 
-    // Fetch all matching rows (paginated 10k at a time to avoid OOM)
-    response.setContentType("text/csv; charset=UTF-8");
-    response.setHeader("Content-Disposition", "attachment; filename=\"datos-inversor.csv\"");
+    /**
+     * {@code GET /dato-inversors/trend-24h} : get hourly aggregated trend for the dashboard.
+     *
+     * Returns an array of 24 objects, one per hour, with average PV power.
+     * Hours without data will have null values — the frontend fills them as zero.
+     *
+     * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the trend array in body.
+     */
+    @GetMapping("/trend-24h")
+    public ResponseEntity<List<Object[]>> getHourlyTrend() {
+        LOG.debug("REST request to get hourly trend for last 24h");
+        List<Object[]> trend = datoInversorService.findHourlyTrend24h();
+        return ResponseEntity.ok().body(trend);
+    }
 
-    try (PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8))) {
-      // CSV header
-      out.println("id,tiempo,inversor_id,bateria_voltaje_v,bateria_corriente_a,bateria_potencia_w,"
-          + "pv_voltaje_v,pv_potencia_w,pv_corriente_a,"
-          + "salida_voltaje_v,salida_potencia_w,salida_corriente_a,salida_frecuencia_hz,"
-          + "carga_porcentaje,soc_pct,"
-          + "red_voltaje_v,red_frecuencia_hz,"
-          + "temperatura_c,bus_voltaje_v,"
-          + "eficiencia_pct,consumo_red_w,"
-          + "modo_operacion,codigo_fallo,"
-          + "bateria_cargando,pv_activo,red_activa,crc_valido,latencia_ms");
+    /**
+     * {@code GET /dato-inversors/export-csv} : export filtered data as CSV.
+     *
+     * Streams a CSV file with all DatoInversor fields filtered by
+     * inversor ID and/or date range. Useful for downloading historical
+     * data for external analysis or compliance.
+     *
+     * @param inversorId optional — filter by inversor
+     * @param from optional — start date (YYYY-MM-DD), inclusive
+     * @param to optional — end date (YYYY-MM-DD), inclusive
+     * @param response the servlet response to stream the CSV into
+     */
+    @GetMapping("/export-csv")
+    public void exportCsv(
+        @RequestParam(required = false) Long inversorId,
+        @RequestParam(required = false) String from,
+        @RequestParam(required = false) String to,
+        HttpServletResponse response
+    ) throws IOException {
+        LOG.debug("REST request to export CSV: inversorId={}, from={}, to={}", inversorId, from, to);
 
-      int page = 0;
-      List<DatoInversorDTO> batch;
-      do {
-        Pageable pageable = PageRequest.of(page, 10_000, Sort.by("tiempo").ascending());
-        batch = datoInversorQueryService.findByCriteria(criteria, pageable).getContent();
-        for (DatoInversorDTO d : batch) {
-          out.println(csvRow(d));
+        // Build criteria
+        DatoInversorCriteria criteria = new DatoInversorCriteria();
+        if (from != null || to != null) {
+            var tiempoFilter = criteria.tiempo();
+            ZoneId zone = ZoneId.of("America/Havana");
+            if (from != null) {
+                Instant fromInstant = LocalDate.parse(from, DateTimeFormatter.ISO_LOCAL_DATE).atStartOfDay(zone).toInstant();
+                tiempoFilter.setGreaterThanOrEqual(fromInstant);
+            }
+            if (to != null) {
+                Instant toInstant = LocalDate.parse(to, DateTimeFormatter.ISO_LOCAL_DATE).plusDays(1).atStartOfDay(zone).toInstant();
+                tiempoFilter.setLessThan(toInstant);
+            }
         }
-        page++;
-      } while (!batch.isEmpty());
+        if (inversorId != null) {
+            var inversorFilter = criteria.inversorId();
+            inversorFilter.setEquals(inversorId);
+        }
+
+        // Fetch all matching rows (paginated 10k at a time to avoid OOM)
+        response.setContentType("text/csv; charset=UTF-8");
+        response.setHeader("Content-Disposition", "attachment; filename=\"datos-inversor.csv\"");
+
+        try (PrintWriter out = new PrintWriter(new OutputStreamWriter(response.getOutputStream(), StandardCharsets.UTF_8))) {
+            // CSV header
+            out.println(
+                "id,tiempo,inversor_id,bateria_voltaje_v,bateria_corriente_a,bateria_potencia_w," +
+                "pv_voltaje_v,pv_potencia_w,pv_corriente_a," +
+                "salida_voltaje_v,salida_potencia_w,salida_corriente_a,salida_frecuencia_hz," +
+                "carga_porcentaje,soc_pct," +
+                "red_voltaje_v,red_frecuencia_hz," +
+                "temperatura_c,bus_voltaje_v," +
+                "eficiencia_pct,consumo_red_w," +
+                "modo_operacion,codigo_fallo," +
+                "bateria_cargando,pv_activo,red_activa,crc_valido,latencia_ms"
+            );
+
+            int page = 0;
+            List<DatoInversorDTO> batch;
+            do {
+                Pageable pageable = PageRequest.of(page, 10_000, Sort.by("tiempo").ascending());
+                batch = datoInversorQueryService.findByCriteria(criteria, pageable).getContent();
+                for (DatoInversorDTO d : batch) {
+                    out.println(csvRow(d));
+                }
+                page++;
+            } while (!batch.isEmpty());
+        }
     }
-  }
 
-  private String csvRow(DatoInversorDTO d) {
-    return String.join(",",
-        safe(d.getId()),
-        safe(d.getTiempo() != null ? d.getTiempo().toString() : null),
-        safe(d.getInversor() != null ? d.getInversor().getId() : null),
-        safe(d.getBateriaVoltajeV()),
-        safe(d.getBateriaCorrienteA()),
-        safe(d.getBateriaPotenciaW()),
-        safe(d.getPvVoltajeV()),
-        safe(d.getPvPotenciaW()),
-        safe(d.getPvCorrienteA()),
-        safe(d.getSalidaVoltajeV()),
-        safe(d.getSalidaPotenciaW()),
-        safe(d.getSalidaCorrienteA()),
-        safe(d.getSalidaFrecuenciaHz()),
-        safe(d.getCargaPorcentaje()),
-        safe(d.getSocPct()),
-        safe(d.getRedVoltajeV()),
-        safe(d.getRedFrecuenciaHz()),
-        safe(d.getTemperaturaC()),
-        safe(d.getBusVoltajeV()),
-        safe(d.getEficienciaPct()),
-        safe(d.getConsumoRedW()),
-        safe(d.getModoOperacion()),
-        safe(d.getCodigoFallo()),
-        safe(d.getBateriaCargando()),
-        safe(d.getPvActivo()),
-        safe(d.getRedActiva()),
-        safe(d.getCrcValido()),
-        safe(d.getLatenciaMs())
-    );
-  }
-
-  private String safe(Object val) {
-    if (val == null) return "";
-    String s = val.toString();
-    // Escape CSV: wrap in quotes if contains comma, quote, or newline
-    if (s.contains(",") || s.contains("\"") || s.contains("\n")) {
-      return "\"" + s.replace("\"", "\"\"") + "\"";
+    private String csvRow(DatoInversorDTO d) {
+        return String.join(
+            ",",
+            safe(d.getId()),
+            safe(d.getTiempo() != null ? d.getTiempo().toString() : null),
+            safe(d.getInversor() != null ? d.getInversor().getId() : null),
+            safe(d.getBateriaVoltajeV()),
+            safe(d.getBateriaCorrienteA()),
+            safe(d.getBateriaPotenciaW()),
+            safe(d.getPvVoltajeV()),
+            safe(d.getPvPotenciaW()),
+            safe(d.getPvCorrienteA()),
+            safe(d.getSalidaVoltajeV()),
+            safe(d.getSalidaPotenciaW()),
+            safe(d.getSalidaCorrienteA()),
+            safe(d.getSalidaFrecuenciaHz()),
+            safe(d.getCargaPorcentaje()),
+            safe(d.getSocPct()),
+            safe(d.getRedVoltajeV()),
+            safe(d.getRedFrecuenciaHz()),
+            safe(d.getTemperaturaC()),
+            safe(d.getBusVoltajeV()),
+            safe(d.getEficienciaPct()),
+            safe(d.getConsumoRedW()),
+            safe(d.getModoOperacion()),
+            safe(d.getCodigoFallo()),
+            safe(d.getBateriaCargando()),
+            safe(d.getPvActivo()),
+            safe(d.getRedActiva()),
+            safe(d.getCrcValido()),
+            safe(d.getLatenciaMs())
+        );
     }
-    return s;
-  }
 
-  /**
-   * {@code GET /dato-inversors/count} : count all the datoInversors.
+    private String safe(Object val) {
+        if (val == null) return "";
+        String s = val.toString();
+        // Escape CSV: wrap in quotes if contains comma, quote, or newline
+        if (s.contains(",") || s.contains("\"") || s.contains("\n")) {
+            return "\"" + s.replace("\"", "\"\"") + "\"";
+        }
+        return s;
+    }
+
+    /**
+     * {@code GET /dato-inversors/count} : count all the datoInversors.
      *
      * @param criteria the criteria which the requested entities should match.
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the count in body.

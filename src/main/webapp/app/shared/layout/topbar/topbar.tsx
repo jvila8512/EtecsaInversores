@@ -221,15 +221,15 @@ const TopBar: React.FC = () => {
             >
               <Avatar
                 src={account?.imageUrl || undefined}
-                sx={theme => ({
+                sx={t => ({
                   width: 38,
                   height: 38,
                   background: account?.imageUrl
                     ? 'none'
-                    : `linear-gradient(135deg, ${theme.palette.primary.main} 0%, ${theme.palette.primary.dark} 100%)`,
+                    : `linear-gradient(135deg, ${t.palette.primary.main} 0%, ${t.palette.primary.dark} 100%)`,
                   fontSize: '0.9rem',
                   fontWeight: 600,
-                  boxShadow: theme => `0 2px 8px ${theme.palette.primary.main}4D`,
+                  boxShadow: `0 2px 8px ${t.palette.primary.main}4D`,
                 })}
               >
                 {!account?.imageUrl && getUserInitials()}

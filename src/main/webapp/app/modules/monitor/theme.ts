@@ -1,4 +1,4 @@
-/* ─── CSS custom properties — aligned with MUI industrial theme ─── */
+/* ─── CSS custom properties — aligned with entities MUI theme ─── */
 export const MONITOR_THEME_CSS = `
 /* ─── DARK MODE (default) ─── */
 #app {
@@ -9,8 +9,8 @@ export const MONITOR_THEME_CSS = `
   --bdr: #2a342e;
   --bdr2: #354033;
   --tx: #e8edeb;
-  --tx2: #889a91;
-  --tx3: #4a5c54;
+  --tx2: #c5d1cb;
+  --tx3: #9aafa5;
 
   --bl: #3b82f6;
   --bl2: #2563eb;
@@ -28,8 +28,8 @@ export const MONITOR_THEME_CSS = `
   --bdr: #d0d8d4;
   --bdr2: #b3c4bc;
   --tx: #0f1a15;
-  --tx2: #5b6b63;
-  --tx3: #a3b1ab;
+  --tx2: #3a4d45;
+  --tx3: #6a7f76;
 }
 
 /* ─── Animations ─── */

@@ -151,3 +151,13 @@ Desktop.ini
 ######################
 coverage/
 .nyc_output/
+
+######################
+# Generated checksums
+######################
+targetchecksums.csv
+
+######################
+# Uploaded content
+######################
+uploads/

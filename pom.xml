@@ -1119,14 +1119,14 @@
               <goals>
                 <goal>files</goal>
               </goals>
-              <phase>generate-resources</phase>
+              <phase>none</phase>
             </execution>
             <execution>
               <id>create-compiled-webapp-checksum</id>
               <goals>
                 <goal>files</goal>
               </goals>
-              <phase>compile</phase>
+              <phase>none</phase>
             </execution>
         </executions>
                         <configuration>

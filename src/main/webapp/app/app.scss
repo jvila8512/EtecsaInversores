@@ -360,4 +360,71 @@ a.anchor-btn:hover {
   }
 }
 
+/* ─── Login modal theme overrides ─── */
+#app .modal-content {
+  background: var(--bg2, #fff);
+  color: var(--tx, #1e293b);
+  border-color: var(--bdr, #dee2e6);
+}
+
+#app .modal-header,
+#app .modal-footer {
+  border-color: var(--bdr, #dee2e6);
+}
+
+#app .modal-header .btn-close {
+  color: var(--tx, #000);
+  filter: var(--close-filter, none);
+}
+
+#app[data-light] {
+  --close-filter: none;
+}
+
+#app:not([data-light]) .btn-close {
+  filter: invert(1) brightness(1.5);
+}
+
+#app .form-control {
+  background: var(--bg3, #fff);
+  color: var(--tx, #1e293b);
+  border-color: var(--bdr, #dee2e6);
+}
+
+#app .form-control:focus {
+  border-color: var(--bl, #2563eb) !important;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
+}
+
+#app .alert-warning {
+  background: var(--bg3, #fff3cd);
+  color: var(--tx2, #664d03);
+  border-color: var(--bdr, #ffecb5);
+}
+
+#app .alert-danger {
+  background: #ef444415;
+  color: var(--rd, #ef4444);
+  border-color: var(--rd, #ef4444);
+}
+
+#app .btn-secondary {
+  background: var(--bg3, #6c757d);
+  border-color: var(--bdr, #6c757d);
+  color: var(--tx, #fff);
+}
+
+#app .btn-primary {
+  background: var(--bl, #2563eb);
+  border-color: var(--bl, #2563eb);
+}
+
+#app .modal-title {
+  color: var(--tx, #000);
+}
+
+#app .form-label {
+  color: var(--tx2, #212529);
+}
+
 /* jhipster-needle-scss-add-main JHipster will add new css style */

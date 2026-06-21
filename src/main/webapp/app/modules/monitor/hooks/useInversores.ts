@@ -19,6 +19,7 @@ interface UseInversoresResult {
   alertCount: number;
   loading: boolean;
   refresh: () => void;
+  trend24h: number[]; // 24 hourly average power values (watts)
 }
 
 export function useInversores(): UseInversoresResult {
@@ -27,23 +28,33 @@ export function useInversores(): UseInversoresResult {
   const [gateways, setGateways] = useState<IGatewayTcp[]>([]);
   const [eficiencias, setEficiencias] = useState<IDatoEficiencia[]>([]);
   const [alertas, setAlertas] = useState<IEventoAlerta[]>([]);
+  const [trend24h, setTrend24h] = useState<number[]>([]);
   const [loading, setLoading] = useState(true);
 
   const fetchData = useCallback(async () => {
     setLoading(true);
     try {
-      const [invRes, readingsRes, gwRes, efRes, alertRes] = await Promise.all([
+      const [invRes, readingsRes, gwRes, efRes, alertRes, trendRes] = await Promise.all([
         axios.get<IInversor[]>(`${API_URL}/inversors/all`),
         axios.get<IDatoInversor[]>(`${API_URL}/dato-inversors/latest-readings`),
         axios.get<IGatewayTcp[]>(`${API_URL}/gateway-tcps?size=50`),
         axios.get<IDatoEficiencia[]>(`${API_URL}/dato-eficiencias?size=200`),
         axios.get<IEventoAlerta[]>(`${API_URL}/evento-alertas?sort=timestamp,desc&size=50`),
+        axios.get<Array<[number, number]>>(`${API_URL}/dato-inversors/trend-24h`),
       ]);
       setInversores(invRes.data || []);
       setLatestReadings(readingsRes.data || []);
       setGateways((gwRes.data || []).filter(g => g.activo));
       setEficiencias(efRes.data || []);
       setAlertas(alertRes.data || []);
+
+      // Convert trend data: API returns [[hour, avgW], ...], fill all 24 slots
+      const rawTrend = trendRes.data || [];
+      const filled = Array.from({ length: 24 }, (_, h) => {
+        const match = rawTrend.find(([hour]) => hour === h);
+        return match ? match[1] : 0;
+      });
+      setTrend24h(filled);
     } catch (e) {
       console.error('Error fetching monitor data:', e);
     } finally {
@@ -107,5 +118,6 @@ export function useInversores(): UseInversoresResult {
     alertCount,
     loading,
     refresh: fetchData,
+    trend24h,
   };
 }
