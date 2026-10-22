@@ -26,7 +26,7 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import { useAppSelector } from 'app/config/store';
-import { useThemeMode } from 'app/app';
+import { useThemeMode } from 'app/shared/layout/theme/ThemeContext';
 
 const mockNotifications = [{ id: 1, title: 'Sistema', message: 'Nueva actualización disponible', type: 'info' }];
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
 import { Routes, Route, useNavigate, useParams, useLocation } from 'react-router-dom';
-import { useThemeMode } from 'app/app';
+import { useThemeMode } from 'app/shared/layout/theme/ThemeContext';
 import { useLiveData } from './hooks/useLiveData';
 import { useInversores } from './hooks/useInversores';
 import DashboardScreen from './screens/DashboardScreen';
