@@ -99,6 +99,9 @@ Thumbs.db
 # Folder config file
 Desktop.ini
 
+# Windows reserved device name, created by shell redirects to /dev/null
+/nul
+
 ######################
 # Mac OSX
 ######################
