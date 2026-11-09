@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
+import React, { useState, useMemo, useCallback, createContext, useContext } from 'react';
 import { Routes, Route, useNavigate, useParams, useLocation } from 'react-router-dom';
 import { useThemeMode } from 'app/shared/layout/theme/ThemeContext';
 import { useLiveData } from './hooks/useLiveData';
@@ -105,7 +105,7 @@ const MonitorProvider: React.FC<{ children: React.ReactNode }> = ({ children }) 
 };
 
 const DashboardRoute = () => {
-  const { groups, kpis, liveData, loading, inversores, trend24h } = useMonitorContext();
+  const { groups, kpis, liveData, loading, inversores, trend24h, toggleTheme } = useMonitorContext();
   const navigate = useNavigate();
 
   const handleInversorTap = (inv: IInversor) => {
@@ -116,7 +116,16 @@ const DashboardRoute = () => {
     return <div style={{ textAlign: 'center', padding: 40, color: 'var(--tx3)', fontSize: 12 }}>Cargando datos del monitor...</div>;
   }
 
-  return <DashboardScreen groups={groups} kpis={kpis} liveData={liveData} onInversorTap={handleInversorTap} trendValues={trend24h} />;
+  return (
+    <DashboardScreen
+      groups={groups}
+      kpis={kpis}
+      liveData={liveData}
+      onInversorTap={handleInversorTap}
+      trendValues={trend24h}
+      onToggleTheme={toggleTheme}
+    />
+  );
 };
 
 const InversorDetailRoute = () => {

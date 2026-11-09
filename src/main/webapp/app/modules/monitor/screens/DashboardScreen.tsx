@@ -13,54 +13,67 @@ interface DashboardScreenProps {
   onInversorTap: (inversor: IInversor) => void;
   trendValues: number[];
   trendAlarmIndex?: number;
+  onToggleTheme: () => void;
 }
 
-const DashboardScreen: React.FC<DashboardScreenProps> = ({ groups, kpis, liveData, onInversorTap, trendValues, trendAlarmIndex }) => {
-  // Recalculate total power from live data
+const DashboardScreen: React.FC<DashboardScreenProps> = ({
+  groups,
+  kpis,
+  liveData,
+  onInversorTap,
+  trendValues,
+  trendAlarmIndex,
+  onToggleTheme,
+}) => {
   const totalPotenciaKw = useMemo(() => {
-    return Object.values(liveData).reduce((sum, d: IDatoInversor) => sum + (d.pvPotenciaW || 0), 0) / 1000;
+    return Object.values(liveData).reduce((sum: number, d: IDatoInversor) => sum + (d.pvPotenciaW || 0), 0) / 1000;
   }, [liveData]);
 
   return (
     <div className="monitor-scroll">
-      {/* KPIs */}
+      <div className="monitor-topbar">
+        <div className="monitor-topbar-title">Monitor Solar</div>
+        <div className="monitor-topbar-actions">
+          <span className="monitor-topbar-live">
+            <span className="dot" /> Vivo
+          </span>
+          <button className="monitor-theme-toggle" aria-label="Cambiar tema" onClick={onToggleTheme}>
+            <span className="mono">&#9882;</span>
+          </button>
+        </div>
+      </div>
+
       <div className="monitor-kpi-grid">
         <div className="monitor-kpi-card">
-          <div className="monitor-kpi-value" style={{ color: 'var(--bl)' }}>
+          <div className="monitor-kpi-value" style={{ color: 'var(--md-primary)' }}>
             {kpis.generacionKwh.toFixed(1)}
           </div>
           <div className="monitor-kpi-unit">kWh</div>
-          <div className="monitor-kpi-label" style={{ color: 'var(--bl)' }}>
-            Generación
-          </div>
+          <div className="monitor-kpi-label">Generacion</div>
         </div>
         <div className="monitor-kpi-card">
-          <div className="monitor-kpi-value" style={{ color: 'var(--am)' }}>
+          <div className="monitor-kpi-value" style={{ color: 'var(--md-secondary)' }}>
             {kpis.consumoKwh.toFixed(1)}
           </div>
           <div className="monitor-kpi-unit">kWh</div>
-          <div className="monitor-kpi-label" style={{ color: 'var(--am)' }}>
-            Consumo
-          </div>
+          <div className="monitor-kpi-label">Consumo</div>
         </div>
         <div className="monitor-kpi-card">
-          <div className="monitor-kpi-value" style={{ color: 'var(--gr)' }}>
+          <div className="monitor-kpi-value" style={{ color: 'var(--md-tertiary)' }}>
             {(totalPotenciaKw || kpis.potenciaKw).toFixed(1)}
           </div>
           <div className="monitor-kpi-unit">kW</div>
-          <div className="monitor-kpi-label" style={{ color: 'var(--gr)' }}>
-            Potencia
-          </div>
+          <div className="monitor-kpi-label">Potencia</div>
         </div>
       </div>
 
-      {/* 24h Trend */}
-      <div className="monitor-section-label">Aggregate Trend 24h</div>
-      <div style={{ position: 'relative', marginBottom: 20 }}>
-        <TrendBars values={trendValues} alarmIndex={trendAlarmIndex} />
+      <div className="monitor-trend-card">
+        <div className="monitor-section-label">Tendencia 24h</div>
+        <div style={{ position: 'relative', marginBottom: 20 }}>
+          <TrendBars values={trendValues} alarmIndex={trendAlarmIndex} />
+        </div>
       </div>
 
-      {/* Inversor groups */}
       {groups.map(group => {
         const allGroupInversores = [group.master, ...group.esclavos].filter((i): i is IInversor => i !== undefined);
         const groupTotalW = allGroupInversores.reduce(
@@ -70,7 +83,6 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ groups, kpis, liveDat
 
         return (
           <div key={group.gateway.id}>
-            {/* Group header */}
             <div className="monitor-group-header">
               <span
                 className="gw-status"
@@ -83,13 +95,11 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ groups, kpis, liveDat
               {group.alertCount > 0 && <span className="alarm-badge">{group.alertCount} alarmas</span>}
             </div>
 
-            {/* Inversor cards */}
             {allGroupInversores.map(inv => {
               const dato = inv.id ? liveData[inv.id] : undefined;
               const isAlarm = inv.estadoDispositivo === 'Error';
               const soc = dato?.cargaPorcentaje || 0;
               const power = dato?.pvPotenciaW || 0;
-              const temp = dato?.bateriaVoltajeV || 0; // placeholder — use actual temp if available
               const eff = dato?.eficienciaPct;
               const codigoFallo = dato?.codigoFallo;
 
@@ -99,8 +109,8 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ groups, kpis, liveDat
                   <div className="inv-info">
                     <div className="inv-name">
                       {inv.nombre}
-                      {inv.esMaster ? ' ★' : ''}
-                      {!inv.esMaster && inv.slaveId ? ` · SLAVE ${inv.slaveId}` : ''}
+                      {inv.esMaster ? ' MASTER' : ''}
+                      {!inv.esMaster && inv.slaveId ? ` SLAVE ${inv.slaveId}` : ''}
                     </div>
                     <div className="inv-model">
                       {inv.marca?.nombre} {inv.modelo?.nombre}
@@ -131,7 +141,6 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ groups, kpis, liveDat
               );
             })}
 
-            {/* Group totalizer */}
             <div className="monitor-group-total">
               <span>{group.gateway.nombre} TOTAL</span>
               <span className="total-value">{(groupTotalW / 1000).toFixed(2)} kW</span>
@@ -139,6 +148,10 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({ groups, kpis, liveDat
           </div>
         );
       })}
+
+      <button className="monitor-fab" aria-label="Agregar inversor">
+        +
+      </button>
     </div>
   );
 };

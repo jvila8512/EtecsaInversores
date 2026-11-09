@@ -17,6 +17,11 @@ export const MONITOR_THEME_CSS = `
   --gr: #22c55e;
   --am: #f59e0b;
   --rd: #ef4444;
+
+  /* ─── Material Design 3 semantic tokens ─── */
+  --md-primary: #3b82f6;
+  --md-secondary: #f59e0b;
+  --md-tertiary: #22c55e;
 }
 
 /* ─── LIGHT MODE ─── */
@@ -30,6 +35,11 @@ export const MONITOR_THEME_CSS = `
   --tx: #0f1a15;
   --tx2: #3a4d45;
   --tx3: #6a7f76;
+
+  /* ─── Material Design 3 semantic tokens ─── */
+  --md-primary: #2563eb;
+  --md-secondary: #b45309;
+  --md-tertiary: #15803d;
 }
 
 /* ─── Animations ─── */
@@ -300,6 +310,19 @@ export const MONITOR_THEME_CSS = `
   letter-spacing: 0.9px;
   text-transform: uppercase;
   margin-top: 4px;
+}
+
+/* ─── Trend card ─── */
+.monitor-trend-card {
+  background: var(--card);
+  border: 1px solid var(--bdr);
+  border-radius: 4px;
+  padding: 11px;
+  margin-bottom: 8px;
+}
+
+.monitor-trend-card .monitor-section-label {
+  padding: 0 0 6px;
 }
 
 /* ─── Group Header ─── */
