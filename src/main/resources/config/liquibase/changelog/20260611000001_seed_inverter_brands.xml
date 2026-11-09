@@ -1,330 +1,144 @@
 <?xml version="1.0" encoding="utf-8"?>
-<databaseChangeLog
-    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-
-    <!--
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+  <!--
         Seed data for inverter brands, models, and register mappings.
         These are configuration data (not fake data) required for the app to function.
         Always loaded regardless of profile (no context="faker").
     -->
-
-    <!-- Step 1: Insert Marca rows -->
-    <changeSet id="20260611000001-1" author="seed">
-        <insert tableName="marca">
-            <column name="id" value="1"/>
-            <column name="nombre" value="Felicity"/>
-            <column name="fabricante" value="Felicity Solar"/>
-            <column name="registro_inicio" value="4353"/>
-            <column name="registro_fin" value="4394"/>
-            <column name="registro_info_inicio" value="8479"/>
-            <column name="registro_info_fin" value="8537"/>
-            <column name="baud_rate_default" value="2400"/>
-            <column name="descripcion" value="Rangos lectura 0x1101-0x112A, configuracion 0x211F-0x2159. BaudRate 2400 por defecto para RS485."/>
-            <column name="activa_marca_default" value="true"/>
-        </insert>
-        <insert tableName="marca">
-            <column name="id" value="2"/>
-            <column name="nombre" value="MUST"/>
-            <column name="fabricante" value="MUST Power"/>
-            <column name="registro_inicio" value="15201"/>
-            <column name="registro_fin" value="25243"/>
-            <column name="registro_info_inicio" value="20101"/>
-            <column name="registro_info_fin" value="20146"/>
-            <column name="baud_rate_default" value="9600"/>
-            <column name="descripcion" value="Bloque B 15201-15221 (cargador PV), Bloque D 25201-25243 (inversor). BaudRate 9600 para PH1800/PV1800, 19200 para PH18/PV18 Pro. Slave ID 0x04."/>
-            <column name="activa_marca_default" value="true"/>
-        </insert>
-    </changeSet>
-
-    <!-- Step 2: Insert ModeloInversor rows -->
-    <changeSet id="20260611000001-2" author="seed">
-        <insert tableName="modelo_inversor">
-            <column name="id" value="1"/>
-            <column name="nombre" value="Lumin Plus 5.5K"/>
-            <column name="capacidad_va" value="5500"/>
-            <column name="voltaje_sistema_nom" value="48"/>
-            <column name="descripcion" value="Inversor hibrido 5.5kVA 48V — 5.5kW MPPT"/>
-            <column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="modelo_inversor">
-            <column name="id" value="2"/>
-            <column name="nombre" value="Lumin Plus 3.5K"/>
-            <column name="capacidad_va" value="3500"/>
-            <column name="voltaje_sistema_nom" value="24"/>
-            <column name="descripcion" value="Inversor hibrido 3.5kVA 24V — 3.5kW MPPT"/>
-            <column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="modelo_inversor">
-            <column name="id" value="3"/>
-            <column name="nombre" value="PH1800 5K"/>
-            <column name="capacidad_va" value="5000"/>
-            <column name="voltaje_sistema_nom" value="48"/>
-            <column name="descripcion" value="Inversor hibrido 5kVA 48V — MUST PH1800 series"/>
-            <column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="modelo_inversor">
-            <column name="id" value="4"/>
-            <column name="nombre" value="PV1800 5K"/>
-            <column name="capacidad_va" value="5000"/>
-            <column name="voltaje_sistema_nom" value="48"/>
-            <column name="descripcion" value="Inversor off-grid 5kVA 48V — MUST PV1800 series"/>
-            <column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="modelo_inversor">
-            <column name="id" value="5"/>
-            <column name="nombre" value="PH18-5448 PRO"/>
-            <column name="capacidad_va" value="5400"/>
-            <column name="voltaje_sistema_nom" value="48"/>
-            <column name="descripcion" value="Inversor hibrido 5.4kVA 48V — MUST PH18 Pro series (19200 bps)"/>
-            <column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="modelo_inversor">
-            <column name="id" value="6"/>
-            <column name="nombre" value="PV18-5048 VHM"/>
-            <column name="capacidad_va" value="5000"/>
-            <column name="voltaje_sistema_nom" value="48"/>
-            <column name="descripcion" value="Inversor off-grid 5kVA 48V — MUST PV18 series"/>
-            <column name="marca_id" value="2"/>
-        </insert>
-    </changeSet>
-
-    <!-- Step 3: Insert Felicity MapeoRegistro rows -->
-    <changeSet id="20260611000001-3" author="seed">
-        <!-- Felicity telemetry registers (0x1101-0x112A) -->
-        <insert tableName="mapeo_registro">
-            <column name="id" value="1"/><column name="direccion_registro" value="4353"/>
-            <column name="nombre_registro" value="Working Mode"/><column name="campo_sql" value="modo_operacion"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value=""/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1101 — Modo de operacion del inversor (0=SOL,1=SBU,2=SUB)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="2"/><column name="direccion_registro" value="4354"/>
-            <column name="nombre_registro" value="Battery Charge Stage"/><column name="campo_sql" value="bateria_cargando"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value=""/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1102 — Etapa de carga de bateria (0=Silent,1=Bulk,2=Abs,3=Float)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="3"/><column name="direccion_registro" value="4355"/>
-            <column name="nombre_registro" value="Fault Code"/><column name="campo_sql" value="codigo_fallo"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value=""/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1103 — Codigo de fallo activo (0=sin fallo)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="4"/><column name="direccion_registro" value="4356"/>
-            <column name="nombre_registro" value="Power Flow Bits"/><column name="campo_sql" value="red_activa"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value=""/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1104 — Bits de flujo de potencia (bit0=Grid,bit1=PV,bit2=Bat)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="5"/><column name="direccion_registro" value="4360"/>
-            <column name="nombre_registro" value="Battery Voltage"/><column name="campo_sql" value="bateria_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="100"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1108 — Voltaje de bateria (valor/100)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="6"/><column name="direccion_registro" value="4361"/>
-            <column name="nombre_registro" value="Battery Current"/><column name="campo_sql" value="bateria_corriente_a"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="A"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1109 — Corriente de bateria (signed)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="7"/><column name="direccion_registro" value="4362"/>
-            <column name="nombre_registro" value="Battery Power"/><column name="campo_sql" value="bateria_potencia_w"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="W"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x110A — Potencia de bateria (signed, negativo=descarga)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="8"/><column name="direccion_registro" value="4369"/>
-            <column name="nombre_registro" value="AC Output Voltage"/><column name="campo_sql" value="salida_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1111 — Voltaje de salida AC (valor/10)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="9"/><column name="direccion_registro" value="4375"/>
-            <column name="nombre_registro" value="AC Input Voltage"/><column name="campo_sql" value="red_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1117 — Voltaje de entrada AC/red (valor/10)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="10"/><column name="direccion_registro" value="4377"/>
-            <column name="nombre_registro" value="AC Input Frequency"/><column name="campo_sql" value="red_frecuencia_hz"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="100"/>
-            <column name="unidad" value="Hz"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1119 — Frecuencia de red AC (valor/100)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="11"/><column name="direccion_registro" value="4382"/>
-            <column name="nombre_registro" value="AC Output Power"/><column name="campo_sql" value="salida_potencia_w"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="W"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x111E — Potencia de salida AC (signed)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="12"/><column name="direccion_registro" value="4383"/>
-            <column name="nombre_registro" value="AC Output Apparent Power"/><column name="campo_sql" value="salida_aparente_va"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="VA"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x111F — Potencia aparente de salida AC"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="13"/><column name="direccion_registro" value="4384"/>
-            <column name="nombre_registro" value="Load Percentage"/><column name="campo_sql" value="carga_porcentaje"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="%"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1120 — Porcentaje de carga"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="14"/><column name="direccion_registro" value="4390"/>
-            <column name="nombre_registro" value="PV Voltage"/><column name="campo_sql" value="pv_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x1126 — Voltaje del panel solar (valor/10)"/><column name="marca_id" value="1"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="15"/><column name="direccion_registro" value="4394"/>
-            <column name="nombre_registro" value="PV Power"/><column name="campo_sql" value="pv_potencia_w"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="W"/><column name="activo" value="true"/>
-            <column name="descripcion" value="0x112A — Potencia del panel solar (signed)"/><column name="marca_id" value="1"/>
-        </insert>
-    </changeSet>
-
-    <!-- Step 4: Insert MUST MapeoRegistro rows — Block B (Charger PV) -->
-    <changeSet id="20260611000001-4" author="seed">
-        <insert tableName="mapeo_registro">
-            <column name="id" value="28"/><column name="direccion_registro" value="15203"/>
-            <column name="nombre_registro" value="PV Charging State"/><column name="campo_sql" value="bateria_cargando"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value=""/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque B 15203 — Estado de carga PV (0=Silent,1=Bulk,2=Abs,3=Float)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="29"/><column name="direccion_registro" value="15204"/>
-            <column name="nombre_registro" value="PV Charger Fault Code"/><column name="campo_sql" value="codigo_fallo"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value=""/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque B 15204 — Codigo de fallo del cargador PV"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="30"/><column name="direccion_registro" value="15205"/>
-            <column name="nombre_registro" value="PV Voltage"/><column name="campo_sql" value="pv_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque B 15205 — Tension del panel solar (valor/10)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="31"/><column name="direccion_registro" value="15206"/>
-            <column name="nombre_registro" value="Battery Voltage (Charger)"/><column name="campo_sql" value="bateria_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque B 15206 — Tension de bateria desde cargador (valor/10)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="32"/><column name="direccion_registro" value="15208"/>
-            <column name="nombre_registro" value="PV Charging Power"/><column name="campo_sql" value="pv_potencia_w"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="W"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque B 15208 — Potencia de carga PV"/><column name="marca_id" value="2"/>
-        </insert>
-    </changeSet>
-
-    <!-- Step 5: Insert MUST MapeoRegistro rows — Block D (Inverter telemetry) -->
-    <changeSet id="20260611000001-5" author="seed">
-        <insert tableName="mapeo_registro">
-            <column name="id" value="33"/><column name="direccion_registro" value="25201"/>
-            <column name="nombre_registro" value="Inverter Work State"/><column name="campo_sql" value="modo_operacion"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value=""/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25201 — Estado del inversor (0=PowerOn,1=SelfTest,2=OffGrid,3=GridTie,4=Bypass,5=Charging,6=Fault)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="34"/><column name="direccion_registro" value="25205"/>
-            <column name="nombre_registro" value="Battery Voltage"/><column name="campo_sql" value="bateria_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25205 — Tension de bateria desde inversor (valor/10, sobreescribe B)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="35"/><column name="direccion_registro" value="25206"/>
-            <column name="nombre_registro" value="Output Voltage"/><column name="campo_sql" value="salida_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25206 — Tension de salida AC (valor/10)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="36"/><column name="direccion_registro" value="25207"/>
-            <column name="nombre_registro" value="Grid Voltage"/><column name="campo_sql" value="red_voltaje_v"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="V"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25207 — Tension de red AC (valor/10)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="37"/><column name="direccion_registro" value="25209"/>
-            <column name="nombre_registro" value="Battery Current"/><column name="campo_sql" value="bateria_corriente_a"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="A"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25209 — Corriente de bateria (signed, valor/10)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="38"/><column name="direccion_registro" value="25213"/>
-            <column name="nombre_registro" value="Inverter Power"/><column name="campo_sql" value="salida_potencia_w"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="W"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25213 — Potencia de salida del inversor (signed)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="39"/><column name="direccion_registro" value="25214"/>
-            <column name="nombre_registro" value="Grid Power"/><column name="campo_sql" value="consumo_red_w"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="W"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25214 — Potencia de red (signed, negativo=exportar)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="40"/><column name="direccion_registro" value="25216"/>
-            <column name="nombre_registro" value="System Load Percentage"/><column name="campo_sql" value="carga_porcentaje"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="%"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25216 — Porcentaje de carga del sistema"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="42"/><column name="direccion_registro" value="25217"/>
-            <column name="nombre_registro" value="Inverter Efficiency"/><column name="campo_sql" value="eficiencia_pct"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="10"/>
-            <column name="unidad" value="%"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25217 — Eficiencia del inversor (valor/10)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="43"/><column name="direccion_registro" value="25218"/>
-            <column name="nombre_registro" value="Output Frequency"/><column name="campo_sql" value="red_frecuencia_hz"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="100"/>
-            <column name="unidad" value="Hz"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25218 — Frecuencia de salida (valor/100)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="44"/><column name="direccion_registro" value="25221"/>
-            <column name="nombre_registro" value="Battery Power"/><column name="campo_sql" value="bateria_potencia_w"/>
-            <column name="tipo_dato" value="SignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="W"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25221 — Potencia de bateria (signed, +cargando, -descargando)"/><column name="marca_id" value="2"/>
-        </insert>
-        <insert tableName="mapeo_registro">
-            <column name="id" value="45"/><column name="direccion_registro" value="25228"/>
-            <column name="nombre_registro" value="Inverter Apparent Power"/><column name="campo_sql" value="salida_aparente_va"/>
-            <column name="tipo_dato" value="UnsignedInt16"/><column name="escala" value="1"/>
-            <column name="unidad" value="VA"/><column name="activo" value="true"/>
-            <column name="descripcion" value="Bloque D 25228 — Potencia aparente del inversor"/><column name="marca_id" value="2"/>
-        </insert>
-    </changeSet>
-
+  <!-- Step 1: Insert Marca rows -->
+  <changeSet id="20260611000001-1" author="seed" runOnChange="true">
+    <sql>
+        INSERT INTO marca (id, nombre, fabricante, registro_inicio, registro_fin, registro_info_inicio, registro_info_fin, baud_rate_default, descripcion, activa_marca_default) VALUES ('1', 'Felicity', 'Felicity Solar', '4353', '4394', '8479', '8537', '2400', 'Rangos lectura 0x1101-0x112A, configuracion 0x211F-0x2159. BaudRate 2400 por defecto para RS485.', 'true') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO marca (id, nombre, fabricante, registro_inicio, registro_fin, registro_info_inicio, registro_info_fin, baud_rate_default, descripcion, activa_marca_default) VALUES ('2', 'MUST', 'MUST Power', '15201', '25243', '20101', '20146', '9600', 'Bloque B 15201-15221 (cargador PV), Bloque D 25201-25243 (inversor). BaudRate 9600 para PH1800/PV1800, 19200 para PH18/PV18 Pro. Slave ID 0x04.', 'true') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+  </changeSet>
+  <!-- Step 2: Insert ModeloInversor rows -->
+  <changeSet id="20260611000001-2" author="seed" runOnChange="true">
+    <sql>
+        INSERT INTO modelo_inversor (id, nombre, capacidad_va, voltaje_sistema_nom, descripcion, marca_id) VALUES ('1', 'Lumin Plus 5.5K', '5500', '48', 'Inversor hibrido 5.5kVA 48V — 5.5kW MPPT', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO modelo_inversor (id, nombre, capacidad_va, voltaje_sistema_nom, descripcion, marca_id) VALUES ('2', 'Lumin Plus 3.5K', '3500', '24', 'Inversor hibrido 3.5kVA 24V — 3.5kW MPPT', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO modelo_inversor (id, nombre, capacidad_va, voltaje_sistema_nom, descripcion, marca_id) VALUES ('3', 'PH1800 5K', '5000', '48', 'Inversor hibrido 5kVA 48V — MUST PH1800 series', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO modelo_inversor (id, nombre, capacidad_va, voltaje_sistema_nom, descripcion, marca_id) VALUES ('4', 'PV1800 5K', '5000', '48', 'Inversor off-grid 5kVA 48V — MUST PV1800 series', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO modelo_inversor (id, nombre, capacidad_va, voltaje_sistema_nom, descripcion, marca_id) VALUES ('5', 'PH18-5448 PRO', '5400', '48', 'Inversor hibrido 5.4kVA 48V — MUST PH18 Pro series (19200 bps)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO modelo_inversor (id, nombre, capacidad_va, voltaje_sistema_nom, descripcion, marca_id) VALUES ('6', 'PV18-5048 VHM', '5000', '48', 'Inversor off-grid 5kVA 48V — MUST PV18 series', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+  </changeSet>
+  <!-- Step 3: Insert Felicity MapeoRegistro rows -->
+  <changeSet id="20260611000001-3" author="seed" runOnChange="true">
+    <!-- Felicity telemetry registers (0x1101-0x112A) -->
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('1', '4353', 'Working Mode', 'modo_operacion', 'UnsignedInt16', '1', '', 'true', '0x1101 — Modo de operacion del inversor (0=SOL,1=SBU,2=SUB)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('2', '4354', 'Battery Charge Stage', 'bateria_cargando', 'UnsignedInt16', '1', '', 'true', '0x1102 — Etapa de carga de bateria (0=Silent,1=Bulk,2=Abs,3=Float)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('3', '4355', 'Fault Code', 'codigo_fallo', 'UnsignedInt16', '1', '', 'true', '0x1103 — Codigo de fallo activo (0=sin fallo)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('4', '4356', 'Power Flow Bits', 'red_activa', 'UnsignedInt16', '1', '', 'true', '0x1104 — Bits de flujo de potencia (bit0=Grid,bit1=PV,bit2=Bat)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('5', '4360', 'Battery Voltage', 'bateria_voltaje_v', 'UnsignedInt16', '100', 'V', 'true', '0x1108 — Voltaje de bateria (valor/100)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('6', '4361', 'Battery Current', 'bateria_corriente_a', 'SignedInt16', '1', 'A', 'true', '0x1109 — Corriente de bateria (signed)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('7', '4362', 'Battery Power', 'bateria_potencia_w', 'SignedInt16', '1', 'W', 'true', '0x110A — Potencia de bateria (signed, negativo=descarga)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('8', '4369', 'AC Output Voltage', 'salida_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', '0x1111 — Voltaje de salida AC (valor/10)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('9', '4375', 'AC Input Voltage', 'red_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', '0x1117 — Voltaje de entrada AC/red (valor/10)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('10', '4377', 'AC Input Frequency', 'red_frecuencia_hz', 'UnsignedInt16', '100', 'Hz', 'true', '0x1119 — Frecuencia de red AC (valor/100)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('11', '4382', 'AC Output Power', 'salida_potencia_w', 'SignedInt16', '1', 'W', 'true', '0x111E — Potencia de salida AC (signed)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('12', '4383', 'AC Output Apparent Power', 'salida_aparente_va', 'UnsignedInt16', '1', 'VA', 'true', '0x111F — Potencia aparente de salida AC', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('13', '4384', 'Load Percentage', 'carga_porcentaje', 'UnsignedInt16', '1', '%', 'true', '0x1120 — Porcentaje de carga', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('14', '4390', 'PV Voltage', 'pv_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', '0x1126 — Voltaje del panel solar (valor/10)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('15', '4394', 'PV Power', 'pv_potencia_w', 'SignedInt16', '1', 'W', 'true', '0x112A — Potencia del panel solar (signed)', '1') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+  </changeSet>
+  <!-- Step 4: Insert MUST MapeoRegistro rows — Block B (Charger PV) -->
+  <changeSet id="20260611000001-4" author="seed" runOnChange="true">
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('28', '15203', 'PV Charging State', 'bateria_cargando', 'UnsignedInt16', '1', '', 'true', 'Bloque B 15203 — Estado de carga PV (0=Silent,1=Bulk,2=Abs,3=Float)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('29', '15204', 'PV Charger Fault Code', 'codigo_fallo', 'UnsignedInt16', '1', '', 'true', 'Bloque B 15204 — Codigo de fallo del cargador PV', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('30', '15205', 'PV Voltage', 'pv_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', 'Bloque B 15205 — Tension del panel solar (valor/10)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('31', '15206', 'Battery Voltage (Charger)', 'bateria_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', 'Bloque B 15206 — Tension de bateria desde cargador (valor/10)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('32', '15208', 'PV Charging Power', 'pv_potencia_w', 'UnsignedInt16', '1', 'W', 'true', 'Bloque B 15208 — Potencia de carga PV', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+  </changeSet>
+  <!-- Step 5: Insert MUST MapeoRegistro rows — Block D (Inverter telemetry) -->
+  <changeSet id="20260611000001-5" author="seed" runOnChange="true">
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('33', '25201', 'Inverter Work State', 'modo_operacion', 'UnsignedInt16', '1', '', 'true', 'Bloque D 25201 — Estado del inversor (0=PowerOn,1=SelfTest,2=OffGrid,3=GridTie,4=Bypass,5=Charging,6=Fault)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('34', '25205', 'Battery Voltage', 'bateria_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', 'Bloque D 25205 — Tension de bateria desde inversor (valor/10, sobreescribe B)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('35', '25206', 'Output Voltage', 'salida_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', 'Bloque D 25206 — Tension de salida AC (valor/10)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('36', '25207', 'Grid Voltage', 'red_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', 'Bloque D 25207 — Tension de red AC (valor/10)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('37', '25209', 'Battery Current', 'bateria_corriente_a', 'SignedInt16', '10', 'A', 'true', 'Bloque D 25209 — Corriente de bateria (signed, valor/10)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('38', '25213', 'Inverter Power', 'salida_potencia_w', 'SignedInt16', '1', 'W', 'true', 'Bloque D 25213 — Potencia de salida del inversor (signed)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('39', '25214', 'Grid Power', 'consumo_red_w', 'SignedInt16', '1', 'W', 'true', 'Bloque D 25214 — Potencia de red (signed, negativo=exportar)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('40', '25216', 'System Load Percentage', 'carga_porcentaje', 'UnsignedInt16', '1', '%', 'true', 'Bloque D 25216 — Porcentaje de carga del sistema', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('42', '25217', 'Inverter Efficiency', 'eficiencia_pct', 'UnsignedInt16', '10', '%', 'true', 'Bloque D 25217 — Eficiencia del inversor (valor/10)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('43', '25218', 'Output Frequency', 'red_frecuencia_hz', 'UnsignedInt16', '100', 'Hz', 'true', 'Bloque D 25218 — Frecuencia de salida (valor/100)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('44', '25221', 'Battery Power', 'bateria_potencia_w', 'SignedInt16', '1', 'W', 'true', 'Bloque D 25221 — Potencia de bateria (signed, +cargando, -descargando)', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+    <sql>
+        INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('45', '25228', 'Inverter Apparent Power', 'salida_aparente_va', 'UnsignedInt16', '1', 'VA', 'true', 'Bloque D 25228 — Potencia aparente del inversor', '2') ON CONFLICT (id) DO UPDATE SET descripcion = EXCLUDED.descripcion;
+      </sql>
+  </changeSet>
 </databaseChangeLog>

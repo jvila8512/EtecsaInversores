@@ -1,49 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
-<databaseChangeLog
-xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
-xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
-
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
   <!--
     Add telemetry columns to dato_inversor for complete register mapping coverage.
     These columns capture data available in both Felicity and MUST protocols
     that was previously unmapped.
   -->
-
-  <changeSet id="20260611000002-1" author="etecsa">
+  <changeSet id="20260611000002-1" author="etecsa" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="dato_inversor" columnName="pv_corriente_a" />
+      </not>
+    </preConditions>
     <addColumn tableName="dato_inversor">
-      <column name="pv_corriente_a" type="double precision"/>
+      <column name="pv_corriente_a" type="double precision" />
     </addColumn>
   </changeSet>
-
-  <changeSet id="20260611000002-2" author="etecsa">
+  <changeSet id="20260611000002-2" author="etecsa" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="dato_inversor" columnName="salida_corriente_a" />
+      </not>
+    </preConditions>
     <addColumn tableName="dato_inversor">
-      <column name="salida_corriente_a" type="double precision"/>
+      <column name="salida_corriente_a" type="double precision" />
     </addColumn>
   </changeSet>
-
-  <changeSet id="20260611000002-3" author="etecsa">
+  <changeSet id="20260611000002-3" author="etecsa" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="dato_inversor" columnName="salida_frecuencia_hz" />
+      </not>
+    </preConditions>
     <addColumn tableName="dato_inversor">
-      <column name="salida_frecuencia_hz" type="double precision"/>
+      <column name="salida_frecuencia_hz" type="double precision" />
     </addColumn>
   </changeSet>
-
-  <changeSet id="20260611000002-4" author="etecsa">
+  <changeSet id="20260611000002-4" author="etecsa" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="dato_inversor" columnName="temperatura_c" />
+      </not>
+    </preConditions>
     <addColumn tableName="dato_inversor">
-      <column name="temperatura_c" type="double precision"/>
+      <column name="temperatura_c" type="double precision" />
     </addColumn>
   </changeSet>
-
-  <changeSet id="20260611000002-5" author="etecsa">
+  <changeSet id="20260611000002-5" author="etecsa" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="dato_inversor" columnName="bus_voltaje_v" />
+      </not>
+    </preConditions>
     <addColumn tableName="dato_inversor">
-      <column name="bus_voltaje_v" type="double precision"/>
+      <column name="bus_voltaje_v" type="double precision" />
     </addColumn>
   </changeSet>
-
-  <changeSet id="20260611000002-6" author="etecsa">
+  <changeSet id="20260611000002-6" author="etecsa" runOnChange="true">
+    <preConditions onFail="MARK_RAN">
+      <not>
+        <columnExists tableName="dato_inversor" columnName="soc_pct" />
+      </not>
+    </preConditions>
     <addColumn tableName="dato_inversor">
-      <column name="soc_pct" type="integer"/>
+      <column name="soc_pct" type="integer" />
     </addColumn>
   </changeSet>
-
 </databaseChangeLog>
