@@ -64,11 +64,11 @@ public interface DatoInversorRepository extends JpaRepository<DatoInversor, Long
     @Query(
         value = "SELECT " +
         "  EXTRACT(HOUR FROM tiempo)::int AS hora, " +
-        "  AVG(pv_potenciaw) AS avg_potencia " +
+        "  AVG(pv_potencia_w) AS avg_potencia " +
         "FROM dato_inversor " +
         "WHERE tiempo >= NOW() - INTERVAL '24 hours' " +
-        "  AND pv_potenciaw IS NOT NULL " +
-        "  AND pv_potenciaw > 0 " +
+        "  AND pv_potencia_w IS NOT NULL " +
+        "  AND pv_potencia_w > 0 " +
         "GROUP BY EXTRACT(HOUR FROM tiempo) " +
         "ORDER BY hora",
         nativeQuery = true
