@@ -1,47 +1,5 @@
-/* ─── CSS custom properties — aligned with entities MUI theme ─── */
+/* ─── Solar Monitor layout styles — colors come from the canonical theme tokens ─── */
 export const MONITOR_THEME_CSS = `
-/* ─── DARK MODE (default) ─── */
-#app {
-  --bg: #0f1412;
-  --bg2: #141b18;
-  --bg3: #1a211e;
-  --card: #1a211e;
-  --bdr: #2a342e;
-  --bdr2: #354033;
-  --tx: #e8edeb;
-  --tx2: #c5d1cb;
-  --tx3: #9aafa5;
-
-  --bl: #3b82f6;
-  --bl2: #2563eb;
-  --gr: #22c55e;
-  --am: #f59e0b;
-  --rd: #ef4444;
-
-  /* ─── Material Design 3 semantic tokens ─── */
-  --md-primary: #3b82f6;
-  --md-secondary: #f59e0b;
-  --md-tertiary: #22c55e;
-}
-
-/* ─── LIGHT MODE ─── */
-#app[data-light] {
-  --bg: #f0f3f2;
-  --bg2: #e8ece9;
-  --bg3: #dce4de;
-  --card: #ffffff;
-  --bdr: #d0d8d4;
-  --bdr2: #b3c4bc;
-  --tx: #0f1a15;
-  --tx2: #3a4d45;
-  --tx3: #6a7f76;
-
-  /* ─── Material Design 3 semantic tokens ─── */
-  --md-primary: #2563eb;
-  --md-secondary: #b45309;
-  --md-tertiary: #15803d;
-}
-
 /* ─── Animations ─── */
 @keyframes monitor-pulse {
   0%, 100% { opacity: 1; }

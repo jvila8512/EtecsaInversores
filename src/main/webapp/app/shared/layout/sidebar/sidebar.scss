@@ -52,19 +52,21 @@
     width: calc(100% - 16px);
 
     &:hover {
-      background-color: #eff6ff;
+      background-color: var(--bg3);
     }
 
     &.Mui-selected {
-      background-color: #dbeafe;
+      background-color: var(--bg3);
+      color: var(--bl);
 
       &:hover {
-        background-color: #bfdbfe;
+        background-color: var(--bdr);
       }
     }
   }
 
   .MuiMenu-paper {
-    background-color: #fff !important;
+    background-color: var(--card) !important;
+    color: var(--tx);
   }
 }

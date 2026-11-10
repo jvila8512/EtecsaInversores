@@ -6,10 +6,10 @@ $primary-blue-light: #3b82f6;
 $primary-blue-dark: #1d4ed8;
 
 body {
-  background: #f8fafc;
+  background: var(--bg);
   margin: 0;
   font-family: 'Inter', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-  color: #1e293b;
+  color: var(--tx);
 }
 
 *:focus,
@@ -62,7 +62,7 @@ a {
   display: flex;
   min-height: 100vh;
   width: 100%;
-  background-color: #f8fafc;
+  background-color: var(--bg);
 
   .main-content {
     flex: 1;
@@ -88,7 +88,8 @@ a {
       .card {
         padding: 1rem;
         border-radius: 12px;
-        border: none;
+        background: var(--card);
+        border: 1px solid var(--bdr);
         box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
       }
 
@@ -110,6 +111,13 @@ a {
       margin-left: 0;
     }
   }
+}
+
+/* ─── Theme aware shell ─── */
+:root[data-theme='dark'] .view-container .card {
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.4),
+    0 1px 2px -1px rgb(0 0 0 / 0.3);
 }
 
 .fullscreen {
@@ -301,7 +309,7 @@ a {
 @include voffset('150');
 
 .readonly {
-  background-color: #eee;
+  background-color: var(--bg3);
   opacity: 1;
 }
 
@@ -362,69 +370,72 @@ a.anchor-btn:hover {
 
 /* ─── Login modal theme overrides ─── */
 #app .modal-content {
-  background: var(--bg2, #fff);
-  color: var(--tx, #1e293b);
-  border-color: var(--bdr, #dee2e6);
+  background: var(--bg2);
+  color: var(--tx);
+  border-color: var(--bdr);
 }
 
 #app .modal-header,
 #app .modal-footer {
-  border-color: var(--bdr, #dee2e6);
+  border-color: var(--bdr);
 }
 
 #app .modal-header .btn-close {
-  color: var(--tx, #000);
-  filter: var(--close-filter, none);
+  color: var(--tx);
 }
 
-#app[data-light] {
+:root[data-theme='light'] {
   --close-filter: none;
 }
 
-#app:not([data-light]) .btn-close {
-  filter: invert(1) brightness(1.5);
+:root[data-theme='dark'] {
+  --close-filter: invert(1) brightness(1.5);
+}
+
+#app .btn-close {
+  filter: var(--close-filter);
 }
 
 #app .form-control {
-  background: var(--bg3, #fff);
-  color: var(--tx, #1e293b);
-  border-color: var(--bdr, #dee2e6);
+  background: var(--bg3);
+  color: var(--tx);
+  border-color: var(--bdr);
 }
 
 #app .form-control:focus {
-  border-color: var(--bl, #2563eb) !important;
+  border-color: var(--bl) !important;
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15) !important;
 }
 
 #app .alert-warning {
-  background: var(--bg3, #fff3cd);
-  color: var(--tx2, #664d03);
-  border-color: var(--bdr, #ffecb5);
+  background: var(--bg3);
+  color: var(--tx2);
+  border-color: var(--bdr);
 }
 
 #app .alert-danger {
   background: #ef444415;
-  color: var(--rd, #ef4444);
-  border-color: var(--rd, #ef4444);
+  color: var(--rd);
+  border-color: var(--rd);
 }
 
 #app .btn-secondary {
-  background: var(--bg3, #6c757d);
-  border-color: var(--bdr, #6c757d);
-  color: var(--tx, #fff);
+  background: var(--bg3);
+  border-color: var(--bdr);
+  color: var(--tx);
 }
 
 #app .btn-primary {
-  background: var(--bl, #2563eb);
-  border-color: var(--bl, #2563eb);
+  background: var(--bl);
+  border-color: var(--bl);
 }
 
 #app .modal-title {
-  color: var(--tx, #000);
+  color: var(--tx);
 }
 
 #app .form-label {
-  color: var(--tx2, #212529);
+  color: var(--tx2);
 }
 
 /* jhipster-needle-scss-add-main JHipster will add new css style */
