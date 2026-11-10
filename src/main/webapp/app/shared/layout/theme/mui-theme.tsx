@@ -1,51 +1,35 @@
 import { createTheme } from '@mui/material/styles';
 import type { PaletteMode } from '@mui/material';
 
-/* ─── Industrial Solar Palette ─── */
-const palette = {
-  dark: {
-    mode: 'dark' as PaletteMode,
-    primary: { main: '#3b82f6', light: '#60a5fa', dark: '#2563eb', contrastText: '#fff' },
-    secondary: { main: '#10b981', light: '#34d399', dark: '#059669' },
-    success: { main: '#22c55e' },
-    warning: { main: '#f59e0b' },
-    error: { main: '#ef4444' },
-    info: { main: '#3b82f6' },
-    background: {
-      default: '#0f1412',
-      paper: '#1a211e',
-    },
-    text: {
-      primary: '#e8edeb',
-      secondary: '#889a91',
-      disabled: '#4a5c54',
-    },
-    divider: '#2a342e',
-  },
-  light: {
-    mode: 'light' as PaletteMode,
-    primary: { main: '#2563eb', light: '#3b82f6', dark: '#1d4ed8', contrastText: '#fff' },
-    secondary: { main: '#059669', light: '#10b981', dark: '#047857' },
-    success: { main: '#22c55e' },
-    warning: { main: '#f59e0b' },
-    error: { main: '#ef4444' },
-    info: { main: '#3b82f6' },
-    background: {
-      default: '#f0f3f2',
-      paper: '#ffffff',
-    },
-    text: {
-      primary: '#0f1a15',
-      secondary: '#5b6b63',
-      disabled: '#a3b1ab',
-    },
-    divider: '#d0d8d4',
-  },
-};
+import { TOKENS } from './tokens';
+import type { ThemeMode, ThemeTokens } from './tokens';
 
-export const getTheme = (mode: PaletteMode) =>
-  createTheme({
-    palette: palette[mode],
+/* ─── Palette derived from the canonical tokens ─── */
+const buildPalette = (mode: ThemeMode, tokens: ThemeTokens) => ({
+  mode: mode as PaletteMode,
+  primary: { main: tokens.primary, dark: tokens.primaryDark, contrastText: '#ffffff' },
+  secondary: { main: tokens.success },
+  success: { main: tokens.success },
+  warning: { main: tokens.warning },
+  error: { main: tokens.error },
+  info: { main: tokens.info },
+  background: {
+    default: tokens.bg,
+    paper: tokens.surface,
+  },
+  text: {
+    primary: tokens.text,
+    secondary: tokens.textMuted,
+    disabled: tokens.textDisabled,
+  },
+  divider: tokens.border,
+});
+
+export const getTheme = (mode: ThemeMode) => {
+  const tokens = TOKENS[mode];
+
+  return createTheme({
+    palette: buildPalette(mode, tokens),
     typography: {
       fontFamily: '"Inter", "Roboto", "Helvetica", "Arial", sans-serif',
       h6: { fontWeight: 600 },
@@ -63,10 +47,10 @@ export const getTheme = (mode: PaletteMode) =>
           body: {
             '&::-webkit-scrollbar': { width: '8px' },
             '&::-webkit-scrollbar-track': {
-              background: mode === 'dark' ? '#1a211e' : '#e8ece9',
+              background: tokens.bg2,
             },
             '&::-webkit-scrollbar-thumb': {
-              background: mode === 'dark' ? '#2a342e' : '#c4ccc8',
+              background: tokens.border,
               borderRadius: '4px',
             },
           },
@@ -89,7 +73,7 @@ export const getTheme = (mode: PaletteMode) =>
                 ? '0 1px 3px 0 rgba(0,0,0,0.4), 0 1px 2px -1px rgba(0,0,0,0.3)'
                 : '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1)',
             borderRadius: 12,
-            border: mode === 'dark' ? '1px solid #2a342e' : 'none',
+            border: mode === 'dark' ? `1px solid ${tokens.border}` : 'none',
           },
         },
       },
@@ -108,7 +92,7 @@ export const getTheme = (mode: PaletteMode) =>
               fontSize: '0.75rem',
               textTransform: 'uppercase',
               letterSpacing: '0.05em',
-              backgroundColor: mode === 'dark' ? '#141b18' : '#f8faf9',
+              backgroundColor: tokens.bg2,
             },
           },
         },
@@ -116,7 +100,7 @@ export const getTheme = (mode: PaletteMode) =>
       MuiTableCell: {
         styleOverrides: {
           root: {
-            borderBottomColor: mode === 'dark' ? '#2a342e' : '#d0d8d4',
+            borderBottomColor: tokens.border,
           },
         },
       },
@@ -130,14 +114,14 @@ export const getTheme = (mode: PaletteMode) =>
       MuiDrawer: {
         styleOverrides: {
           paper: {
-            borderRight: mode === 'dark' ? '1px solid #2a342e' : '1px solid #d0d8d4',
+            borderRight: `1px solid ${tokens.border}`,
           },
         },
       },
       MuiDivider: {
         styleOverrides: {
           root: {
-            borderColor: mode === 'dark' ? '#2a342e' : '#d0d8d4',
+            borderColor: tokens.border,
           },
         },
       },
@@ -146,10 +130,10 @@ export const getTheme = (mode: PaletteMode) =>
           root: {
             '& .MuiOutlinedInput-root': {
               '& fieldset': {
-                borderColor: mode === 'dark' ? '#2a342e' : '#d0d8d4',
+                borderColor: tokens.border,
               },
               '&:hover fieldset': {
-                borderColor: mode === 'dark' ? '#3b82f6' : '#2563eb',
+                borderColor: tokens.primary,
               },
             },
           },
@@ -171,5 +155,6 @@ export const getTheme = (mode: PaletteMode) =>
       },
     },
   });
+};
 
 export default getTheme;
