@@ -66,6 +66,21 @@ describe('AppThemeProvider runtime token injection', () => {
     expect(document.documentElement.style.getPropertyValue('--tx')).toBe(TOKENS.dark.text);
   });
 
+  it('switches the bootstrap palette together with the application theme', () => {
+    renderProvider();
+
+    expect(document.documentElement.getAttribute('data-bs-theme')).toBe('dark');
+    expect(document.documentElement.style.getPropertyValue('--bs-body-bg')).toBe(TOKENS.dark.bg);
+    expect(document.documentElement.style.getPropertyValue('--bs-body-color')).toBe(TOKENS.dark.text);
+    expect(document.documentElement.style.getPropertyValue('--bs-border-color')).toBe(TOKENS.dark.border);
+
+    fireEvent.click(screen.getByRole('button', { name: 'toggle theme' }));
+
+    expect(document.documentElement.getAttribute('data-bs-theme')).toBe('light');
+    expect(document.documentElement.style.getPropertyValue('--bs-body-bg')).toBe(TOKENS.light.bg);
+    expect(document.documentElement.style.getPropertyValue('--bs-body-color')).toBe(TOKENS.light.text);
+  });
+
   it('never uses the legacy data-light attribute', () => {
     const probe = document.createElement('div');
     probe.setAttribute('data-light', '');

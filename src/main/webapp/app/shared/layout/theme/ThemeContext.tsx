@@ -18,12 +18,14 @@ const readThemeMode = (): ThemeMode => {
 /**
  * Applies the active mode to the document root:
  * - `data-theme` drives the mode specific CSS rules.
+ * - `data-bs-theme` switches the Bootstrap 5.3 palette.
  * - The custom properties are set inline so they always win over any stylesheet rule.
  */
 export const applyThemeTokens = (mode: ThemeMode): void => {
   const root = document.documentElement;
 
   root.setAttribute('data-theme', mode);
+  root.setAttribute('data-bs-theme', mode);
 
   Object.entries(toCssVariables(TOKENS[mode])).forEach(([variable, value]) => {
     root.style.setProperty(variable, value);

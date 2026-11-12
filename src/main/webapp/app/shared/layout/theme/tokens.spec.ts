@@ -96,6 +96,16 @@ describe('canonical theme tokens', () => {
       '--md-secondary': '#f59e0b',
       '--rd': '#ef4444',
       '--md-info': '#3b82f6',
+      '--bs-body-bg': '#0f1412',
+      '--bs-body-color': '#e8edeb',
+      '--bs-border-color': '#2a342e',
+      '--bs-secondary-bg': '#141b18',
+      '--bs-tertiary-bg': '#1a211e',
+      '--bs-emphasis-color': '#e8edeb',
+      '--bs-secondary-color': '#c5d1cb',
+      '--bs-body-bg-rgb': '15, 20, 18',
+      '--bs-body-color-rgb': '232, 237, 235',
+      '--bs-border-color-rgb': '42, 52, 46',
     });
   });
 
@@ -119,6 +129,16 @@ describe('canonical theme tokens', () => {
       '--md-secondary': '#f59e0b',
       '--rd': '#ef4444',
       '--md-info': '#2563eb',
+      '--bs-body-bg': '#f0f3f2',
+      '--bs-body-color': '#0f1a15',
+      '--bs-border-color': '#d0d8d4',
+      '--bs-secondary-bg': '#e8ece9',
+      '--bs-tertiary-bg': '#dce4de',
+      '--bs-emphasis-color': '#0f1a15',
+      '--bs-secondary-color': '#3a4d45',
+      '--bs-body-bg-rgb': '240, 243, 242',
+      '--bs-body-color-rgb': '15, 26, 21',
+      '--bs-border-color-rgb': '208, 216, 212',
     });
   });
 
