@@ -299,7 +299,7 @@ export const EventoAlerta = () => {
       <TableContainer sx={{ overflowX: 'auto' }}>
         <Table sx={{ minWidth: 1100 }}>
           <TableHead>
-            <TableRow sx={{ bgcolor: '#f8fafc' }}>
+            <TableRow sx={{ bgcolor: 'var(--bg2)' }}>
               {showColumn('id') && (
                 <TableCell sx={{ fontWeight: 600, cursor: 'pointer' }} onClick={() => sort('id')}>
                   Id
@@ -546,7 +546,7 @@ export const EventoAlerta = () => {
         <DialogTitle>Confirmar</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1 }}>
-            <WarningAmberIcon sx={{ fontSize: 40, color: '#f59e0b' }} />
+            <WarningAmberIcon sx={{ fontSize: 40, color: 'var(--am)' }} />
             {selectedEntity && (
               <Typography>
                 ¿Seguro que quiere eliminar el Evento: <strong>{selectedEntity.nombreAlerta}</strong>?

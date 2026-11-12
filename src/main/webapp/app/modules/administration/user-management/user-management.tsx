@@ -540,7 +540,7 @@ export const UserManagement = () => {
         <DialogTitle>Confirmar</DialogTitle>
         <DialogContent>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, py: 1 }}>
-            <WarningAmberIcon sx={{ fontSize: 40, color: '#f59e0b' }} />
+            <WarningAmberIcon sx={{ fontSize: 40, color: 'var(--am)' }} />
             {selectedUser && (
               <Typography>
                 ¿Seguro que desea eliminar el usuario: <strong>{selectedUser.login}</strong>?
