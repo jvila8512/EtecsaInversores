@@ -67,7 +67,6 @@ export const MONITOR_THEME_CSS = `
   display: flex;
   align-items: center;
   gap: 4px;
-  font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
   font-weight: 500;
   color: var(--gr);
@@ -249,14 +248,13 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-kpi-value {
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 21px;
   font-weight: 500;
   line-height: 1.1;
 }
 
 .monitor-kpi-unit {
-  font-family: 'IBM Plex Mono', monospace;
   font-size: 10px;
   color: var(--tx2);
   margin-top: 2px;
@@ -368,14 +366,14 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-inversor-card .inv-power {
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 12px;
   font-weight: 500;
   color: var(--tx);
 }
 
 .monitor-inversor-card .inv-temp {
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 9px;
   color: var(--tx2);
   margin-top: 1px;
@@ -398,7 +396,7 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-group-total .total-value {
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   color: var(--tx);
 }
 
@@ -435,7 +433,6 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-detail-header .inv-subtitle {
-  font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
   color: var(--tx2);
   line-height: 1.6;
@@ -514,14 +511,13 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-metric-item .metric-value {
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 18px;
   font-weight: 500;
   line-height: 1.2;
 }
 
 .monitor-metric-item .metric-unit {
-  font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
   color: var(--tx2);
 }
@@ -601,7 +597,7 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-slider-row .slider-value {
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 10px;
   color: var(--tx);
   min-width: 45px;
@@ -663,7 +659,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-table {
   width: 100%;
   border-collapse: collapse;
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 10px;
 }
 
@@ -737,7 +733,6 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-alert-item .alert-meta {
-  font-family: 'IBM Plex Mono', monospace;
   font-size: 9px;
   color: var(--tx3);
   margin-top: 2px;
@@ -848,7 +843,7 @@ export const MONITOR_THEME_CSS = `
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 7px;
   font-weight: 500;
   cursor: default;
@@ -951,7 +946,7 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-gw-card .gw-metric-value {
-  font-family: 'IBM Plex Mono', monospace;
+  font-variant-numeric: tabular-nums;
   font-size: 14px;
   font-weight: 500;
 }
