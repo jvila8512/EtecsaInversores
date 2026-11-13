@@ -3,6 +3,7 @@ import type { PaletteMode } from '@mui/material';
 
 import { TOKENS } from './tokens';
 import type { ThemeMode, ThemeTokens } from './tokens';
+import { RADIUS } from './scale';
 
 /* ─── Palette derived from the canonical tokens ─── */
 const buildPalette = (mode: ThemeMode, tokens: ThemeTokens) => ({
@@ -38,7 +39,7 @@ export const getTheme = (mode: ThemeMode) => {
       caption: { fontSize: '0.75rem' },
     },
     shape: {
-      borderRadius: 8,
+      borderRadius: RADIUS.md,
     },
     components: {
       MuiCssBaseline: {
@@ -51,7 +52,7 @@ export const getTheme = (mode: ThemeMode) => {
             },
             '&::-webkit-scrollbar-thumb': {
               background: tokens.border,
-              borderRadius: '4px',
+              borderRadius: `${RADIUS.sm}px`,
             },
           },
         },
@@ -61,7 +62,7 @@ export const getTheme = (mode: ThemeMode) => {
           root: {
             textTransform: 'none',
             fontWeight: 500,
-            borderRadius: 8,
+            borderRadius: RADIUS.md,
           },
         },
       },
@@ -72,7 +73,7 @@ export const getTheme = (mode: ThemeMode) => {
               mode === 'dark'
                 ? '0 1px 3px 0 rgba(0,0,0,0.4), 0 1px 2px -1px rgba(0,0,0,0.3)'
                 : '0 1px 3px 0 rgba(0,0,0,0.1), 0 1px 2px -1px rgba(0,0,0,0.1)',
-            borderRadius: 12,
+            borderRadius: RADIUS.lg,
             border: mode === 'dark' ? `1px solid ${tokens.border}` : 'none',
           },
         },
@@ -80,7 +81,7 @@ export const getTheme = (mode: ThemeMode) => {
       MuiPaper: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: RADIUS.lg,
           },
         },
       },

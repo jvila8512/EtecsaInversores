@@ -81,6 +81,15 @@ describe('AppThemeProvider runtime token injection', () => {
     expect(document.documentElement.style.getPropertyValue('--bs-body-color')).toBe(TOKENS.light.text);
   });
 
+  it('publishes the shared design scale on the document root', () => {
+    renderProvider();
+
+    expect(document.documentElement.style.getPropertyValue('--radius-sm')).toBe('4px');
+    expect(document.documentElement.style.getPropertyValue('--radius-md')).toBe('8px');
+    expect(document.documentElement.style.getPropertyValue('--radius-lg')).toBe('12px');
+    expect(document.documentElement.style.getPropertyValue('--bs-border-radius')).toBe('8px');
+  });
+
   it('never uses the legacy data-light attribute', () => {
     const probe = document.createElement('div');
     probe.setAttribute('data-light', '');

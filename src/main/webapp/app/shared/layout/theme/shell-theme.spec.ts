@@ -60,6 +60,15 @@ describe('theme aware application shell', () => {
     expect(card).toMatch(/box-shadow:/);
   });
 
+  it('takes the corner radius from the shared scale', () => {
+    const viewContainer = blockOf(APP_SCSS, '.view-container {');
+    const card = blockOf(viewContainer, '.card {');
+
+    expect(card).toContain('border-radius: var(--radius-lg)');
+    expect(SIDEBAR_SCSS).toContain('border-radius: var(--radius-md)');
+    expect(APP_SCSS).not.toMatch(/border-radius:\s*\d+px/);
+  });
+
   it('uses a stronger card shadow in dark mode', () => {
     expect(APP_SCSS).toContain(":root[data-theme='dark'] .view-container .card");
     expect(APP_SCSS).toMatch(/box-shadow:[^;]*0\.4[^;]*;/);

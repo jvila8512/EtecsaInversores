@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { getTheme } from './mui-theme';
 import { TOKENS, toCssVariables } from './tokens';
 import type { ThemeMode } from './tokens';
+import { toScaleCssVariables } from './scale';
 
 interface ThemeCtxValue {
   mode: ThemeMode;
@@ -27,7 +28,9 @@ export const applyThemeTokens = (mode: ThemeMode): void => {
   root.setAttribute('data-theme', mode);
   root.setAttribute('data-bs-theme', mode);
 
-  Object.entries(toCssVariables(TOKENS[mode])).forEach(([variable, value]) => {
+  const variables = { ...toCssVariables(TOKENS[mode]), ...toScaleCssVariables() };
+
+  Object.entries(variables).forEach(([variable, value]) => {
     root.style.setProperty(variable, value);
   });
 };
