@@ -85,7 +85,7 @@ const CSS_VARIABLES: Record<keyof ThemeTokens, string[]> = {
  * them to the canonical tokens keeps every Bootstrap component (tables,
  * dropdowns, form controls, modals) in sync with the application theme.
  */
-const BOOTSTRAP_VARIABLES: Record<keyof ThemeTokens, string[]> = {
+const BOOTSTRAP_VARIABLES: Partial<Record<keyof ThemeTokens, string[]>> = {
   bg: ['--bs-body-bg'],
   text: ['--bs-body-color', '--bs-emphasis-color'],
   textMuted: ['--bs-secondary-color'],
