@@ -47,7 +47,7 @@
   }
 
   .MuiListItemButton-root {
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     margin: 0 8px;
     width: calc(100% - 16px);
 

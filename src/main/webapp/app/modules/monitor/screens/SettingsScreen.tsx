@@ -124,7 +124,7 @@ const SettingsScreen: React.FC<SettingsScreenProps> = ({ inversores, gateways, l
                 </td>
                 <td>
                   {inv.esMaster ? (
-                    <span style={{ background: '#2563eb18', color: 'var(--bl)', fontSize: 8, padding: '1px 5px', borderRadius: 3 }}>
+                    <span style={{ background: '#2563eb18', color: 'var(--bl)', fontSize: 8, padding: '1px 5px', borderRadius: '24px' }}>
                       Master
                     </span>
                   ) : (

@@ -28,7 +28,7 @@ const StatusBadge: React.FC<StatusBadgeProps> = ({ variant }) => (
       fontWeight: 600,
       letterSpacing: '0.5px',
       padding: '2px 6px',
-      borderRadius: 3,
+      borderRadius: '24px',
       display: 'inline-flex',
       alignItems: 'center',
       gap: 3,

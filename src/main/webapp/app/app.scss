@@ -87,7 +87,7 @@ a {
 
       .card {
         padding: 1rem;
-        border-radius: 12px;
+        border-radius: var(--radius-lg);
         background: var(--card);
         border: 1px solid var(--bdr);
         box-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.1);
@@ -171,7 +171,7 @@ a {
   box-shadow:
     rgba(0, 0, 0, 0.12) 0 1px 6px,
     rgba(0, 0, 0, 0.12) 0 1px 4px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
 }
 
 .error {
@@ -363,7 +363,7 @@ a.anchor-btn:hover {
 
 .toastify-container {
   .toastify-toast {
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     border-left: 4px solid $primary-blue;
   }
 }

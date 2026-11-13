@@ -83,7 +83,7 @@ const TopBar: React.FC = () => {
             backgroundColor: theme.palette.mode === 'dark' ? '#141b18' : '#f8fafc',
             border: '1px solid',
             borderColor: 'divider',
-            borderRadius: 2,
+            borderRadius: '8px',
             px: 2,
             py: 0.5,
             flex: 1,
@@ -161,7 +161,7 @@ const TopBar: React.FC = () => {
               onClose={() => setNotificationsAnchor(null)}
               PaperProps={{
                 elevation: 4,
-                sx: { mt: 1.5, width: 360, borderRadius: 2, overflow: 'hidden' },
+                sx: { mt: 1.5, width: 360, borderRadius: '12px', overflow: 'hidden' },
               }}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
@@ -240,7 +240,7 @@ const TopBar: React.FC = () => {
               anchorEl={accountMenuAnchor}
               open={Boolean(accountMenuAnchor)}
               onClose={() => setAccountMenuAnchor(null)}
-              PaperProps={{ elevation: 4, sx: { mt: 1.5, minWidth: 220, borderRadius: 2 } }}
+              PaperProps={{ elevation: 4, sx: { mt: 1.5, minWidth: 220, borderRadius: '12px' } }}
               transformOrigin={{ horizontal: 'right', vertical: 'top' }}
               anchorOrigin={{ horizontal: 'right', vertical: 'bottom' }}
             >
