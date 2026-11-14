@@ -243,29 +243,30 @@ export const MONITOR_THEME_CSS = `
   background: var(--card);
   border: 1px solid var(--bdr);
   border-radius: 4px;
-  padding: 11px;
+  padding: 16px 18px;
   text-align: center;
 }
 
 .monitor-kpi-value {
   font-variant-numeric: tabular-nums;
-  font-size: 21px;
-  font-weight: 500;
-  line-height: 1.1;
+  font-size: 38px;
+  font-weight: 600;
+  line-height: 1.05;
+  white-space: nowrap;
 }
 
 .monitor-kpi-unit {
-  font-size: 10px;
+  font-size: 13px;
   color: var(--tx2);
-  margin-top: 2px;
+  margin-top: 4px;
 }
 
 .monitor-kpi-label {
-  font-size: 9px;
+  font-size: 11px;
   font-weight: 600;
-  letter-spacing: 0.9px;
+  letter-spacing: 1.1px;
   text-transform: uppercase;
-  margin-top: 4px;
+  margin-top: 6px;
 }
 
 /* ─── Trend card ─── */
@@ -512,13 +513,13 @@ export const MONITOR_THEME_CSS = `
 
 .monitor-metric-item .metric-value {
   font-variant-numeric: tabular-nums;
-  font-size: 18px;
-  font-weight: 500;
+  font-size: 22px;
+  font-weight: 600;
   line-height: 1.2;
 }
 
 .monitor-metric-item .metric-unit {
-  font-size: 9px;
+  font-size: 10px;
   color: var(--tx2);
 }
 

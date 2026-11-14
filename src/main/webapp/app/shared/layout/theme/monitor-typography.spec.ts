@@ -28,6 +28,22 @@ const blockOf = (source: string, selector: string): string => {
 
 const MONO_DECLARATION = "font-family: 'IBM Plex Mono'";
 
+const fontSizeOf = (selector: string): number => {
+  const match = /font-size:\s*(\d+(?:\.\d+)?)px/.exec(blockOf(MONITOR_THEME_CSS, selector));
+  if (!match) {
+    throw new Error(`font-size not found: ${selector}`);
+  }
+  return Number(match[1]);
+};
+
+const fontWeightOf = (selector: string): number => {
+  const match = /font-weight:\s*(\d+)/.exec(blockOf(MONITOR_THEME_CSS, selector));
+  if (!match) {
+    throw new Error(`font-weight not found: ${selector}`);
+  }
+  return Number(match[1]);
+};
+
 const TECHNICAL_SELECTORS = [
   '.solar-monitor-root .mono {',
   '.monitor-group-header .gw-ip {',
@@ -79,5 +95,32 @@ describe('solar monitor typography', () => {
     PROSE_SELECTORS.forEach(selector => {
       expect(blockOf(MONITOR_THEME_CSS, selector)).not.toContain(MONO_DECLARATION);
     });
+  });
+});
+
+describe('solar monitor visual hierarchy', () => {
+  it('renders the hero kpi large enough to lead the dashboard', () => {
+    expect(fontSizeOf('.monitor-kpi-value {')).toBeGreaterThanOrEqual(36);
+  });
+
+  it('keeps the kpi hierarchy descending from the value to the label', () => {
+    const value = fontSizeOf('.monitor-kpi-value {');
+    const unit = fontSizeOf('.monitor-kpi-unit {');
+    const label = fontSizeOf('.monitor-kpi-label {');
+
+    expect(value).toBeGreaterThan(unit);
+    expect(unit).toBeGreaterThan(label);
+  });
+
+  it('gives the hero kpi a strong weight', () => {
+    expect(fontWeightOf('.monitor-kpi-value {')).toBeGreaterThanOrEqual(600);
+  });
+
+  it('never wraps the hero value', () => {
+    expect(blockOf(MONITOR_THEME_CSS, '.monitor-kpi-value {')).toContain('white-space: nowrap');
+  });
+
+  it('scales the metric readouts of the detail screen with the hero', () => {
+    expect(fontSizeOf('.monitor-metric-item .metric-value {')).toBeGreaterThanOrEqual(20);
   });
 });
