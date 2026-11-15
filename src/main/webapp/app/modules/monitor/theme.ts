@@ -104,7 +104,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-theme-toggle {
   width: 28px;
   height: 28px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--bdr);
   background: var(--bg3);
   color: var(--tx);
@@ -125,7 +125,7 @@ export const MONITOR_THEME_CSS = `
   position: relative;
   width: 28px;
   height: 28px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--bdr);
   background: var(--bg3);
   color: var(--tx2);
@@ -142,7 +142,7 @@ export const MONITOR_THEME_CSS = `
   right: -4px;
   min-width: 14px;
   height: 14px;
-  border-radius: 7px;
+  border-radius: var(--radius-md);
   background: var(--rd);
   color: #fff;
   font-size: 8px;
@@ -210,7 +210,7 @@ export const MONITOR_THEME_CSS = `
   bottom: 0;
   width: 6px;
   height: 3px;
-  border-radius: 1.5px;
+  border-radius: 50%;
   background: var(--bl);
   filter: drop-shadow(0 0 5px #2563eb88);
 }
@@ -242,7 +242,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-kpi-card {
   background: var(--card);
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 16px 18px;
   text-align: center;
 }
@@ -273,7 +273,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-trend-card {
   background: var(--card);
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   padding: 11px;
   margin-bottom: 8px;
 }
@@ -315,7 +315,7 @@ export const MONITOR_THEME_CSS = `
   font-size: 8px;
   font-weight: 700;
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
 }
 
 /* ─── Inversor Card ─── */
@@ -326,7 +326,7 @@ export const MONITOR_THEME_CSS = `
   padding: 11px;
   background: var(--card);
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin-bottom: 6px;
   cursor: pointer;
   transition: border-color 150ms, background 150ms;
@@ -404,7 +404,7 @@ export const MONITOR_THEME_CSS = `
 /* ─── Detail Header ─── */
 .monitor-detail-header {
   padding: 11px;
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   border: 1px solid var(--bdr);
   background: var(--card);
   margin-bottom: 8px;
@@ -448,7 +448,7 @@ export const MONITOR_THEME_CSS = `
 /* ─── Buttons ─── */
 .monitor-btn {
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--bg3);
   color: var(--tx);
   font-size: 10px;
@@ -486,7 +486,7 @@ export const MONITOR_THEME_CSS = `
   padding: 11px;
   background: var(--card);
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin-bottom: 8px;
 }
 
@@ -567,7 +567,7 @@ export const MONITOR_THEME_CSS = `
   align-items: center;
   padding: 4px 10px;
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--bg3);
   color: var(--tx2);
   font-size: 10px;
@@ -631,7 +631,7 @@ export const MONITOR_THEME_CSS = `
   height: 20px;
   background: var(--bg3);
   border: 1px solid var(--bdr);
-  border-radius: 10px;
+  border-radius: 50%;
   cursor: pointer;
   transition: background 180ms, border-color 180ms;
 }
@@ -690,7 +690,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-alert-item {
   padding: 10px 11px;
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin-bottom: 6px;
   background: var(--card);
 }
@@ -723,7 +723,7 @@ export const MONITOR_THEME_CSS = `
   font-size: 8px;
   font-weight: 700;
   padding: 1px 5px;
-  border-radius: 3px;
+  border-radius: var(--radius-sm);
   margin-left: 6px;
 }
 
@@ -778,7 +778,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-modal {
   background: var(--bg2);
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   width: 90%;
   max-width: 420px;
   padding: 16px;
@@ -812,7 +812,7 @@ export const MONITOR_THEME_CSS = `
   width: 100%;
   padding: 7px 10px;
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--bg3);
   color: var(--tx);
   font-size: 12px;
@@ -840,7 +840,7 @@ export const MONITOR_THEME_CSS = `
 
 .bms-cell {
   height: 24px;
-  border-radius: 2px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -891,7 +891,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-legend .legend-swatch {
   width: 8px;
   height: 8px;
-  border-radius: 2px;
+  border-radius: 50%;
 }
 
 /* ─── Export button ─── */
@@ -899,7 +899,7 @@ export const MONITOR_THEME_CSS = `
   width: 100%;
   padding: 8px;
   border: 1px solid var(--bl);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--bl);
   color: #fff;
   font-size: 11px;
@@ -920,7 +920,7 @@ export const MONITOR_THEME_CSS = `
   padding: 11px;
   background: var(--card);
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   margin-bottom: 6px;
 }
 
@@ -975,7 +975,7 @@ export const MONITOR_THEME_CSS = `
 .monitor-date-input {
   padding: 6px 10px;
   border: 1px solid var(--bdr);
-  border-radius: 4px;
+  border-radius: var(--radius-sm);
   background: var(--bg3);
   color: var(--tx);
   font-family: 'IBM Plex Mono', monospace;
