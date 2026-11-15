@@ -1,6 +1,15 @@
 // eslint-disable-next-line spaced-comment
 /// <reference types="node" />
+import fs from 'fs';
+import path from 'path';
+
 import { MONITOR_THEME_CSS } from '../../../modules/monitor/theme';
+
+const readComponent = (relativePath: string): string => fs.readFileSync(path.join(__dirname, relativePath), 'utf8');
+
+const TREND_BARS = readComponent('../../../modules/monitor/components/TrendBars.tsx');
+const SOC_RING = readComponent('../../../modules/monitor/components/SocRing.tsx');
+const AREA_CHART = readComponent('../../../modules/monitor/components/AreaChart.tsx');
 
 /** Extracts the body of the first rule matching `selector`, honouring nested braces. */
 const blockOf = (source: string, selector: string): string => {
@@ -122,5 +131,25 @@ describe('solar monitor visual hierarchy', () => {
 
   it('scales the metric readouts of the detail screen with the hero', () => {
     expect(fontSizeOf('.monitor-metric-item .metric-value {')).toBeGreaterThanOrEqual(20);
+  });
+});
+
+describe('monitor chart typography', () => {
+  it('never renders the charts with the monospace family', () => {
+    [TREND_BARS, SOC_RING, AREA_CHART].forEach(source => {
+      expect(source).not.toContain('IBM Plex Mono');
+    });
+  });
+
+  it('gives the trend axis its own row so the labels never sit on the bars', () => {
+    expect(TREND_BARS).not.toContain("position: 'absolute'");
+  });
+
+  it('renders the trend axis labels large enough to be read', () => {
+    expect(TREND_BARS).toMatch(/fontSize:\s*1[0-9]/);
+  });
+
+  it('renders the soc ring value large enough to be read', () => {
+    expect(SOC_RING).toMatch(/fontSize="1[0-9]"/);
   });
 });

@@ -91,8 +91,8 @@ const AreaChart: React.FC<AreaChartProps> = ({
               x={scaleX(anomaly.index)}
               y={scaleY(data1[anomaly.index].y) - 12}
               textAnchor="middle"
-              fontFamily="'IBM Plex Mono', monospace"
-              fontSize="7"
+              fontFamily="'IBM Plex Sans', sans-serif"
+              fontSize="8"
               fill="var(--rd)"
             >
               {anomaly.label}

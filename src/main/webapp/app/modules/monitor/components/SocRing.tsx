@@ -37,9 +37,9 @@ const SocRing: React.FC<SocRingProps> = ({ soc, alarm = false, size = 38 }) => {
         y={size / 2}
         textAnchor="middle"
         dominantBaseline="central"
-        fontFamily="'IBM Plex Mono', monospace"
-        fontSize="9"
-        fontWeight="500"
+        fontFamily="'IBM Plex Sans', sans-serif"
+        fontSize="10"
+        fontWeight="600"
         fill={color}
       >
         {Math.round(pct)}%
