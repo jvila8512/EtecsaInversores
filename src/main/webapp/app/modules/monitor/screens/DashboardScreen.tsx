@@ -38,7 +38,7 @@ const DashboardScreen: React.FC<DashboardScreenProps> = ({
             <span className="dot" /> Vivo
           </span>
           <button className="monitor-theme-toggle" aria-label="Cambiar tema" onClick={onToggleTheme}>
-            <span className="mono">&#9882;</span>
+            <span className="monitor-topbar-glyph">&#9882;</span>
           </button>
         </div>
       </div>

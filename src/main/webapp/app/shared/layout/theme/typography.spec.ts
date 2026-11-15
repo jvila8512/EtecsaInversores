@@ -50,7 +50,6 @@ const FONT_FACES = parseFontFaces(FONTS_CSS);
 const EXPECTED_FAMILIES: { family: string; weights: string[] }[] = [
   { family: 'Inter', weights: ['400', '500', '600', '700'] },
   { family: 'IBM Plex Sans', weights: ['400', '500', '600', '700'] },
-  { family: 'IBM Plex Mono', weights: ['400', '500', '600', '700'] },
 ];
 
 describe('self hosted typography', () => {
@@ -81,7 +80,7 @@ describe('self hosted typography', () => {
   it('renders the fonts without blocking the first paint', () => {
     const swapCount = (FONTS_CSS.match(/font-display:\s*swap/g) ?? []).length;
 
-    expect(FONT_FACES).toHaveLength(12);
+    expect(FONT_FACES).toHaveLength(8);
     expect(swapCount).toBe(FONT_FACES.length);
   });
 
@@ -92,6 +91,6 @@ describe('self hosted typography', () => {
   it('uses the self hosted families on the application body and the monitor', () => {
     expect(APP_SCSS).toMatch(/font-family:[^;]*'Inter'/);
     expect(MONITOR_THEME_CSS).toMatch(/font-family:[^;]*'IBM Plex Sans'/);
-    expect(MONITOR_THEME_CSS).toMatch(/font-family:[^;]*'IBM Plex Mono'/);
+    expect(MONITOR_THEME_CSS).not.toContain('IBM Plex Mono');
   });
 });

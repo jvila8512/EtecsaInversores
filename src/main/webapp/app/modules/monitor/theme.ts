@@ -30,9 +30,6 @@ export const MONITOR_THEME_CSS = `
   box-sizing: border-box;
 }
 
-.solar-monitor-root .mono {
-  font-family: 'IBM Plex Mono', 'SF Mono', 'Cascadia Code', monospace;
-}
 
 /* ─── Scroll container ─── */
 .monitor-scroll {
@@ -303,7 +300,8 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-group-header .gw-ip {
-  font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+font-family: 'IBM Plex Sans', sans-serif;
   font-size: 9px;
   color: var(--bl);
 }
@@ -933,7 +931,8 @@ export const MONITOR_THEME_CSS = `
 }
 
 .monitor-gw-card .gw-ip {
-  font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+font-family: 'IBM Plex Sans', sans-serif;
   font-size: 9px;
   color: var(--bl);
   margin-top: 2px;
@@ -978,7 +977,8 @@ export const MONITOR_THEME_CSS = `
   border-radius: var(--radius-sm);
   background: var(--bg3);
   color: var(--tx);
-  font-family: 'IBM Plex Mono', monospace;
+    font-variant-numeric: tabular-nums;
+font-family: 'IBM Plex Sans', sans-serif;
   font-size: 11px;
   width: 100%;
 }

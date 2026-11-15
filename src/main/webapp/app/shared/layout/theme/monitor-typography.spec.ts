@@ -85,10 +85,8 @@ describe('solar monitor typography', () => {
     expect(blockOf(MONITOR_THEME_CSS, '.solar-monitor-root {')).toContain("font-family: 'IBM Plex Sans'");
   });
 
-  it('keeps the monospace family for the technical fields only', () => {
-    TECHNICAL_SELECTORS.forEach(selector => {
-      expect(blockOf(MONITOR_THEME_CSS, selector)).toContain(MONO_DECLARATION);
-    });
+  it('uses no monospace family anywhere in the monitor stylesheet', () => {
+    expect(MONITOR_THEME_CSS).not.toContain('IBM Plex Mono');
   });
 
   it('renders every numeric readout with tabular figures', () => {
