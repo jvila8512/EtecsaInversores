@@ -56,4 +56,7 @@
   <!-- Complete register mappings for Felicity and MUST (all telemetry registers) -->
   <include file="changelog/20260611000003_complete_register_mappings.xml" relativeToChangelogFile="true"/>
 
+  <!-- Felicity IVGM-8KLP1G1: new brand, model and 19 register mappings (RS485 9600) -->
+  <include file="changelog/20260615000001_seed_felicity_ivgm.xml" relativeToChangelogFile="true"/>
+
 </databaseChangeLog>

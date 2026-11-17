@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+  <!--
+    Seed data for the Felicity IVGM-8KLP1G1 inverter (RS485, 9600 baud).
+
+    NEW brand / model / mappings only. Rows 1-65 of mapeo_registro and the
+    existing brands (1=Felicity Lumin, 2=MUST) are NOT modified.
+
+    The IVGM-8K uses a DIFFERENT address layout than the Lumin from the same
+    vendor (0x1108 is "Time: Year-Month" here but "Battery Voltage" in Lumin),
+    so it needs its own brand. Doc rule: an IVGM address must come from the IVGM
+    document, never be borrowed from T-REX because it looks similar.
+
+    Power telemetry (<0x2000) is in kW with 0.01 kW/count (raw/100). The app
+    stores W and applies `value = raw / escala`, so escala 0.1 converts to W
+    (raw / 0.1 = raw * 10). Documented in each mapping.
+
+    Field-validated readings from docs/IVGM8k/IVGM8K_CONEXION_MODBUS.md (§5):
+      bat1_soc 460 -> 46.0 %      bat1_voltage 539 -> 53.9 V
+      pv1_voltage 3102 -> 310.2 V pv1_current 108 -> 10.8 A
+      bat1_power 3262 -> 32.62 kW -> 32620 W
+  -->
+
+  <!-- Step 1: new brand (protocol/layout variant, same vendor) -->
+  <changeSet id="20260615000001-1" author="seed" runOnChange="true">
+    <sql>
+      INSERT INTO marca (id, nombre, fabricante, registro_inicio, registro_fin, registro_info_inicio, registro_info_fin, baud_rate_default, descripcion, activa_marca_default) VALUES ('3', 'Felicity IVGM', 'Felicity Solar', '4352', '4525', '63488', '63509', '9600', 'IVGM-8KLP1G1: RS485 9600 8N1, holding FC03. Sin fase C, sin PV3/PV4, sin bateria 2. Direcciones 0x1100-0x12CF, config 0x2100-0x22CF, identidad 0xF800.', 'true') ON CONFLICT (id) DO UPDATE SET nombre = EXCLUDED.nombre, fabricante = EXCLUDED.fabricante, registro_inicio = EXCLUDED.registro_inicio, registro_fin = EXCLUDED.registro_fin, registro_info_inicio = EXCLUDED.registro_info_inicio, registro_info_fin = EXCLUDED.registro_info_fin, baud_rate_default = EXCLUDED.baud_rate_default, descripcion = EXCLUDED.descripcion, activa_marca_default = EXCLUDED.activa_marca_default;
+    </sql>
+  </changeSet>
+
+  <!-- Step 2: new model -->
+  <changeSet id="20260615000001-2" author="seed" runOnChange="true">
+    <sql>
+      INSERT INTO modelo_inversor (id, nombre, capacidad_va, voltaje_sistema_nom, descripcion, marca_id) VALUES ('7', 'IVGM-8KLP1G1', '8000', '48', 'Inversor hibrido 8kVA 48V — Felicity IVGM-8KLP1G1 (RS485 9600, sin fase C). Rated Power confirmado en 0x2143 = 8000 W.', '3') ON CONFLICT (id) DO UPDATE SET nombre = EXCLUDED.nombre, capacidad_va = EXCLUDED.capacidad_va, voltaje_sistema_nom = EXCLUDED.voltaje_sistema_nom, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+  </changeSet>
+
+  <!-- Step 3: register mappings for the new brand (ids 66-84, all new) -->
+  <changeSet id="20260615000001-3" author="seed" runOnChange="true">
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('66', '4352', 'WorkMode', 'modo_operacion', 'UnsignedInt16', '1', '', 'true', '0x1100 — Modo de operacion IVGM (WorkMode).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('67', '4362', 'Fault Code', 'codigo_fallo', 'UnsignedInt16', '1', '', 'true', '0x110A — Codigo de fallo IVGM (no confundir con 0x1101 State1).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('68', '4376', 'PV1 Voltage', 'pv_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', '0x1118 — Tension PV1 (raw/10). Validado en campo: 3102 -> 310.2 V.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('69', '4380', 'PV1 Current', 'pv_corriente_a', 'SignedInt16', '10', 'A', 'true', '0x111C — Corriente PV1 (raw/10, con signo). Validado: 108 -> 10.8 A.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('70', '4392', 'PV1 Power', 'pv_potencia_w', 'SignedInt16', '0.1', 'W', 'true', '0x1128 — Potencia PV1 en kW (raw/100). La app guarda W: raw/0.1 = raw*10.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('71', '4396', 'Bat1 Voltage', 'bateria_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', '0x112C — Tension bateria (raw/10). Validado en campo: 539 -> 53.9 V.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('72', '4400', 'Bat1 Current', 'bateria_corriente_a', 'SignedInt16', '10', 'A', 'true', '0x1130 — Corriente bateria (raw/10, con signo).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('73', '4401', 'Bat1Power', 'bateria_potencia_w', 'SignedInt16', '0.1', 'W', 'true', '0x1131 — Potencia bateria en kW (raw/100) -> W (escala 0.1). Validado: 3262 -> 32620 W.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('74', '4408', 'Bat1 SOC', 'soc_pct', 'UnsignedInt16', '10', '%', 'true', '0x1138 — SOC bateria (raw/10). Validado en campo: 460 -> 46.0 %.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('75', '4479', 'Load A Persent', 'carga_porcentaje', 'UnsignedInt16', '1', '%', 'true', '0x117F — Porcentaje de CARGA (load), no es SOC. El anillo del dashboard usa este campo; en Lumin/MUST tambien es load.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('76', '4435', 'Inverter A Voltage', 'salida_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', '0x1153 — Tension de salida del inversor, fase A (raw/10).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('77', '4447', 'Inverter A Current', 'salida_corriente_a', 'SignedInt16', '10', 'A', 'true', '0x115F — Corriente de salida del inversor, fase A (raw/10, con signo).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('78', '4470', 'Inverter APhase Power', 'salida_potencia_w', 'SignedInt16', '0.1', 'W', 'true', '0x1176 — Potencia de salida inversor fase A (kW raw/100) -> W (escala 0.1).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('79', '4462', 'Inverter frequency', 'salida_frecuencia_hz', 'UnsignedInt16', '100', 'Hz', 'true', '0x116E — Frecuencia de salida del inversor (raw/100).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('80', '4432', 'Grid A Voltage', 'red_voltaje_v', 'UnsignedInt16', '10', 'V', 'true', '0x1150 — Tension de red, fase A (raw/10).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('81', '4461', 'Grid frequency', 'red_frecuencia_hz', 'UnsignedInt16', '100', 'Hz', 'true', '0x116D — Frecuencia de red (raw/100).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('82', '4467', 'Grid A Phase Power', 'consumo_red_w', 'SignedInt16', '0.1', 'W', 'true', '0x1173 — Potencia de red fase A (kW raw/100) -> W (escala 0.1).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('83', '4421', 'Inverter temperature', 'temperatura_c', 'SignedInt16', '10', '°C', 'true', '0x1145 — Temperatura del inversor (raw/10, con signo).', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+    <sql>
+      INSERT INTO mapeo_registro (id, direccion_registro, nombre_registro, campo_sql, tipo_dato, escala, unidad, activo, descripcion, marca_id) VALUES ('84', '4496', 'PowerFlowMsg', 'red_activa', 'UnsignedInt16', '1', '', 'true', '0x1190 — Bits de flujo de potencia (equivalente a Power Flow Bits de Lumin). Semantica a confirmar con la pantalla del inversor.', '3') ON CONFLICT (id) DO UPDATE SET direccion_registro = EXCLUDED.direccion_registro, nombre_registro = EXCLUDED.nombre_registro, campo_sql = EXCLUDED.campo_sql, tipo_dato = EXCLUDED.tipo_dato, escala = EXCLUDED.escala, unidad = EXCLUDED.unidad, activo = EXCLUDED.activo, descripcion = EXCLUDED.descripcion, marca_id = EXCLUDED.marca_id;
+    </sql>
+  </changeSet>
+</databaseChangeLog>
